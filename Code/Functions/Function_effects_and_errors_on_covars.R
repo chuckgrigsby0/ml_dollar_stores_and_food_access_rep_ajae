@@ -48,9 +48,10 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
   # -------------------------------------------------------------------------------------------- #
   posttr_binned_covars_str <- names(posttre_effects_wbinnedcovars)[!grepl('GEOID|^year$|event_year|rel_year|tau', 
                                                                           names(posttre_effects_wbinnedcovars))]
-  
+  # -------------------------------------------------------------------------------------------- #
   # Separate binned covariates from the unbinned (factor/integer/dummy) predictors 
   # Not binned vars. 
+  # -------------------------------------------------------------------------------------------- #
   posttr_unbinned_covars_str <- posttr_binned_covars_str[!grepl('bins', posttr_binned_covars_str)]
   
   # -------------------------------------------------------------------------------------------- #
@@ -65,7 +66,6 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
   # -------------------------------------------------------------------------------------------- #
   # Binned vars. 
   posttr_binned_covars_str <- posttr_binned_covars_str[grepl('bins', posttr_binned_covars_str)]; posttr_binned_covars_str
-  
   # -------------------------------------------------------------------------------------------- #
   
   
@@ -155,10 +155,9 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
   # -------------------------------------------------------------------------------------------- #
   # CV errors on normalized/standardized covariates. 
   # -------------------------------------------------------------------------------------------- #
-  
   # Top code values at and above (3rd Quartile + 1.5*IQR). 
   # -------------------------------------------------------------------------------------------- #
-  top_code_vars <- c('park_access_7nn', 'distance_to_urban_area', 'total_population') # 'inc_per_capita'
+  top_code_vars <- c('park_access_7nn', 'distance_to_urban_area', 'total_population') 
   
   top_code_vars_df <- top_code_vars %>% 
     
@@ -313,15 +312,11 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
       
     })
   # -------------------------------------------------------------------------------------------- #
-  
-  
-  # -------------------------------------------------------------------------------------------- #
   # Effects (tau) on normalized/standardized covariates. 
   # -------------------------------------------------------------------------------------------- #
-  
-  # Top and bottom code values at and above the 99th percentile for the following variables. 
+  # Top code values at and above (3rd Quartile + 1.5*IQR). 
   # -------------------------------------------------------------------------------------------- #
-  top_code_vars <- c('park_access_7nn', 'distance_to_urban_area', 'total_population') # 'inc_per_capita'
+  top_code_vars <- c('park_access_7nn', 'distance_to_urban_area', 'total_population')
   
   top_code_vars_df <- top_code_vars %>% map_dfc(function(.x){ 
     
@@ -360,9 +355,7 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
    
      
     dta <- dta %>% select(tau, model_covars[covar_id])
-    # -------------------------------------------------------------------------------------------- #
     
-    # -------------------------------------------------------------------------------------------- #
     reg_form <- xpd(tau ~ .[ model_covars[covar_id] ] )
     
     effects_on_covars <- lm(reg_form, data = dta)
@@ -503,7 +496,6 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
     }) 
       })
   # -------------------------------------------------------------------------------------------- #
-  
   # Effects by Region and Division
   # -------------------------------------------------------------------------------------------- #
   # Data Preparation. 
@@ -542,35 +534,8 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
     return(effects_on_geog)
   }
   
-   # -------------------------------------------------------------------------------------------- #
+  # -------------------------------------------------------------------------------------------- #
   
-  # effects_by_geography <- function(posttr_dta, geographic_var, id, reg_or_div_str){
-    
-    # Specify the base region/division for each iteration. 
-  #   posttr_dta_relevel <- posttr_dta %>% 
-      
-  #   mutate(across(.cols = all_of(geographic_var), 
-                    
-  #                 .fn = ~relevel(., ref = id) ) )
-    
-    # -------------------------------------------------------------------------------------------- #
-    
-  # reg_form <- xpd(tau ~ .[geographic_var]) # DIVISION or REGION
-    
-  # effects_on_geog <- lm(reg_form, data = posttr_dta_relevel)
-    
-  # effects_on_geog <- broom::tidy(effects_on_geog)
-    
-  # effects_on_geog <- effects_on_geog %>% 
-  #   mutate(label = paste('Effects relative to', 
-  #                        reg_or_div_str, # e.g., West, Northeast, Midwest, South or division name. 
-  #                        str_to_title(str_to_lower(geographic_var))), # e.g., REGION or DIVISION. 
-  #          outcome = 'tau', 
-  #           covariate = levels(posttr_dta_relevel[[geographic_var]]), 
-  #          boot_iteration = boot_iter)
-    
-  #   return(effects_on_geog)
-  # }
   # -------------------------------------------------------------------------------------------- #
   
   # Effects by Region. 
@@ -582,22 +547,7 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
     left_join(us_regions_key, by = c('covariate' = 'REGION')) %>%  # Join the region name key-value pairs. 
     
     relocate(REGION_NAME, .after = last_col() )
-  
-  # -------------------------------------------------------------------------------------------- #
-  # effects_by_region_df <- map2_dfr(seq_along(init_region_levels), # map over IDs. 
-  #                               us_regions_key$REGION_NAME, # map over region names. 
-  #                             function(.x, .y){ 
-                                  
-  #                               effects_by_geography(posttr_dta = posttre_effects_wdsentry, 
-  #                                                    geographic_var = 'REGION', 
-  #                                                    id = .x, 
-  #                                                    reg_or_div_str = .y)
-  #                               
-  #                             }) %>%
-    
-  # left_join(us_regions_key, by = c('covariate' = 'REGION')) %>%  # Join the region name key-value pairs. 
-    
-  # relocate(REGION_NAME, .after = last_col() )
+
   # -------------------------------------------------------------------------------------------- #
   
   # Effects by Division 
@@ -609,23 +559,6 @@ effects_and_errors_on_covars <- function(national, geography_str, model_preds_dt
     left_join(us_divisions_key, by = c('covariate' = 'DIVISION')) %>%  # Join the region name key-value pairs. 
     
     relocate(DIVISION_NAME, .after = last_col() )
-  # -------------------------------------------------------------------------------------------- #
-  # effects_by_division_df <- map2_dfr(seq_along(init_division_levels), # map over IDs. 
-  #                               us_divisions_key$DIVISION_NAME, # map over region names. 
-  #                             function(.x, .y){ 
-                                  
-  #                               effects_by_geography(posttr_dta = posttre_effects_wdsentry, 
-  #                                                    geographic_var = 'DIVISION', 
-  #                                                    id = .x, 
-  #                                                    reg_or_div_str = .y)
-                                  
-  #                             }) %>%
-    
-  # left_join(us_divisions_key, by = c('covariate' = 'DIVISION')) %>%
-    
-  # relocate(DIVISION_NAME, .after = last_col() )
-  # -------------------------------------------------------------------------------------------- #
-  
   # -------------------------------------------------------------------------------------------- #
   err_and_tau_on_covars <- list('errors_on_bins' = errors_on_binned_covars_df, 
                                 'errors_on_ints' = errors_on_int_covars_df, 

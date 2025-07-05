@@ -6,9 +6,6 @@ CV_Function <- function(untreated_dta, cv_type, k){
 
   if (cv_type == 'horizontal rolling-origin-block-cv'){ # Horizontal CV method involving forecasting and back-casting. 
     
-    # lhs = c(0, 0.20, 0.40, 0.60, 0.80)
-    # rhs = c(0.20, 0.40, 0.60, 0.80, 1)
-    
     untreated_dta_wo2005 <- untreated_dta %>% filter(year != '2005')
     
     obs_by_year <- untreated_dta_wo2005 %>% 
@@ -34,9 +31,6 @@ CV_Function <- function(untreated_dta, cv_type, k){
     
     time_ids <- bind_rows(year_2005, time_ids)
     
-    # time_ids = map2(lhs, rhs, function(.x, .y) obs_by_year %>% filter(between(cumsum, .x, .y)) %>% distinct(year))
-    # time_ids = set_names(time_ids, nm = seq(1, 5, 1)) %>% bind_rows(.id = 'fold_id')
-    
     untreated_dta_wfolds <- untreated_dta %>% left_join(time_ids, by = 'year')
     
     untreated_dta_wfolds <- untreated_dta_wfolds %>% relocate(fold_id)
@@ -45,15 +39,8 @@ CV_Function <- function(untreated_dta, cv_type, k){
   
   if (cv_type == 'horizontal equal-sized-block-cv'){ # Horizontal CV method involving forecasting and back-casting. 
     
-    # lhs = c(0, 0.20, 0.40, 0.60, 0.80)
-    # rhs = c(0.20, 0.40, 0.60, 0.80, 1)
-    
-    
     untreated_dta_wo2005_2006 <- untreated_dta %>% filter(year != '2005' & year != '2006')
     
-    # time_ids <- data.frame(year = unique(untreated_dta_wo2005_2006$year), 
-      #                      fold_id = as.character(c(rep(2, 2), rep(3, 2), rep(4, 2), 
-        #                                             rep(5, 2), rep(6, 2), rep(7, 2), rep(8, 2))))
     time_ids <- data.frame(year = unique(untreated_dta_wo2005_2006$year), 
                            fold_id = as.character(c(rep(1, 2), rep(2, 2), rep(3, 2), 
                                                     rep(4, 2), rep(5, 2), rep(6, 2), rep(7, 2))))

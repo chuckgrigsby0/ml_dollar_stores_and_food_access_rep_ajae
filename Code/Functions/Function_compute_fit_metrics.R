@@ -50,7 +50,7 @@ compute_metrics <- function(dta, bootstrap_idx){
                                        g_mean_relyear) %>%
     arrange(rel_year)
   
-  # Compute Precision-Recall AUC for the entire pre-entry period and for each relative-time-to-treatment group. 
+  # Compute Precision-Recall (ROC) AUC for the entire pre-entry period and for each relative-time-to-treatment group. 
   pr_auc_rel_year <- dta %>% 
     group_by(rel_year) %>% 
     pr_auc(truth = actual, 
@@ -60,7 +60,6 @@ compute_metrics <- function(dta, bootstrap_idx){
     pr_auc(truth = actual, 
            pred_probs)
   
-  # Filter out the Never Treated Observations. 
   roc_auc <- dta %>%
     roc_auc(truth = actual, 
             pred_probs)

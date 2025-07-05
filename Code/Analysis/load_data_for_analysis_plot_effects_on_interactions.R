@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------------------- #
-# Load data based on parameters specified in analysis_plot_effects_and_errors_on_covars 
+# Load data based on parameters specified in analysis_plot_effects_on_ds_entry_x_covars_interactions_sourced.R
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'))
 # -------------------------------------------------------------------------------------------- #
@@ -7,12 +7,6 @@ source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_model_covars_lists.R'))
 model_covars <- unlist(model_covars_list, use.names = FALSE) 
-# -------------------------------------------------------------------------------------------- #
-# Filter out urban_area and uc_area from the Rural models. 
-# -------------------------------------------------------------------------------------------- #
-# if (model_geography == 'Rural'){ 
-#   model_covars <- model_covars[!grepl('^urban_area$|^uc_area$', model_covars)]
-# }
 # -------------------------------------------------------------------------------------------- #
 # Load regional and divisional labels. 
 # -------------------------------------------------------------------------------------------- #
@@ -51,10 +45,7 @@ treated_preds <- model_output$data_cf_preds %>%
   
   left_join(select(dta_treated, GEOID, year, all_of(model_covars)), by = c('GEOID', 'year')) %>%
   
-  # For consistency with the out-of-sample predictions during CV, 
-  # we obtain counterfactual predictions from 2007 to 2020.
-  
-  filter(year >= '2006') %>%
+  filter(year >= '2006') %>% # We obtain counterfactual predictions from 2006 to 2020.
   
   left_join(bg_regs_and_divs, by = 'GEOID') # Regional and divisional indicators. 
 # -------------------------------------------------------------------------------------------- #
@@ -117,7 +108,6 @@ effects_on_interactions <- effects_on_ds_entry_x_covars_x_grocery(national = FAL
                                                                   geography_str = model_geography, 
                                                                   model_preds_dta = model_preds, 
                                                                   boot_iter = 0)
-
 # -------------------------------------------------------------------------------------------- #
 # Load the bootstrapped estimates. 
 # -------------------------------------------------------------------------------------------- #
@@ -125,7 +115,7 @@ dir_geography <- paste(model_geography, 'Bootstrap', sep = '_') # e.g., Rural_Bo
 
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_') # e.g., Low_Access
 
-dir_bootstrap <- paste0('bootstrap_effects_by_interactions', bootstrap_by_tracts) # NULL or '_tracts'
+dir_bootstrap <- paste0('bootstrap_effects_by_interactions', bootstrap_by_tracts)
 
 boot_data <- seq(1, 499, 1) %>%
   

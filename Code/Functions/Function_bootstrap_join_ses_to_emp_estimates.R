@@ -1,10 +1,10 @@
 # -------------------------------------------------------------------------------------------- #
-# Function to combine the empirical estimates with the bootstrapped standard errors. 
+# Convenience function to combine the empirical estimates with the bootstrapped standard errors. 
 # -------------------------------------------------------------------------------------------- #
 cat('Sourced: join_bootstrap_ses_to_emp_estimates <- function(empirical_estimates_dta, bootstrap_estimates_dta, join_vars) \n
     Note: join_vars can be a string of characters')
 
-# Note that contrains(entry_events) will apply to post-treatment data. 
+# Note that contains(entry_events) will apply to post-treatment data. 
 # label to DIVISION_NAME corresponds to the errors and effects on covariate bootstrap analyses. 
 # -------------------------------------------------------------------------------------------- #
 join_bootstrap_ses_to_emp_estimates <- function(empirical_estimates_dta, bootstrap_estimates_dta, join_vars){ 
@@ -34,9 +34,6 @@ join_bootstrap_ses_to_emp_estimates <- function(empirical_estimates_dta, bootstr
     
     relocate(bootstrap_sd, .after = estimate) # %>% 
     
-    # mutate(across(.cols = starts_with('bootstrap'), 
-      #             .fn = ~if_else(is.na(.), 0, .))) # The rows with Actual will have NAs so fill in with 0. 
-  
   return(empirical_estimates_dta)
   
 }

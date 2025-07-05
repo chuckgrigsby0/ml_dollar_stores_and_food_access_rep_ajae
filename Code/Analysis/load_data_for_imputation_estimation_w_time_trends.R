@@ -12,9 +12,7 @@ load(here::here('Data', 'Data_2_and_10_Miles', 'ds_entries_panel_treated_wbins_a
 # -------------------------------------------------------------------------------------------- #
 # Pre-Entry Retail Store Counts
 # -------------------------------------------------------------------------------------------- #
-# load(here::here('Data', 'dollar_store_counts_3mile_2005_feature.RData')) #10min, 3mile Same variable in retail_store.*
 load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData')) #10min, 3mile
-# -------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------- #
 # Demographic and socioeconomic data. 
 # -------------------------------------------------------------------------------------------- #
@@ -110,11 +108,11 @@ roads <- roads %>%
 roads_vars <- names(roads)[!grepl('GEOID|year', names(roads))]
 # -------------------------------------------------------------------------------------------- #
 # The following scripts will source a function to combine the state and time estimated fixed effects and 
-# state-time trend. These data are combined into data.frame friendly formats for use in statistical models. 
+# state-time trends. These data are combined into data.frame friendly formats for use in statistical models. 
 # -------------------------------------------------------------------------------------------- #
 
 # -------------------------------------------------------------------------------------------- #
-# For State by Time FEs. 
+# For state, time, and state-linear trends.  
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_feat_eng_time_state_and_linear_trends_fes_create_data.R'))
 rm('fe_estimates', 'compile_fes')
@@ -124,7 +122,6 @@ rm('fe_estimates', 'compile_fes')
 fes_state_vars <- names(fes_state)[!grepl('^STATE$', names(fes_state))]
 fes_year_vars <- names(fes_year)[!grepl('^year$', names(fes_year))]
 fes_trend_vars <- names(fes_trend)[!grepl('^STATE$', names(fes_trend))]
-# -------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------- #
 # Geographic data. 
 # -------------------------------------------------------------------------------------------- #

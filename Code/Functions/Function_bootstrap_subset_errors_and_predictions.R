@@ -1,5 +1,6 @@
 # -------------------------------------------------------------------------------------------- #
-# Function to subset the named elements 'errors' or the 'predictions'. 
+# Convenience function to subset the named elements 'errors' or the 'predictions'. 
+# -------------------------------------------------------------------------------------------- #
 print('Sourced: subset_errors_and_predictions <- function(bootstrap_data, list_element_name)')
 # -------------------------------------------------------------------------------------------- #
 subset_errors_and_predictions <- function(bootstrap_data, list_element_name){

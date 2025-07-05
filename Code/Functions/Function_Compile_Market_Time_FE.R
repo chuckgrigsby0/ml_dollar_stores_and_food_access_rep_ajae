@@ -1,4 +1,4 @@
-# Code to compile each sublist of the year, market, and market^year FEs estimated for the tree-based ML algorithms. 
+# Code to compile each sublist of the year, market/state, and market/state^year FEs estimated for the tree-based ML algorithms. 
 # -------------------------------------------------------------------------------------------- #
 compile_fes <- function(fe_estimates_list, grepl_ls_name, ls_name){
 

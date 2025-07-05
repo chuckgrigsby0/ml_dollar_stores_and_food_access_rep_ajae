@@ -1,8 +1,7 @@
 # -------------------------------------------------------------------------------------------- #
-.libPaths()
 # Load empirical data and point estimates. 
 # -------------------------------------------------------------------------------------------- #
-# Specify Urban/Rural, dependent variable, and results based on BG bootstrap or CT bootstrap. 
+# Specify Urban/Rural, dependent variable, and results based on CT bootstrap. 
 model_geography <- 'Rural' # Used in script below to subset by either Urban or Rural.
 model_dep_var <- 'low_access'
 options(scipen = 999)
@@ -52,10 +51,7 @@ treated_preds <- model_output$data_cf_preds %>%
   
   left_join(select(dta_treated, GEOID, year, all_of(model_covars)), by = c('GEOID', 'year')) %>%
   
-  # For consistency with the out-of-sample predictions during CV, 
-  # we obtain counterfactual predictions from 2007 to 2020.
-  
-  filter(year >= '2006') %>%
+  filter(year >= '2006') %>% # we obtain counterfactual predictions from 2006 to 2020.
   
   left_join(bg_regs_and_divs, by = 'GEOID') # Regional and divisional indicators. 
 # -------------------------------------------------------------------------------------------- #

@@ -17,11 +17,7 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
                                      filename))
   # -------------------------------------------------------------------------------------------- #
   # Note: We filter >= 2007 because for the untreated/yet-to-be-treated observations, we only have 
-  # holdout predictions for years 2007-2020. For block groups whose year of treatment (event_year == 2007), 
-  # we do not obtain out-of-sample predictions for their relative time to treatment food-desert/low-access status. 
-  # We obtain predictions for relative time to treatment at t = -1 for the event_year == 2008 because the first
-  # fold corresponds to 2007-2008. As another example, for the event_year == 2009, we obtain relative time to treatment
-  # predictions for t = -2 and -1 in the years 2007 and 2008, respectively. 
+  # holdout predictions for years 2007-2020. 
   # -------------------------------------------------------------------------------------------- #
   untreated_preds <- model_output$cv_errors_opt %>% 
     
@@ -45,17 +41,12 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
     
     filter(year >= '2006') # Post-treatment effects are assessed from 2006-2020.
   # -------------------------------------------------------------------------------------------- #
-  # Note: We do obtain counterfactual predictions from 2006, whereby for block-groups treated 
-  # in 2006, we obtain predictions at rel_year = 0. However, the ML model CV predictions are made from years 2007-2020. 
-  # -------------------------------------------------------------------------------------------- #
   model_preds <- bind_rows(untreated_preds, treated_preds) %>%
     
     filter(is.finite(rel_year))
   # -------------------------------------------------------------------------------------------- #
   
-  # -------------------------------------------------------------------------------------------- #
-  
-  # Data to assess errors by relative time. 2007-2019
+  # Data to assess errors by relative time.
   pretr_preds <- model_preds %>% 
     filter(rel_year < 0) %>% 
     filter(grepl(model_geography, Geography)) %>%
@@ -71,7 +62,6 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
     filter(grepl(model_geography, Geography)) %>%
     
     filter(year >= '2006')
-  
   # -------------------------------------------------------------------------------------------- #
   
   # Regress errors on relative time without intercept. 
@@ -141,7 +131,6 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
   reg_results <- list('errors' = model_errors_coefs, 
                       'predictions' = preds_vs_actual, 
                       'effects_rel_year' = effects_rel_year) 
-  #'effects_rel_year_x_entry_bin' = effects_rel_year_x_entry_bin)
   
   return(reg_results)
   

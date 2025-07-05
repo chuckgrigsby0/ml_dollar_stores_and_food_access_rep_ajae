@@ -11,13 +11,8 @@ xgboost_imputation_estimation <- function(dep_var_string, cv_models){
   
   opt_params <- append(opt_params, 
                        list(subsample = 0.80, 
-                            #colsample_bylevel = 0.70, 
                             colsample_bytree = 0.75,
                             scale_pos_weight = scale_pos_weight_data)) # Add defaults. 
-  
-  # Optimal boosting iterations. 
-  # opt_score_index <- which.max(xgb_cv$scoreSummary$Score)
-  # opt_nrounds <- xgb_cv$scoreSummary$nrounds_opt[opt_score_index]
   
   
   opt_tuning_params <- append(list(booster = 'gbtree', 

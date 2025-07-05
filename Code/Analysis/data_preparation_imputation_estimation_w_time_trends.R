@@ -1,10 +1,9 @@
-# ----------------------------------- #
+# -------------------------------------------------------------------------------------------- #
 # Load packages
-# ----------------------------------- #
+# -------------------------------------------------------------------------------------------- #
 library('pacman')
 p_load('here', 'dplyr', 'ggplot2', 'purrr', 'tidyr', 'stringr', 
        'recipes', 'rsample', 'fixest', 'sf', 'tictoc', 'xgboost')
-# -------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------- #
 # Load data. 
 # -------------------------------------------------------------------------------------------- #
@@ -26,10 +25,12 @@ non_model_vars <- c('DS_Count_10mile', 'DS_Count_10mile_diff',
                     'entry', 'entry_events', 'event_year', 'net_entry_cumsum', 'rel_year', 'treat', 
                     'Grocery_Count_10mile', 'Grocery_Count_10mile_diff', 'Grocery_Count_10mile_2005', 'total_low_access', 
                     'STATE', 'market', 'market_name_full', 'Geography')
+
 # Modeling variables (Columns needed for imputation models). 
+
 model_vars <- names(dta_untreated)[!(names(dta_untreated) %in% non_model_vars)]; model_vars
 # -------------------------------------------------------------------------------------------- #
-# The NA observations are completely missing in covariates or are located in Puerto Rico, and therefore, will be discarded. 
+# The NA observations are completely missing in covariates, and therefore, will be discarded. 
 # -------------------------------------------------------------------------------------------- #
 nas_ut <- dta_untreated[!complete.cases(dta_untreated), ]  
 dta_untreated <- dta_untreated[complete.cases(dta_untreated), ]
@@ -56,10 +57,8 @@ dta_treated <- dta_treated %>% select(all_of(model_vars))
 source(here::here('Code', 'Functions', 'Function_Cross_Validation_Folds.R'))
 # -------------------------------------------------------------------------------------------- #
 dta_untreated_wfolds <- CV_Function(untreated_dta = dta_untreated,
-                                    cv_type = 'horizontal equal-sized-block-cv', #  'horizontal rolling-origin-block-cv', 'horizontal equal-sized-block-cv'
-                                    k = 7) # For horizontal CV try 6 or 8 to obtain 5 or 7 folds.  
-# Use 5 when cv_type = 'vertical'. 
-#'vertical' implies stratified sampling by GEOID. 
+                                    cv_type = 'horizontal equal-sized-block-cv', 
+                                    k = 7)
 
 for (i in 1:7) print( dta_untreated_wfolds %>% filter(fold_id == i) %>% distinct(year) ) 
 for (i in 1:7) print( dta_untreated_wfolds %>% filter(fold_id == i) %>% nrow() ) 

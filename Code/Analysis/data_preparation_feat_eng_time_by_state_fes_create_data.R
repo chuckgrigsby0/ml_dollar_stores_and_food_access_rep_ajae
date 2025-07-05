@@ -1,18 +1,15 @@
 # -------------------------------------------------------------------------------------------- #
-# Create time and state and state by time fixed effects data frame objects for use in models. 
+# Create state by time fixed effects data frame objects for use in models. 
 # Function to compile FEs by FE type. 
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Functions', 'Function_Compile_Market_Time_FE.R')) # Works with state or market fixed effects. 
 # -------------------------------------------------------------------------------------------- #
-#.libPaths(c("K:/Home/grigsby-charles/Documents/R/win-library/4.0", "C:/Program Files/R/R-4.0.4/library"))
-.libPaths()
-# ----------------------------------- #
 # Load packages
-# ----------------------------------- #
+# -------------------------------------------------------------------------------------------- #
 library(pacman)
 p_load('here', 'dplyr', 'ggplot2', 'purrr', 'tidyr', 'stringr', 'recipes', 'sf', 'rsample')
 # -------------------------------------------------------------------------------------------- #
-# Load the output containing the state and year FEs from the regression of food-desert status of the untreated
+# Load the output containing the state and year FEs from the regression of low-access status of the untreated
 # on the covariates. 
 # -------------------------------------------------------------------------------------------- #
 fe_estimates <- readRDS(here::here('Data', 'Data_2_and_10_Miles', 'time_by_state_fixed_effects.rds'))
@@ -21,18 +18,6 @@ la_type_names <- names(fe_estimates); la_type_names
 # -------------------------------------------------------------------------------------------- #
 # Using the sourced function compile_fes from above. 
 # -------------------------------------------------------------------------------------------- #
-
-# -------------------------------------------------------------------------------------------- #
-# Uncomment the Year and State FEs if estimating State and Year FEs, respectively. 
-# -------------------------------------------------------------------------------------------- #
-# Year FEs
-# fes_year <- compile_fes(fe_estimates_list = fe_estimates, grepl_ls_name = '^year$', ls_name = 'year')
-
-# State FEs
-# fes_state <- compile_fes(fe_estimates_list = fe_estimates, grepl_ls_name = '^STATE$', ls_name = 'STATE')
-# -------------------------------------------------------------------------------------------- #
-
-
 # State by Year FEs
 # -------------------------------------------------------------------------------------------- #
 fes_state_by_time <- compile_fes(fe_estimates_list = fe_estimates, 

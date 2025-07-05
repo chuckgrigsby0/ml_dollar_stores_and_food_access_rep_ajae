@@ -7,12 +7,6 @@ source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'
 source(here::here('Code', 'Analysis', 'data_preparation_model_covars_lists.R'))
 model_covars <- unlist(model_covars_list, use.names = FALSE) 
 # -------------------------------------------------------------------------------------------- #
-# Filter out urban_area and uc_area from the Rural models. 
-# -------------------------------------------------------------------------------------------- #
-# if (model_geography == 'Rural'){ 
-#   model_covars <- model_covars[!grepl('^urban_area$|^uc_area$', model_covars)]
-# }
-# -------------------------------------------------------------------------------------------- #
 # Load regional and divisional labels. 
 # -------------------------------------------------------------------------------------------- #
 bg_regs_and_divs <- readRDS(here::here('Data', 'block_group_regions_and_division.rds'))
@@ -49,11 +43,8 @@ treated_preds <- model_output$data_cf_preds %>%
   rename(preds = pred_class_cf) %>%
   
   left_join(select(dta_treated, GEOID, year, all_of(model_covars)), by = c('GEOID', 'year')) %>%
-
-  # For consistency with the out-of-sample predictions during CV, 
-  # we obtain counterfactual predictions from 2007 to 2020.
     
-  filter(year >= '2006') %>%
+  filter(year >= '2006') %>% # We obtain counterfactual predictions from 2006 to 2020.
   
   left_join(bg_regs_and_divs, by = 'GEOID') # Regional and divisional indicators. 
 # -------------------------------------------------------------------------------------------- #
@@ -61,7 +52,6 @@ model_preds <- bind_rows(untreated_preds, treated_preds) %>%
   
   filter(is.finite(rel_year)) # Filter out observations with rel_year == Inf because these are never-treated observations. 
 # -------------------------------------------------------------------------------------------- #
-
 # Create a pre-treatment data set to be used later in functions. 
 # -------------------------------------------------------------------------------------------- #
 pretr_preds <- model_preds %>% # Varies by bootstrap iteration. 
@@ -83,7 +73,7 @@ pretr_preds <- model_preds %>% # Varies by bootstrap iteration.
 # for the creation of this file using the original data. 
 
 # Note: These data.frames are from the original data so they must be joined 
-# to the bootrapped data for the current bootstrap iteration. 
+# to the bootstrapped data for the current bootstrap iteration. 
 # -------------------------------------------------------------------------------------------- #
 
 # -------------------------------------------------------------------------------------------- #
@@ -104,14 +94,16 @@ pretr_key_vars <- c('GEOID', 'year', 'event_year', 'rel_year')
 pretr_preds_sel <- pretr_preds %>% select(all_of(pretr_key_vars), err)
 # -------------------------------------------------------------------------------------------- #
 # Join the prepared binned data to the bootstrap data. 
+# -------------------------------------------------------------------------------------------- #
 pretr_binned_covars <- pretr_preds_sel %>% left_join(pretr_binned_covars, by = pretr_key_vars)
 # -------------------------------------------------------------------------------------------- #
 
 # -------------------------------------------------------------------------------------------- #
 pretr_binned_covars_str <- names(pretr_binned_covars)[!grepl('GEOID|^year$|event_year|rel_year|err', names(pretr_binned_covars))]
-
+# -------------------------------------------------------------------------------------------- #
 # Separate binned covariates from the unbinned (factor/integer/dummy) predictors 
 # Not binned vars. 
+# -------------------------------------------------------------------------------------------- #
 pretr_unbinned_covars_str <- pretr_binned_covars_str[!grepl('bins', pretr_binned_covars_str)]
 
 # -------------------------------------------------------------------------------------------- #
@@ -125,6 +117,7 @@ if (model_geography == 'Rural'){
 print(pretr_unbinned_covars_str)
 # -------------------------------------------------------------------------------------------- #
 # Binned vars.
+# -------------------------------------------------------------------------------------------- #
 pretr_binned_covars_str <- pretr_binned_covars_str[grepl('bins', pretr_binned_covars_str)]; pretr_binned_covars_str
 
 # -------------------------------------------------------------------------------------------- #
@@ -133,10 +126,10 @@ pretr_binned_covars_str <- pretr_binned_covars_str[grepl('bins', pretr_binned_co
 fname_posttr_binned_covars = paste0('posttreatment_binned_and_factor_covariates_', str_to_lower(model_geography), '.rds')
 
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
-
+# -------------------------------------------------------------------------------------------- #
 # Remove tau calculated from the original/empirical data 
 # because the pretr_preds from model_preds contains the bootstrapped error. 
-
+# -------------------------------------------------------------------------------------------- #
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment dollar store bins and factors. 
@@ -144,16 +137,17 @@ posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', str_to_lower(model_geography), '.rds')
 
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
-
+# -------------------------------------------------------------------------------------------- #
 # Remove tau calculated from the original/empirical data 
 # because the pretr_preds from model_preds contains the bootstrapped error. 
-
+# -------------------------------------------------------------------------------------------- #
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 
 
 # -------------------------------------------------------------------------------------------- #
 # Functions used in script: 'Function_effects_and_errors_on_covars.R'
+# -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Functions', 'Function_tidy_regression.R')) 
 source(here::here('Code', 'Functions', 'Function_top_and_bottom_code_vars.R')) 
 source(here::here('Code', 'Functions', 'Function_effects_and_errors_on_covars.R'))
@@ -173,7 +167,7 @@ dir_geography <- paste(model_geography, 'Bootstrap', sep = '_') # e.g., Rural_Bo
 
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_') # e.g., Low_Access
 
-dir_bootstrap <- paste0('bootstrap_errors_and_effects_by_covars', bootstrap_by_tracts) # NULL or '_tracts'
+dir_bootstrap <- paste0('bootstrap_errors_and_effects_by_covars', bootstrap_by_tracts) 
 
 boot_data <- seq(1, 499, 1) %>%
   
@@ -194,7 +188,7 @@ boot_data <- seq(1, 499, 1) %>%
     
     })
 # -------------------------------------------------------------------------------------------- #
-# Functions to subset the named elements 'errors' or the 'predictions', 
+# Convenience functions to subset the named elements 'errors' or the 'predictions', 
 # compute standard errors, and join standard errors to empirical point estimates. 
 # -------------------------------------------------------------------------------------------- #
 # Select from the list of bootstrapped output. 

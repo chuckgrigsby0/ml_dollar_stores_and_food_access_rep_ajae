@@ -1,8 +1,8 @@
 # -------------------------------------------------------------------------------------------- #
-# Create time and state and state by time fixed effects data frame objects for use in models. 
+# Create time and state and state trend fixed effects data frame objects for use in models. 
 # Function to compile FEs by FE type. 
 # -------------------------------------------------------------------------------------------- #
-source(here::here('Code', 'Functions', 'Function_Compile_Market_Time_FE.R')) # Works with state or market fixed effects. 
+source(here::here('Code', 'Functions', 'Function_Compile_Market_Time_FE.R')) 
 # -------------------------------------------------------------------------------------------- #
 # ----------------------------------- #
 # Load packages
