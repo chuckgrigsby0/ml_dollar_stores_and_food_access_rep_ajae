@@ -3,9 +3,9 @@
 # -------------------------------------------------------------------------------------------- #
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #
-# Load empirical data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
-source(here::here('Code', 'Analysis', 'load_data_for_analysis_plot_effects_on_interactions.R'))
+source(here::here('Code', 'Analysis', 'Figures_Effects_on_Grocery', 'load_data_for_analysis_plot_effects_on_interactions.R'))
 # -------------------------------------------------------------------------------------------- #
 # Loads functions for plots. 
 # -------------------------------------------------------------------------------------------- #

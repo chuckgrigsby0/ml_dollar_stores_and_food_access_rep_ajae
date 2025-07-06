@@ -1,3 +1,5 @@
+# Script to compute bootstrap ATTs as a percent of average counterfactual share in low access. 
+# Used to compute bootstrapped SEs. 
 # -------------------------------------------------------------------------------------------- #
 model_dep_var = Sys.getenv('model_dep_var') # Used in script below.
 model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.

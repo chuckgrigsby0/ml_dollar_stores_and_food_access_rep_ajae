@@ -1,4 +1,4 @@
-# Script used to estimate bootstrap estimates on average CV errors and ATTs across binned predictor values and treatment effects on standardized predictors. 
+# Script used to estimate bootstrap estimates of average CV errors and ATTs across binned predictor values and treatment effects on standardized predictors.
 # -------------------------------------------------------------------------------------------- #
 # Load bootstrap data and point estimates. 
 # -------------------------------------------------------------------------------------------- #

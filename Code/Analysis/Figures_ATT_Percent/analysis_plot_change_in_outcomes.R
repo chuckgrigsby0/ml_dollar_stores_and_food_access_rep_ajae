@@ -1,3 +1,4 @@
+# Creates tables and figures of ATTs as a percentage of average counterfactual low-access shares across relative treatment timing and years. 
 # -------------------------------------------------------------------------------------------- #
 options(scipen = 999)
 library(readr)

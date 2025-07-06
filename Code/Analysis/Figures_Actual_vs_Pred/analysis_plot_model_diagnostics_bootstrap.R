@@ -1,5 +1,7 @@
 # Use with sbatch_figures.sh to create event-study type figures in Figures 1 and 2 of main text. 
 # sbatch_figures.sh calls analysis_plot_model_diagnostics_bootstrap_sourced.R to create both urban and rural figures. 
+# Figures show actual vs predicted share of low-access block groups across relative treatment timing. 
+# Additional figures include average CV errors and treatment effects across relative time to treatment. 
 # -------------------------------------------------------------------------------------------- #
 
 # -------------------------------------------------------------------------------------------- #
@@ -122,7 +124,7 @@ emp_predictions_on_relyear <- join_bootstrap_ses_to_emp_estimates(empirical_esti
                                                              bootstrap_estimates_dta = boot_se_predictions_on_relyear, 
                                                              join_vars = c('rel_year', 'Outcome'))
 # -------------------------------------------------------------------------------------------- #
-# Average MSE across model runs. 
+# Check average classification error across model runs. 
 # -------------------------------------------------------------------------------------------- #
 boot_data_predictions %>% summarise(mean_mse = mean(cv_mse))
 # -------------------------------------------------------------------------------------------- #

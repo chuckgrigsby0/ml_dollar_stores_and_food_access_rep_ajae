@@ -3,7 +3,7 @@
 # necessary for creating the figures in the scripts below. 
 # Use in conjunction with `analysis_plot_effects_and_errors_on_covars_sourced.R`
 # -------------------------------------------------------------------------------------------- #
-source(here::here('Code', 'Analysis', 'load_data_for_analysis_plot_effects_and_errors_on_covars.R'))
+source(here::here('Code', 'Analysis', 'Figures_Errors_and_Effects_on_Covars', 'load_data_for_analysis_plot_effects_and_errors_on_covars.R'))
 # -------------------------------------------------------------------------------------------- #
 # Plot estimates. 
 # Loads functions for plots. 

@@ -1,3 +1,5 @@
+# Executes scripts to create figures showing average CV errors and treatment effects across binned and normalized covariates. 
+# See Figures E.5 and E.6 of supplementary analyses that include superettes in low-access indicator. 
 # -------------------------------------------------------------------------------------------- #
 # Create figures for rural area models. 
 # -------------------------------------------------------------------------------------------- #
