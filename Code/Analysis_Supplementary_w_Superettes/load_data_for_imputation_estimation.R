@@ -2,22 +2,22 @@
 # -------------------------------------------------------------------------------------------- #
 library(here)
 # -------------------------------------------------------------------------------------------- #
-# Food Desert indicators for a given drive time or distance. 
+# Food-access indicators for a given drive time or distance. 
 # -------------------------------------------------------------------------------------------- #
 panel_df_access_inds_2_and_10mile <- readRDS(here::here('Data', 
                                                         'Data_2_and_10_Miles', 
-                                                        'food_access_indicators_block_groups_2_and_10mile_w_superettes.rds')) # 10min, 3mile, 5mile 
+                                                        'food_access_indicators_block_groups_2_and_10mile_w_superettes.rds'))
 # -------------------------------------------------------------------------------------------- #
 # Dollar store entries - This dataset is needed to separate the treated from the yet-to-be-treated and never-treated. 
 # -------------------------------------------------------------------------------------------- #
-load(here::here('Data', 'Data_2_and_10_Miles', 'ds_entries_panel_treated_wbins_and_untreated_2_and_10mile.RData')) #10min, 3mile
+load(here::here('Data', 'Data_2_and_10_Miles', 'ds_entries_panel_treated_wbins_and_untreated_2_and_10mile.RData')) 
 # -------------------------------------------------------------------------------------------- #
 # Pre-Entry Retail Store Counts
 # -------------------------------------------------------------------------------------------- #
-# load(here::here('Data', 'dollar_store_counts_3mile_2005_feature.RData')) #10min, 3mile Same variable in retail_store.*
-load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData')) #10min, 3mile
+load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData'))
 # -------------------------------------------------------------------------------------------- #
 # Cannot control for superette counts, given that they are now in the dependent variables. 
+# -------------------------------------------------------------------------------------------- #
 retail_counts_2005_2_and_10mile <- retail_counts_2005_2_and_10mile %>% select(-starts_with('Superette')) 
 # -------------------------------------------------------------------------------------------- #
 # Demographic and socioeconomic data. 
@@ -113,33 +113,11 @@ roads <- roads %>%
 
 roads_vars <- names(roads)[!grepl('GEOID|year', names(roads))]
 # -------------------------------------------------------------------------------------------- #
-# The following scripts will source a function to combine the state and time estimated fixed effects and 
-# combine the state and time fixed effects into data.frame friendly formats for use in statistical models. 
+# The following scripts will source a function to combine the state-x-time estimated fixed effects and 
+# combine the state-x-time fixed effects into data.frame friendly formats for use in statistical models. 
 # -------------------------------------------------------------------------------------------- #
-# Note: The fixed effects are from the LASSO selection model. To change, one can alter the function in the 
-# data_preparation_feat_eng_time_fes_load_data.R file. 
-# Note that the state_fixed_effects and time_fixed_effects objects are output. 
-# -------------------------------------------------------------------------------------------- #
-# source(here::here('Code', 'Analysis', 'data_preparation_feat_eng_time_fes_create_data.R'))
-# rm('fe_estimates', 'state_time_fixed_effects', 'Compile_State_Time_FE_Function')
-# fes_state_vars <- names(state_fixed_effects)[!grepl('^STATE$', names(state_fixed_effects))]
-# fes_year_vars <- names(time_fixed_effects)[!grepl('^year$', names(time_fixed_effects))]
-# -------------------------------------------------------------------------------------------- #
-# For Market by Time FEs. 
-# source(here::here('Code', 'Analysis', 'data_preparation_feat_eng_time_by_market_fes_create_data.R'))
-# rm('fe_estimates', 'compile_fes')
-# fes_market_vars <- names(fes_market)[!grepl('^market$', names(fes_market))]
-# fes_year_vars <- names(fes_year)[!grepl('^year$', names(fes_year))]
-# fes_market_by_time_vars <- names(fes_market_by_time)[!grepl('^year$|^market$', names(fes_market_by_time))]
-# -------------------------------------------------------------------------------------------- #
-# For State by Time FEs. 
 source(here::here('Code', 'Analysis_Supplementary_w_Superettes', 'data_preparation_feat_eng_time_by_state_fes_create_data.R'))
 rm('fe_estimates')
-# -------------------------------------------------------------------------------------------- #
-# When using state-x-time FEs, comment out the State and Year FEs. 
-# -------------------------------------------------------------------------------------------- #
-# fes_state_vars <- names(fes_state)[!grepl('^STATE$', names(fes_state))]
-# fes_year_vars <- names(fes_year)[!grepl('^year$', names(fes_year))]
 # -------------------------------------------------------------------------------------------- #
 fes_state_by_time_vars <- names(fes_state_by_time)[!grepl('^year$|^STATE$', names(fes_state_by_time))]
 # -------------------------------------------------------------------------------------------- #
@@ -159,11 +137,6 @@ econ_geog_vars <- list('distance_to_urban_areas' = dist_to_urb_vars,
                        'roads' = roads_vars, 
                        'schools' = schools_vars, 
                        'fes_state_by_time' = fes_state_by_time_vars)
-                       # 'fes_state' = fes_state_vars,
-                       # 'fes_year' = fes_year_vars) 
-                       # 'fes_market' = fes_market_vars, 
-                       # 'fes_year' = fes_year_vars, 
-                       # 'fes_market_by_time' = fes_market_by_time_vars, 
 # -------------------------------------------------------------------------------------------- #
 gc()
 # -------------------------------------------------------------------------------------------- #

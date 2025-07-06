@@ -1,8 +1,6 @@
 model_dep_var = 'low_access'
-model_geography = 'Urban' # Change for Urban/Rural results. 
+model_geography = 'Rural'# Change for Urban/Rural area results. 
 options(scipen=999)
-# -------------------------------------------------------------------------------------------- #
-# Load data based on parameters above. 
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis_Supplementary_w_Superettes', 'data_preparation_imputation_estimation.R'))
 # -------------------------------------------------------------------------------------------- #
@@ -10,8 +8,6 @@ source(here::here('Code', 'Analysis_Supplementary_w_Superettes', 'data_preparati
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis_Supplementary_w_Superettes', 'data_preparation_model_covars_lists.R'))
 model_covars <- unlist(model_covars_list, use.names = FALSE) 
-# -------------------------------------------------------------------------------------------- #
-
 # -------------------------------------------------------------------------------------------- #
 # Load regional and divisional labels. 
 # -------------------------------------------------------------------------------------------- #
@@ -49,8 +45,8 @@ treated_preds <- model_output$data_cf_preds %>%
   rename(preds = pred_class_cf) %>%
   
   left_join(select(dta_treated, GEOID, year, all_of(model_covars)), by = c('GEOID', 'year')) %>%
- 
-  filter(year >= '2006') %>% # We obtain post-treatment predictions from 2006-2020
+   
+  filter(year >= '2006') %>%
   
   left_join(bg_regs_and_divs, by = 'GEOID') # Regional and divisional indicators. 
 # -------------------------------------------------------------------------------------------- #
@@ -73,8 +69,6 @@ posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_
 # Remove tau calculated from the original/empirical data 
 # because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
-
-
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment dollar store bins and factors. 
 # -------------------------------------------------------------------------------------------- #
@@ -88,12 +82,13 @@ posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 
 
 # -------------------------------------------------------------------------------------------- #
-# Post-treatment observations, year 2005 Grocery Store bins. 
+# Post-treatment observations, year 2005 Grocery Store and superette bins. 
 # -------------------------------------------------------------------------------------------- #
 fname_posttr_binned_grocery = paste0('posttreatment_binned_grocery_and_superette_', str_to_lower(model_geography), '.rds')
 
 posttr_binned_grocery <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_grocery))
 # -------------------------------------------------------------------------------------------- #
+
 posttre_effects <- model_preds %>% 
   
   filter(rel_year >= 0) %>% 
@@ -102,7 +97,8 @@ posttre_effects <- model_preds %>%
   
   mutate(rel_year = factor(rel_year))
 # -------------------------------------------------------------------------------------------- #
-# Prepare data for post-treatment analyses. 
+# Prepare data for pre-treatment analyses and post-treatment analyses. 
+# Note: data preparation is already completed for pre-treatment data. See pretr_binned_covars. 
 # -------------------------------------------------------------------------------------------- #
 load(here::here("Data", "bg_pop_centroids_2010_projected_w_urban_areas.RData"))
 
@@ -139,85 +135,118 @@ posttre_effects_winteracts <- posttre_effects_wdsentry %>%
             by =  posttr_key_vars)
 # -------------------------------------------------------------------------------------------- #
 
-stats_by_type <- posttre_effects_winteracts %>% 
-  select(all_of(posttr_key_vars), actual, preds, tau, 
-         entry_events_bins, Grocery_Count_10mile_2005_bins, Superette_Count_10mile_2005_bins)
+# Summary statistics for predicted, actual, and average treatment effects by year 2005 grocery stores and superettes and entries. 
 
-stats_efx_preds_obs <- stats_by_type %>% 
-  group_by(entry_events_bins, Grocery_Count_10mile_2005_bins, Superette_Count_10mile_2005_bins) %>%
-  summarise(across(.cols = c(actual, preds, tau), 
-                   .fns = list('avg' = mean), 
-                   .names = '{.col}_{.fn}')) %>%
-  ungroup()
-
-
-totals_efx_preds_obs <- stats_by_type %>% 
-  group_by(entry_events_bins, Grocery_Count_10mile_2005_bins, Superette_Count_10mile_2005_bins) %>%
-  count(name = 'total_per_group') %>% 
-  ungroup() %>% 
-  mutate(total_obs = sum(total_per_group), 
-         share_of_obs = total_per_group/total_obs)
-
-
-stats_efx_preds_obs <- stats_efx_preds_obs %>% 
-  
-  left_join(totals_efx_preds_obs, by = c('Grocery_Count_10mile_2005_bins', 
-                                         'Superette_Count_10mile_2005_bins', 
-                                         'entry_events_bins'))
-
-
-stats_efx_preds_obs <- stats_efx_preds_obs %>% arrange(desc(share_of_obs))
 # -------------------------------------------------------------------------------------------- #
-paste0('Share of entries in block groups with 0 pre-entry grocery stores and 0 superettes: ',
-stats_efx_preds_obs %>% 
-  filter(Grocery_Count_10mile_2005_bins == 0 & Superette_Count_10mile_2005_bins == 0) %>%
-  ungroup() %>%
-  summarise(sum_of_shares = round(sum(share_of_obs), digits = 4)))
 
-paste0('Share of entries in block groups with 0 pre-entry grocery stores and one or more superettes: ',  
-stats_efx_preds_obs %>% 
-  filter(Grocery_Count_10mile_2005_bins == 0 & Superette_Count_10mile_2005_bins != 0) %>%
-  ungroup() %>%
-  summarise(sum_of_shares = round(sum(share_of_obs), digits = 4)))
+ds_entry_by_num_grocery_2005 <- function(dta, ds_entry_var, grocery_store_var){
+  
+  sum_stats <- dta %>% 
+    group_by(.data[[ds_entry_var]], .data[[grocery_store_var]]) %>%
+    summarise(across(.cols = c(actual, preds, tau), 
+                     .fns = c('avg' = mean, 
+                              'total' = sum), 
+                     .names = '{.col}_{.fn}')) %>%
+    mutate(pct_att = 100*(tau_avg/preds_avg) ) %>%
+    select(all_of(ds_entry_var), all_of(grocery_store_var), matches('*_avg$'), pct_att, matches('*_total$'))
+  
+  total_per_group <- dta %>% 
+    group_by(.data[[grocery_store_var]], .data[[ds_entry_var]]) %>%
+    count(name = 'total_per_group')
+  
+  total_bg_per_group <- dta %>% 
+    group_by(.data[[grocery_store_var]], .data[[ds_entry_var]]) %>%
+    distinct(GEOID) %>%
+    count(name = 'total_bg_per_group')
+  
+  sum_stats <- sum_stats %>% 
+    left_join(total_per_group, by = c({{grocery_store_var}}, ds_entry_var)) %>%
+    left_join(total_bg_per_group, by = c({{grocery_store_var}}, ds_entry_var)) %>%
+    ungroup() %>%
+    mutate(total_treated = sum(total_per_group), 
+           share_per_group = total_per_group/total_treated)
+  
+  if (ds_entry_var == 'gross_entry_cumsum_bins'){
+    sum_stats <- sum_stats %>% 
+      filter(gross_entry_cumsum_bins != 0) 
+  }
+  
+  sum_stats <- sum_stats %>%
+    filter(.data[[grocery_store_var]] %in% seq(0, 4, 1))
+  
+  current_levels <- levels(sum_stats[[ds_entry_var]])
+  
+  new_levels <- current_levels %>% str_replace_all("\\((\\d+),\\s*\\d+\\]", "\u003e \\1") %>% 
+    str_replace_all("^\\[\\-\\d+,\\s*(\\-*\\d+)\\]", "\u2264 \\1") # Replaces the bins with negative numbers
+  
+  
+  levels(sum_stats[[ds_entry_var]]) <- new_levels
+  
+  
+  sum_stats_long <- sum_stats %>% 
+    pivot_longer(cols = actual_avg:share_per_group, 
+                 names_to = 'stat', 
+                 values_to = 'values') %>%
+    mutate(values = round(values, digits = 3))
+  
+  sum_stats_wide <- sum_stats_long %>%
+    pivot_wider(names_from = all_of(grocery_store_var), 
+                values_from = 'values')
+  
+  sum_stats_wide <- sum_stats_wide %>% filter(stat != 'total_treated')
+  
+  sum_stats_wide$stat_tidy <- sum_stats_wide$stat %>% str_replace_all(c('actual_avg' = 'Low Access (Actual)', 
+                                                                        'preds_avg' = 'Low Access (Pred.)', 
+                                                                        'tau_avg' = 'ATT', 
+                                                                        'pct_att' = '% Change ATT', 
+                                                                        'actual_total' = 'Total Low Access (Actual)', 
+                                                                        'preds_total' = 'Total Low Access (Pred.)',
+                                                                        'tau_total' = 'Total ATT', 
+                                                                        'total_per_group' = 'Obs. per Group',
+                                                                        'total_bg_per_group' = 'Unique BGs per Group',
+                                                                        'share_per_group' = 'Share of Obs.') )
+  
+  sum_stats_wide <- sum_stats_wide %>% relocate(stat_tidy, .before = stat) %>% relocate(stat, .after = last_col())
+}
+# -------------------------------------------------------- #
+grocery_var_counts <- names(posttre_effects_winteracts) %>% str_subset('Count_.*_2005')
+grocery_var_counts_labels <- grocery_var_counts %>% str_replace_all('_Count.*', '') %>% str_to_lower(); grocery_var_counts_labels
+# -------------------------------------------------------- #
+# Map across grocery store types (grocery, grocery and superette, and superette)
+# -------------------------------------------------------- #
+map2(grocery_var_counts, 
+     grocery_var_counts_labels, 
+     function(.x, .y){
 
+sum_stats_gross_entry_by_grocery <- ds_entry_by_num_grocery_2005(dta = posttre_effects_winteracts, 
+                                                                 ds_entry_var = 'gross_entry_cumsum_bins', 
+                                                                 grocery_store_var = .x)
+readr::write_csv(sum_stats_gross_entry_by_grocery, 
+                 here::here('Analysis_Supplementary_w_Superettes', 
+                            'Tables', 
+                            'Low_Access', 
+                            model_geography, 
+                            paste0('sum_stats_gross_entry_by_', .y ,'.csv') ) )
+# -------------------------------------------------------- #
+sum_stats_entry_events_by_grocery <- ds_entry_by_num_grocery_2005(dta = posttre_effects_winteracts, 
+                                                                  ds_entry_var = 'entry_events_bins', 
+                                                                  grocery_store_var = .x)
+readr::write_csv(sum_stats_entry_events_by_grocery, 
+                 here::here('Analysis_Supplementary_w_Superettes', 
+                            'Tables', 
+                            'Low_Access', 
+                            model_geography, 
+                            paste0('sum_stats_entry_events_by_', .y ,'.csv') ) )
+# -------------------------------------------------------- #
+sum_stats_net_entry_by_grocery <- ds_entry_by_num_grocery_2005(dta = posttre_effects_winteracts, 
+                                                               ds_entry_var = 'net_entry_cumsum_bins', 
+                                                               grocery_store_var = .x)
+readr::write_csv(sum_stats_net_entry_by_grocery, 
+                 here::here('Analysis_Supplementary_w_Superettes', 
+                            'Tables', 
+                            'Low_Access', 
+                            model_geography, 
+                            paste0('sum_stats_net_entry_by_', .y ,'.csv') ) )
 
-paste0('Share of entries in block groups with 0 pre-entry grocery stores and one or two superettes: ',  
-stats_efx_preds_obs %>% 
-  filter(Grocery_Count_10mile_2005_bins == 0 & Superette_Count_10mile_2005_bins == 1 | 
-           Grocery_Count_10mile_2005_bins == 0 & Superette_Count_10mile_2005_bins == 2) %>%
-  ungroup() %>%
-  summarise(sum_of_shares = round(sum(share_of_obs), digits = 4)))
-
-
-paste0('Share of entries in block groups with at least one grocery store and zero superettes: ', 
-stats_efx_preds_obs %>% 
-  filter(Grocery_Count_10mile_2005_bins != 0 & Superette_Count_10mile_2005_bins == 0) %>% 
-  ungroup() %>%
-  summarise(sum_of_shares = round(sum(share_of_obs), digits = 4)))
-
-paste0('Share of entries in block groups with at least one grocery store and at least one superette: ', 
-stats_efx_preds_obs %>% 
-  filter(Grocery_Count_10mile_2005_bins != 0 & Superette_Count_10mile_2005_bins != 0) %>%
-  ungroup() %>%
-  summarise(sum_of_shares = round(sum(share_of_obs), digits = 4)))
-
-paste0('Share of entries in block groups with at least one grocery store and either 0 superettes or more than one: ',
-stats_efx_preds_obs %>% 
-  filter(Grocery_Count_10mile_2005_bins != 0 & Superette_Count_10mile_2005_bins == 0 | 
-           Grocery_Count_10mile_2005_bins != 0 & Superette_Count_10mile_2005_bins != 0) %>%
-  ungroup() %>%
-  summarise(sum_of_shares = round(sum(share_of_obs), digits = 4)))
-
-paste0('Share of entries in block groups with at least one or two grocery store and 0 superettes: ',
-stats_efx_preds_obs %>% 
-  filter(Grocery_Count_10mile_2005_bins == 1 & Superette_Count_10mile_2005_bins == 0 | 
-           Grocery_Count_10mile_2005_bins == 2 & Superette_Count_10mile_2005_bins == 0) %>%
-  ungroup() %>%
-  summarise(sum_of_shares = round(sum(share_of_obs), digits = 4)))
-
-paste0('Share of entries in block groups with at more than two grocery store and 0 superettes: ',
-stats_efx_preds_obs %>% 
-  filter(Grocery_Count_10mile_2005_bins != 1 & Superette_Count_10mile_2005_bins == 0 | 
-           Grocery_Count_10mile_2005_bins != 2 & Superette_Count_10mile_2005_bins == 0) %>%
-  ungroup() %>%
-  summarise(sum_of_shares = round(sum(share_of_obs), digits = 4)))
+})
+# -------------------------------------------------------- #

@@ -4,14 +4,12 @@
 library(pacman)
 p_load('here', 'dplyr', 'ggplot2', 'purrr', 'tidyr', 'stringr', 'recipes', 'sf', 'rsample')
 # -------------------------------------------------------------------------------------------- #
-# Load the output containing the state and year FEs from the regression of food-desert status of the untreated
+# Load the output containing the state and year FEs from the regression of low-access status of the untreated
 # on the covariates. 
 # -------------------------------------------------------------------------------------------- #
 fe_estimates <- readRDS(here::here('Data', 'Data_2_and_10_Miles', 'time_by_state_fixed_effects_w_superettes.rds'))
 # -------------------------------------------------------------------------------------------- #
 la_type_names <- names(fe_estimates); la_type_names
-# -------------------------------------------------------------------------------------------- #
-# Using the sourced function compile_fes from above. 
 # -------------------------------------------------------------------------------------------- #
 
 # -------------------------------------------------------------------------------------------- #

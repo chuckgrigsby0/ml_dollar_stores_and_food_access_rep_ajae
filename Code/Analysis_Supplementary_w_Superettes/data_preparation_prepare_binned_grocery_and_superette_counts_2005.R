@@ -1,8 +1,8 @@
+# Creates binned-valued factors of baseline grocery store/superette counts for use in figures. 
 # -------------------------------------------------------------------------------------------- #
-.libPaths()
-# Load empirical data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
-# Specify Urban/Rural, dependent variable, and results based on BG bootstrap or CT bootstrap. 
+# Specify Urban/Rural, dependent variable, and results based on CT bootstrap. 
 model_geography <- 'Rural' # Used in script below to subset by either Urban or Rural.
 model_dep_var <- 'low_access'
 options(scipen = 999)
@@ -20,7 +20,7 @@ bg_regs_and_divs <- readRDS(here::here('Data', 'block_group_regions_and_division
 # -------------------------------------------------------------------------------------------- #
 # Pre-Entry Retail Store Counts
 # -------------------------------------------------------------------------------------------- #
-load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData')) #10min, 3mile
+load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData'))
 # -------------------------------------------------------------------------------------------- #
 # Add year 2005 grocery store counts, superette counts, and grocery + superette counts. 
 # -------------------------------------------------------------------------------------------- #
@@ -34,8 +34,8 @@ retail_counts_2005_2_and_10mile <- retail_counts_2005_2_and_10mile %>%
 # Load the optimal estimated model following tuning/training. 
 # -------------------------------------------------------------------------------------------- #
 filename <- paste0('xgboost_10m_', str_to_lower(model_geography), '_', model_dep_var, '_final_w_superettes', '.rds'); filename
-dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
+dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var 
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title 
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis_Supplementary_w_Superettes', 'Model_Training', dir_dep_var, filename))
 # -------------------------------------------------------------------------------------------- #
@@ -65,10 +65,7 @@ treated_preds <- model_output$data_cf_preds %>%
   
   left_join(select(dta_treated, GEOID, year, all_of(model_covars)), by = c('GEOID', 'year')) %>%
   
-  # For consistency with the out-of-sample predictions during CV, 
-  # we obtain counterfactual predictions from 2007 to 2020.
-  
-  filter(year >= '2006') %>%
+  filter(year >= '2006') %>% # We obtain counterfactual predictions from 2006 to 2020.
   
   left_join(bg_regs_and_divs, by = 'GEOID') %>% # Regional and divisional indicators. 
   

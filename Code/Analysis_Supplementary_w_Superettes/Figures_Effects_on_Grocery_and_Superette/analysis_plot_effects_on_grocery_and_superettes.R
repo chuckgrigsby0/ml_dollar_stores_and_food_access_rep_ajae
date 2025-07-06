@@ -1,6 +1,13 @@
-model_dep_var = 'low_access'; 
-model_geography = 'Rural' # Change according to Urban/Rural models. 
-bootstrap_by_tracts = '_tracts' 
+# Script creates Figures E.3 and E.4 in supplementary analyses including superettes in low-access definition. 
+# Results assess average treatment effects across dollar store entries and baseline grocery store-superette counts. 
+# Used in conjunction with analysis_plot_effects_on_grocery_and_superettes_sourced.R and sbatch_figures.sh. 
+# -------------------------------------------------------------------------------------------- #
+# Load data. 
+# -------------------------------------------------------------------------------------------- #
+print(model_dep_var)
+print(model_geography)
+bootstrap_by_tracts = '_tracts'
+options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #
 # Load data based on parameters above. 
 # -------------------------------------------------------------------------------------------- #
@@ -19,7 +26,7 @@ bg_regs_and_divs <- readRDS(here::here('Data', 'block_group_regions_and_division
 # -------------------------------------------------------------------------------------------- #
 filename <- paste0('xgboost_10m_', str_to_lower(model_geography), '_', model_dep_var, '_final_w_superettes', '.rds'); filename
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title 
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis_Supplementary_w_Superettes', 'Model_Training', dir_dep_var, filename))
 # -------------------------------------------------------------------------------------------- #
@@ -86,7 +93,8 @@ posttre_effects <- model_preds %>%
   
   mutate(rel_year = factor(rel_year))
 # -------------------------------------------------------------------------------------------- #
-# Prepare data for post-treatment analyses. 
+# Prepare data for pre-treatment analyses and post-treatment analyses. 
+# Note: data preparation is already completed for pre-treatment data. See pretr_binned_covars. 
 # -------------------------------------------------------------------------------------------- #
 load(here::here("Data", "bg_pop_centroids_2010_projected_w_urban_areas.RData"))
 
@@ -110,7 +118,7 @@ geog_vars <- c('GEOID', 'STATE', 'COUNTY', 'market_name')
 
 # Prepare data. 
 
-posttre_effects_winteracts <- posttre_effects_wdsentry %>% 
+posttre_effects_winteracts <- posttre_effects_wdsentry %>% # dta
   
   select(all_of(posttr_key_vars), all_of(geog_vars),
          actual, preds, tau, 
@@ -147,6 +155,18 @@ sum_stats <- map2(sum_stats, ds_entry_vars, function(.x, .y){
   bind_rows(.id = 'ds_entry')
 # -------------------------------------------------------------------------------------------- #
 
+# -------------------------------------------------------------------------------------------- #
+emp_reg_coefs <- map_dfr(ds_entry_vars, function(.x){
+  
+  effects_by_ds_entry_x_grocery_x_superette(dta = posttre_effects_winteracts, 
+                                            ds_entry_var = .x, 
+                                            grocery_store_var = 'Grocery_Count_10mile_2005_bins', 
+                                            superette_var = 'Superette_Count_10mile_2005_bins', 
+                                            iter_id = bootstrap_id)
+})
+# -------------------------------------------------------------------------------------------- #
+# Load bootstrap data. 
+# -------------------------------------------------------------------------------------------- #
 dir_geography <- paste(model_geography, 'Bootstrap', sep = '_') # e.g., Rural_Bootstrap, Urban_Bootstrap
 
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_') # e.g., Low_Access
@@ -165,89 +185,68 @@ boot_data <- seq(1, 499, 1) %>%
                        dir_geography,
                        dir_dep_var, 
                        dir_bootstrap, 
-                       'summary_stats',
                        filename))    
     
   })
 # -------------------------------------------------------------------------------------------- #
-boot_group_vars <- names(boot_data)[!grepl('values|boot_iteration', names(boot_data))]
 
-boot_data_sd <- boot_data %>% 
-  group_by(across(.cols = all_of(boot_group_vars) ) ) %>%
-  summarise(across(.cols = values, 
-                   .fns = c('mean' = mean, 
-                            'sd' = sd) ) ) 
-
-sum_stats <- sum_stats %>% left_join(boot_data_sd, by = boot_group_vars)
-sum_stats <- sum_stats %>% select(all_of(boot_group_vars), matches('^values'))
 # -------------------------------------------------------------------------------------------- #
-ds_entry_vars <- unique(sum_stats$ds_entry)
+# Functions to compute standard errors, and join standard errors to empirical point estimates. 
+# -------------------------------------------------------------------------------------------- #
+# Simple function to compute SEs by some grouping variables. 
+source(here::here('Code', 'Functions', 'Function_bootstrap_compute_standard_errors.R')) 
+# -------------------------------------------------------------------------------------------- #
+boot_data <- bind_rows(emp_reg_coefs, boot_data)
+group_join_vars <- c('ds_entry', 'ds_entry_bins', 'grocery_stores', 'superettes', 
+                     'superette_count_var', 'grocery_count_var')
+boot_data_sd <- compute_bootstrap_standard_errors(dta = boot_data, group_vars = group_join_vars)
+emp_reg_coefs <- left_join(emp_reg_coefs, boot_data_sd, by = group_join_vars)
+emp_reg_coefs <- emp_reg_coefs %>% relocate(c(bootstrap_mean, bootstrap_sd), .after = estimate)
+# -------------------------------------------------------------------------------------------- #
+emp_reg_coefs <- emp_reg_coefs %>% 
+  mutate(tidy_ds_entry = tidy_covar_names(ds_entry) ) %>% 
+  relocate(tidy_ds_entry, .before = ds_entry)
 
-sum_stats_entry_events <- sum_stats %>%
+ds_entry_vars <- unique(emp_reg_coefs$ds_entry); ds_entry_vars
+tidy_ds_entry_vars <- unique(emp_reg_coefs$tidy_ds_entry)
+tidy_ds_entry_vars <- str_remove_all(tidy_ds_entry_vars, pattern = ' Bins')
+tidy_ds_entry_vars <- tidy_ds_entry_vars %>% str_replace_all(pattern = 'Entry$', replacement = 'Entry Events')
+
+one_store_pairs_vec <- c(TRUE, FALSE)
+pair_set = c('first', 'second')
+# -------------------------------------------------------------------------------------------- #
+# Loads functions for plots. 
+# -------------------------------------------------------------------------------------------- #
+source(here::here('Code', 'Functions', 'Function_plots_for_model_diagnostics.R'))
+# -------------------------------------------------------------------------------------------- #
+map2(ds_entry_vars, tidy_ds_entry_vars, function(.x, .y){
   
-  rename_with(.cols = Grocery_Count_10mile_2005_bins, 
-              .fn = \(x) str_replace_all(x, pattern = x, 
-                                         replacement = 'grocery_stores') ) %>%
+  map2(one_store_pairs_vec, pair_set, function(.z, .w){
+
+plot_effects_on_ds_entry_grocery_and_superettes(dta = emp_reg_coefs, 
+                                                filter_ds_entry_type = .x, 
+                                                ci_label_str = '99% CI', 
+                                                ci_level = qnorm(1 - (0.01/2)),
+                                                one_store_pairs = .z,
+                                                y_axis_title = 'Average Treatment Effects', 
+                                                x_axis_title = .y, 
+                                                legend_title_str = 'Pre-Entry Stores (2005)', 
+                                                title_str = '', 
+                                                subtitle_str = '', 
+                                                decimal_place_y = 0.01, 
+                                                nbreaks = 14)
+
+figname <- paste0(str_to_lower(model_geography), '_', model_dep_var, '_effects_on_',
+                  .x, '_x_', 'grocery_superette_pairs', bootstrap_by_tracts, '_', .w, '.pdf')
+
+fig_dir_name <- paste0('effects_on_ds_entry_grocery_superettes', bootstrap_by_tracts)
+
+ggsave(here::here('Analysis_Supplementary_w_Superettes', 'Figures', dir_dep_var, model_geography,
+                  fig_dir_name, # Saves to directories and subdirectories.
+                  figname), 
+       width = 8, height = 6, unit = 'in', dpi = 600)
+
+})
   
-  rename_with(.cols = Superette_Count_10mile_2005_bins, 
-              .fn = \(x) str_replace_all(x, pattern = x, 
-                                         replacement = 'superettes') ) %>%
-  
-  filter(ds_entry == ds_entry_vars[2]) 
-
-
-
-sum_stats_entry_events <- sum_stats_entry_events %>%
-  
-  filter(grocery_stores %in% seq(0, 2, 1) ) %>% # Only 0 or 2 grocery stores pre-entry.
-
-  filter(superettes %in% seq(0, 2, 1) ) %>% # Only 0 or 2 superettes pre-entry.
-
-  filter(ds_entry_bins %in% seq(1, 4, 1) ) # 1 to 4 dollar store entries.
-
-# -------------------------------------------------------- #
-share_obs_by_group <- sum_stats_entry_events %>% filter(stat_tidy == 'Share of Obs.') %>% arrange(values)
-# -------------------------------- #
-if (model_geography == 'Urban'){
-share_obs_by_group %>% filter(ds_entry_bins == 1 & grocery_stores == 1 & superettes == 0 |
-                                ds_entry_bins == 2 & grocery_stores == 1 & superettes == 0|
-                                ds_entry_bins == 3 & grocery_stores == 1 & superettes == 0) %>%
-  select(values) %>% sum()
-} else if (model_geography == 'Rural'){ 
-  share_obs_by_group %>% filter(ds_entry_bins == 1 & grocery_stores == 1 & superettes == 0 |
-                                  ds_entry_bins == 2 & grocery_stores == 1 & superettes == 0) %>%
-    select(values) %>% sum()
-  }
-# -------------------------------- #
-if (model_geography == 'Rural'){ 
-  print(paste0(share_obs_by_group %>% filter(ds_entry_bins == 1 & grocery_stores == 0 & superettes == 1 |
-                                  ds_entry_bins == 2 & grocery_stores == 0 & superettes == 1 | 
-                                  ds_entry_bins == 3 & grocery_stores == 0 & superettes == 1 |
-                                  ds_entry_bins == 4 & grocery_stores == 0 & superettes == 1) %>%
-    select(values) %>% sum(), 
-    ': Share of treated block group observations with only one superette at baseline.') )
-}
-
-if (model_geography == 'Rural'){ 
-  print(paste0(share_obs_by_group %>% filter(ds_entry_bins == 1 & grocery_stores == 1 & superettes == 0 |
-                                               ds_entry_bins == 2 & grocery_stores == 1 & superettes == 0 | 
-                                               ds_entry_bins == 3 & grocery_stores == 1 & superettes == 0 |
-                                               ds_entry_bins == 4 & grocery_stores == 1 & superettes == 0) %>%
-                 select(values) %>% sum(), 
-               ': Share of treated block group observations with only one grocery store at baseline.') )
-}
-
-
-if (model_geography == 'Rural'){ 
-  print(paste0(share_obs_by_group %>% filter(ds_entry_bins == 1 & grocery_stores == 0 & superettes == 1 |
-                                               ds_entry_bins == 2 & grocery_stores == 0 & superettes == 1 ) %>%
-                 select(values) %>% sum(), 
-               ': Share of treated block group observations with only one grocery store at baseline.') )
-}
-
-# -------------------------------------------------------- #
-magnitudes_by_group <- sum_stats_entry_events %>% filter(stat_tidy == 'ATT') %>% arrange(desc(values))
-
-
-obs_vs_pred <- sum_stats_entry_events %>% 
-  filter(stat_tidy == 'Low Access (Actual)' | stat_tidy == 'Low Access (Pred.)') 
+})
+# -------------------------------------------------------------------------------------------- #
