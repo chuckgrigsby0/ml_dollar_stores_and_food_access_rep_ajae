@@ -6,7 +6,7 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
   
   dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_') # e.g., Low_Access
   
-  dir_bootstrap <- paste0('bootstrap_', bootstrap_ids, bootstrap_by_tracts) # bootstrap_ids = '01_499'; bootstrap_by_tracts = NULL or '_tracts'
+  dir_bootstrap <- paste0('bootstrap_', bootstrap_ids, bootstrap_by_tracts) 
   
   filename <- paste(str_to_lower(model_geography), model_dep_var, 'bootstrap', paste0(iter, '.rds'), sep = '_')
   
@@ -15,14 +15,7 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
                                      dir_dep_var, 
                                      dir_bootstrap, 
                                      filename))
-  # -------------------------------------------------------------------------------------------- #
-  # Note: We filter >= 2007 because for the untreated/yet-to-be-treated observations, we only have 
-  # holdout predictions for years 2007-2020. For block groups whose year of treatment (event_year == 2007), 
-  # we do not obtain out-of-sample predictions for their relative time to treatment food-desert/low-access status. 
-  # We obtain predictions for relative time to treatment at t = -1 for the event_year == 2008 because the first
-  # fold corresponds to 2007-2008. As another example, for the event_year == 2009, we obtain relative time to treatment
-  # predictions for t = -2 and -1 in the years 2007 and 2008, respectively. 
-  # -------------------------------------------------------------------------------------------- #
+   # -------------------------------------------------------------------------------------------- #
   untreated_preds <- model_output$cv_errors_opt %>% 
     
     left_join(dta_untreated_non_model_vars, by = c('GEOID', 'year')) %>%
@@ -44,20 +37,14 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
     
     rename(preds = pred_class_cf) %>%
     
-    filter(year >= '2006') # Counterfactual predictions are made for years 2007-2020 in the figures for consistency with CV error preds. 
-                            # Post-treatment effects are assessed from 2006-2020.
+    filter(year >= '2006') # Post-treatment effects are assessed from 2006-2020.
   # -------------------------------------------------------------------------------------------- #
-  # Note: We do obtain counterfactual predictions from 2006, whereby for block-groups treated 
-  # in 2006, we obtain predictions at rel_year = 0. However, the ML model CV predictions are made from years 2007-2020. 
-  # -------------------------------------------------------------------------------------------- #
-  model_preds <- bind_rows(untreated_preds, treated_preds) %>%
+    model_preds <- bind_rows(untreated_preds, treated_preds) %>%
     
     filter(is.finite(rel_year))
   # -------------------------------------------------------------------------------------------- #
-
-  # -------------------------------------------------------------------------------------------- #
   
-  # Data to assess errors by relative time. 2007-2019
+  # Data to assess errors by relative time. 
   pretr_preds <- model_preds %>% 
     filter(rel_year < 0) %>% 
     filter(grepl(model_geography, Geography)) %>%
@@ -66,7 +53,6 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
            rel_year = factor(rel_year))
   
   # Data to assess actual vs predicted outcomes by relative time. 
-  # Filter at and after 2007 to coincide with CV error time periods. 
   posttr_preds <- model_preds %>% 
     
     mutate(rel_year = factor(rel_year)) %>%
@@ -74,7 +60,6 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
     filter(grepl(model_geography, Geography)) %>%
     
     filter(year >= '2006')
-  
   # -------------------------------------------------------------------------------------------- #
   
   # Regress errors on relative time without intercept. 
@@ -118,7 +103,6 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
   preds_vs_actual <- preds_vs_actual %>% mutate(cv_mse = model_output$min_cv_mse) %>% relocate(id, .after = last_col())
   
 # -------------------------------------------------------------------------------------------- #
-  
 # Estimation of causal effects.   
   
 # Effects on relative time. 
@@ -139,39 +123,11 @@ effects_rel_year <- tidy_regression(lm_model = effects_rel_year,
 effects_rel_year <- effects_rel_year %>% mutate(rel_year = as.numeric(rel_year), 
                                                 id = iter)
 
-#--------------------------------------------------------------------------------------------#
-# Effects on relative time by entry-bin  
-#--------------------------------------------------------------------------------------------#
-# combine.quick = FALSE means that fixed effects using names when combining interaction FEs, 
-#--------------------------------------------------------------------------------------------#
-# effects_reg <- feols(tau ~ -1 | rel_year^entry_events_bins, data = posttre_effects, combine.quick = FALSE) 
-# 
-# effects_est <- fixef(effects_reg) # Extract fixed effects using fixef(). 
-# 
-# #--------------------------------------------------------------------------------------------#
-# estimates <- data.frame(estimate = effects_est[[1]]) %>% 
-#   tibble::rownames_to_column('term') 
-# 
-# # Split up the term column and add to the estimates data.frame(). 
-# new_cols <- data.frame((str_split_fixed(estimates$term, '_', n = 2))) 
-# names(new_cols) <- c('rel_year', 'entry_events')
-# estimates <- bind_cols(new_cols, estimates) 
-# 
-# 
-# effects_rel_year_x_entry_bin <- estimates %>% mutate(rel_year = as.numeric(rel_year)) %>%
-#   arrange(rel_year) %>%
-#   select(-term) %>%
-#   mutate(entry_events = factor(entry_events, levels = unique(entry_events)))
-# 
-# effects_rel_year_x_entry_bin <- effects_rel_year_x_entry_bin %>% mutate(Outcome = 'Tau', 
-#                                                                         id = iter)
-
-  # Save results in list. 
+# Save results in list. 
   
   reg_results <- list('errors' = model_errors_coefs, 
                       'predictions' = preds_vs_actual, 
                       'effects_rel_year' = effects_rel_year) 
-                      #'effects_rel_year_x_entry_bin' = effects_rel_year_x_entry_bin)
   
   return(reg_results)
   

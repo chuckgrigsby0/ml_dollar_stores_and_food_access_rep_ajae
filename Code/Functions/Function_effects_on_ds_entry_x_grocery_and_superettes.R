@@ -51,9 +51,6 @@ ds_entry_by_num_grocery_and_superette_2005 <- function(dta, ds_entry_var, grocer
                  values_to = 'values') %>%
     mutate(values = round(values, digits = 3))
   
-  # sum_stats_long$values[grepl('total', sum_stats_long$stat)] <- as.integer(sum_stats_long$values[grepl('total', sum_stats_long$stat)]) 
-  
-  
   sum_stats_long$stat_tidy <- sum_stats_long$stat %>% str_replace_all(c('actual_avg' = 'Low Access (Actual)', 
                                                                         'preds_avg' = 'Low Access (Pred.)', 
                                                                         'tau_avg' = 'ATT', 
