@@ -3,10 +3,11 @@
 # Use in conjunction with analysis_plot_errors_on_ds_entry_x_grocery_sourced.R
 # See Figures D.4, D.5, D.7, and D.8 of supplementary materials. 
 # -------------------------------------------------------------------------------------------- #
-# Load data based on parameters above. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
 options(scipen = 999)
-print(model_dep_var); print(model_geography)
+print(model_dep_var)
+print(model_geography)
 source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'))
 # -------------------------------------------------------------------------------------------- #
 # Vectors of character strings containing raw variable names and tidy variable names. 

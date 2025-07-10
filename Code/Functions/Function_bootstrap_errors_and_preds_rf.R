@@ -53,8 +53,6 @@ bootstrap_errors_and_preds <- function(bootstrap_ids, iter, bootstrap_by_tracts)
     select(-tau) %>% 
     mutate(rel_year = factor(rel_year))
   
-  # Data to assess actual vs predicted outcomes by relative time. 
-  # Filter at and after 2007 to coincide with CV error time periods. 
   posttr_preds <- model_preds %>% 
     
     mutate(rel_year = factor(rel_year)) %>%

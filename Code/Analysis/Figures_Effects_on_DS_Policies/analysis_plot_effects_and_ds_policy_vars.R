@@ -5,7 +5,7 @@ print(model_geography)
 print(model_dep_var)
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #
-# Load data based on parameters above. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'))
 # -------------------------------------------------------------------------------------------- #

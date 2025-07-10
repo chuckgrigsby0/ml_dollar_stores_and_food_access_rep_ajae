@@ -40,7 +40,7 @@ treated_preds <- model_output$data_cf_preds %>%
   
   rename(preds = pred_class_cf) %>%
   
-  filter(year >= '2006') 
+  filter(year >= '2006') # We obtain post-treatment counterfactual predictions from 2006-2020
 # -------------------------------------------------------------------------------------------- #
 model_preds <- bind_rows(untreated_preds, treated_preds) %>%
   
@@ -184,8 +184,6 @@ plot_errors_on_relyear(dta = empirical_estimates$errors,
                        standard_error = bootstrap_sd,
                        y_axis_title = 'Average Cross-Validated Errors', 
                        x_axis_title = 'Relative Time from Treatment', 
-                       # plot_title = 'Cross-Validated Prediction Errors by Time from Treatment', 
-                       # plot_subtitle = paste(paste('Geography:', model_geography), paste('Outcome:', dep_var_title), sep = '\n'),
                        plot_title = NULL, 
                        plot_subtitle = NULL,
                        decimal_place_y = 0.001, 
@@ -202,14 +200,12 @@ plot_actual_on_predicted(dta = empirical_estimates$predictions,
                          ci_level = qnorm(1 - 0.01/2),
                          y_axis_title = 'Share of Low-Access Block Groups', 
                          x_axis_title = 'Time from Treatment', 
-                         # plot_title = 'Cross-Validated Predicted and Actual Outcomes by Time from Treatment', 
-                         # plot_subtitle = paste(paste('Geography:', model_geography), paste('Outcome:', dep_var_title), sep = '\n'),
                          plot_title = NULL, 
                          plot_subtitle = NULL,
                          x_intercept_val = 0,
                          decimal_place_y = 0.01, 
-                         y1_lim = NULL, # plot_coords$predictions$y_coord_lower 
-                         y2_lim = NULL) # plot_coords$predictions$y_coord_upper
+                         y1_lim = NULL, 
+                         y2_lim = NULL) 
 
 ggsave(here::here('Analysis', 'Figures', dir_dep_var, model_geography, paste0('errors_and_preds', bootstrap_by_tracts), # Saves to directories and subdirectories. 
                   paste0('preds_vs_cfs_relative_time_', str_to_lower(model_geography), '_', model_dep_var, bootstrap_by_tracts, '.pdf')), 
@@ -223,13 +219,11 @@ plot_effects_on_relyear(dta = empirical_estimates$tau_on_relyear,
                         standard_error = bootstrap_sd,
                         y_axis_title = 'Average Treatment Effects', 
                         x_axis_title = 'Time from Treatment', 
-                        # plot_title = 'Treatment Effects by Time from Treatment',
-                        # plot_subtitle = paste(paste('Geography:', model_geography), paste('Outcome:', dep_var_title), sep = '\n'),
                         plot_title = NULL, 
                         plot_subtitle = NULL,
                         decimal_place_y = 0.001, 
-                        y1_lim = NULL, # plot_coords$tau_on_relyear$y_coord_lower,
-                        y2_lim = NULL) # plot_coords$tau_on_relyear$y_coord_upper)
+                        y1_lim = NULL, 
+                        y2_lim = NULL) 
                          
 
 ggsave(here::here('Analysis', 'Figures', dir_dep_var, model_geography, paste0('errors_and_preds', bootstrap_by_tracts), # Saves to directories and subdirectories. 

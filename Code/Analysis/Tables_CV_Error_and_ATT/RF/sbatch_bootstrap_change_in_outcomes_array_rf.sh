@@ -7,11 +7,11 @@
 #SBATCH --array=0-499%200
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=8gb
-#SBATCH --qos=useraccount
+#SBATCH --qos=useraccount-b
 #SBATCH --time=01:00:00
 #SBATCH --export=model_geography=Urban,model_dep_var=low_access # Rural/Urban
-#SBATCH --output=./bootstrap_output/rf/urban/change_in_outcomes/bootstrap_change_in_outcomes_rf_%A_%a.out
-#SBATCH --error=./bootstrap_output/rf/urban/change_in_outcomes/bootstrap_change_in_outcomes_rf_%A_%a.error
+#SBATCH --output=./output/bootstrap_change_in_outcomes_rf_%A_%a.out
+#SBATCH --error=./output/bootstrap_change_in_outcomes_rf_%A_%a.error
 
 #Record the time and compute node the job ran on
 date; hostname; pwd

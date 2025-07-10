@@ -1,17 +1,17 @@
 #!/bin/bash
 #SBATCH --job-name=bootstrap_change_in_outcomes
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=cgrigsby0@gmail.com
+#SBATCH --mail-user=useremail
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --array=1-499%200
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=8gb
-#SBATCH --qos=connerm-b
+#SBATCH --qos=useraccount-b
 #SBATCH --time=01:00:00
-#SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban, low_access/low_access_pers
-#SBATCH --output=./bootstrap_output/rural_bootstrap_low_access/cv_and_att_summary_lhs/bootstrap_change_in_outcomes_lhs_%A_%a.out
-#SBATCH --error=./bootstrap_output/rural_bootstrap_low_access/cv_and_att_summary_lhs/bootstrap_change_in_outcomes_lhs_%A_%a.error
+#SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban
+#SBATCH --output=./output/bootstrap_change_in_outcomes_lhs_%A_%a.out
+#SBATCH --error=./output/bootstrap_change_in_outcomes_lhs_%A_%a.error
 
 #Record the time and compute node the job ran on
 date; hostname; pwd

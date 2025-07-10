@@ -1,16 +1,9 @@
 # Script creates figures of average CV errors and treatment effects w.r.t baseline counts of retailer controls and multiple dollar store entries. 
 # Script is used in conjunction with `analysis_plot_errors_and_effects_on_ds_entry_x_baseline_store_counts_sourced.R` and sbatch_figures.sh
 # -------------------------------------------------------------------------------------------- #
-# model_geography = 'Urban'; model_dep_var = 'low_access'
-# -------------------------------------------------------------------------------------------- #
-# Load empirical data and point estimates. 
-# -------------------------------------------------------------------------------------------- #
-print(model_dep_var); print(model_geography)
-.libPaths()
-# -------------------------------------------------------------------------------------------- #
-# Specify bootstrap type. 
-# -------------------------------------------------------------------------------------------- #  
-bootstrap_by_tracts = '_tracts' # or NULL to bootstrap by block-group and stratify by relative time. 
+print(model_dep_var)
+print(model_geography)
+bootstrap_by_tracts = '_tracts' 
 # -------------------------------------------------------------------------------------------- #
 # Load data based on parameters above. 
 # -------------------------------------------------------------------------------------------- #
@@ -40,7 +33,7 @@ fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', s
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
+ 
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 

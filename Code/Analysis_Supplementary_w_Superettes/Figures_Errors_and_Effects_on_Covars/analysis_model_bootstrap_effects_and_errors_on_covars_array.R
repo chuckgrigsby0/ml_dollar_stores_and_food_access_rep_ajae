@@ -149,7 +149,7 @@ fname_posttr_binned_covars = paste0('posttreatment_binned_and_factor_covariates_
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
+
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment dollar store bins and factors. 
@@ -159,7 +159,7 @@ fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', s
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
 # -------------------------------------------------------------------------------------------- #
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
+
 # -------------------------------------------------------------------------------------------- #
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #

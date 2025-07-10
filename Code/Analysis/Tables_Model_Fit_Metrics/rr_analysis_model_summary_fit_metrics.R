@@ -6,7 +6,7 @@ library(tidymodels)
 # -------------------------------------------------------------------------------------------- #
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #
-model_geography = 'Urban'
+model_geography = 'Urban' # Change for Urban/Rural results. 
 model_dep_var = 'low_access' 
 bootstrap_by_tracts <- '_tracts'
 bootstrap_ids = '01_499'

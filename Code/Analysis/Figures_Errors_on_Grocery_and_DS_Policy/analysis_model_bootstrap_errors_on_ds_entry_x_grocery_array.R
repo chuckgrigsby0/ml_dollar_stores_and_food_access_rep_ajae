@@ -1,10 +1,10 @@
 # Script to estimate bootstrap average CV errors by presence of dollar store policies, geographic region, 
 # and baseline grocery stores interacted with future dollar store entries. 
 # -------------------------------------------------------------------------------------------- #
-# Load data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
 model_dep_var = Sys.getenv('model_dep_var') # Used in script below.
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_geography = Sys.getenv("model_geography") # Used in script below.
 bootstrap_by_tracts = '_tracts' 
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #

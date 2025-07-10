@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'Figures_Errors_and_Effects_on_Covars', 'load_data_for_analysis_plot_effects_and_errors_on_covars.R'))
 # -------------------------------------------------------------------------------------------- #
-# Plot estimates. 
 # Loads functions for plots. 
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Functions', 'Function_plots_for_model_diagnostics.R'))

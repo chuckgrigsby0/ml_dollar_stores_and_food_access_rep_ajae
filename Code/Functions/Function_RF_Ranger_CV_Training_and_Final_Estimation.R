@@ -151,12 +151,12 @@ rf_training_and_imputation <- function(model_type){
            tau = actual - cf_preds)
   
   if (model_type == 'full_sample'){
-    model_results <- list(min_cv_mse = min_cv_mse, #The min_cv_mse is not the MSE, but is actually the mininum misclassification rate.  
+    model_results <- list(min_cv_mse = min_cv_mse, #The min_cv_mse is the mininum misclassification rate.  
                           cv_errors_opt = cv_results, # The combined cross-validated errors from each cross-validation fit. 
                           data_cf_preds = cf_preds, # Estimated counterfactuals.
                           rf_model_fit = rf_model_final_fit) # Save final fitted model.
   } else if (model_type == 'bootstrap'){ 
-    model_results <- list(min_cv_mse = min_cv_mse, #The min_cv_mse is not the MSE, but is actually the mininum misclassification rate.  
+    model_results <- list(min_cv_mse = min_cv_mse, #The min_cv_mse is the mininum misclassification rate.  
                           cv_errors_opt = cv_results, # The combined cross-validated errors from each cross-validation fit. 
                           data_cf_preds = cf_preds) # Estimated counterfactuals.
     

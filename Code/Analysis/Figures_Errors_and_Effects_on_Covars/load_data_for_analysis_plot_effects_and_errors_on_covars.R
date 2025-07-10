@@ -1,3 +1,4 @@
+# Helper script: 
 # Load data based on parameters specified in analysis_plot_effects_and_errors_on_covars 
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'))
@@ -14,8 +15,8 @@ bg_regs_and_divs <- readRDS(here::here('Data', 'block_group_regions_and_division
 # Load the optimal estimated model following tuning/training. 
 # -------------------------------------------------------------------------------------------- #
 filename <- paste0('xgboost_10m_', str_to_lower(model_geography), '_', model_dep_var, '_final', '.rds'); filename
-dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
+dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, filename))
 # -------------------------------------------------------------------------------------------- #
@@ -128,7 +129,6 @@ fname_posttr_binned_covars = paste0('posttreatment_binned_and_factor_covariates_
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
 # -------------------------------------------------------------------------------------------- #
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 # -------------------------------------------------------------------------------------------- #
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
@@ -139,7 +139,6 @@ fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', s
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
 # -------------------------------------------------------------------------------------------- #
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 # -------------------------------------------------------------------------------------------- #
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
@@ -188,7 +187,7 @@ boot_data <- seq(1, 499, 1) %>%
     
     })
 # -------------------------------------------------------------------------------------------- #
-# Convenience functions to subset the named elements 'errors' or the 'predictions', 
+# Convenience functions to subset the named elements in lists,
 # compute standard errors, and join standard errors to empirical point estimates. 
 # -------------------------------------------------------------------------------------------- #
 # Select from the list of bootstrapped output. 

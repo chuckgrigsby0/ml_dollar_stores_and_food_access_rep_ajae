@@ -48,15 +48,11 @@ plot_treated_vs_nevertreated_by_year <- function(dta,
     
     labs(title= plot_title, subtitle = plot_subtitle)+
     
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
-    
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=0, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 12), 
           axis.title.y = element_text(size=12, face = 'bold'),
           axis.title.x = element_text(size=12, face = 'bold'),
           axis.ticks.x = element_blank(), 
-          #axis.ticks.length.x = unit(.25, 'cm'), 
-          #axis.ticks.x = element_line(color='black'), 
           panel.grid.major.x=element_line(colour='grey', linewidth = 0.1), 
           panel.grid.minor = element_blank(), 
           panel.grid.major.y = element_line(colour='grey', linewidth = 0.1), 
@@ -110,9 +106,7 @@ plot_dep_var_by_year <- function(dta,
     scale_x_continuous(name = x_axis_title, breaks = scales::breaks_pretty(n = 16))+
     
     labs(title= plot_title, subtitle = plot_subtitle)+
-    
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
-    
+     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=0, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 12), 
           axis.title.y = element_text(size=12, face = 'bold'),
@@ -170,8 +164,7 @@ plot_dep_var_by_year_and_treatment <- function(dta,
     scale_x_continuous(name = x_axis_title, breaks = scales::breaks_pretty(n = 16))+
     
     labs(title= plot_title, subtitle = plot_subtitle)+
-    
-    # facet_wrap2(~treatment, scales='free_y', nrow = 1, ncol = 2)+
+
     
     theme(axis.text.x = element_text(color = 'black', size = 12), 
           axis.text.y = element_text(color = 'black', size = 12), 
@@ -236,8 +229,6 @@ plot_dep_var_by_rel_time <- function(dta,
                        expand = c(0.01, 0.01))+ # Determines cutoff of x axis on left- and right-hand sides. 
     
     labs(title= plot_title, subtitle = plot_subtitle)+
-    
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=0, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 12), 

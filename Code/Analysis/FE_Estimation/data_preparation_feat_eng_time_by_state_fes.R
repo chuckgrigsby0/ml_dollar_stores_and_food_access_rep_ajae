@@ -1,3 +1,8 @@
+# Load packages
+# -------------------------------------------------------------------------------------------- #
+library(pacman)
+p_load('here', 'dplyr', 'sf', 'purrr', 'tidyr', 'stringr', 'recipes', 
+       'broom', 'tidymodels', 'fixest', 'doParallel')
 #--------------------------------------------------------------------------------------------#
 source(here::here('Code', 'Analysis', 'FE_Estimation', 'load_data_for_time_by_state_fixed_effects.R'))
 #--------------------------------------------------------------------------------------------#

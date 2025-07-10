@@ -4,11 +4,11 @@
 pacman::p_load('here', 'dplyr', 'purrr', 'stringr', 'tidyr')
 options(scipen=999)
 # -------------------------------------------------------------------------------------------- #
-# Load empirical data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
 # Specify Urban/Rural, dependent variable, and results based on census-tract bootstrap.
 # -------------------------------------------------------------------------------------------- #
-model_geography_vec <- c('Urban', 'Rural') # Used in script below to subset by either Urban or Rural.
+model_geography_vec <- c('Urban', 'Rural')
 model_dep_var <- 'low_access'
 bootstrap_by_tracts <- '_tracts'
 # -------------------------------------------------------------------------------------------- #
@@ -26,7 +26,7 @@ nobs <- model_geography_vec %>%
                        model_dep_var, '_', 
                        'final.rds')
     dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-    dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
+    dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title 
     model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, filename))
     col_name <- .x
     df <- data.frame(format(nrow(model_output$data_cf_preds), big.mark = ',' ))
@@ -146,7 +146,7 @@ kable(table_att,
       escape = TRUE, # Note: This is the default.
       digits = 4,
       position = '!h',
-      linesep = '', # Remove \addlinespace every 5 rows. 
+      linesep = '', 
       centering = TRUE, # Note: This is the default. 
       col.names = colnames(table_att),
       caption = paste0("Average Treatment Effects of Dollar Store Entry on Low-Access Status, 

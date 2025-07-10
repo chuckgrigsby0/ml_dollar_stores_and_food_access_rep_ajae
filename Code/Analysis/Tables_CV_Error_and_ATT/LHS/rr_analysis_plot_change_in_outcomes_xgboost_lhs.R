@@ -2,12 +2,11 @@
 options(scipen = 999)
 library(readr)
 # -------------------------------------------------------------------------------------------- #
-# Load empirical data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
-# Specify Urban/Rural, dependent variable, and results based on block-group bootstrap or census-tract bootstrap.
 model_geography <- 'Rural' # Used in script below to subset by either Urban or Rural.
 model_dep_var <- 'low_access'
-bootstrap_by_tracts <- '_tracts' # NULL for bootstrap at block-group level; '_tracts' for bootstrap at census-tract level.
+bootstrap_by_tracts <- '_tracts'
 # -------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'))
@@ -21,15 +20,6 @@ dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', 
 dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, 'LHS_Results', filename))
-# -------------------------------------------------------------------------------------------- #
-
-# -------------------------------------------------------------------------------------------- #
-# Note: We filter >= 2007 because for the untreated/yet-to-be-treated observations, we only have 
-# holdout predictions for years 2007-2020. For block groups whose year of treatment (event_year == 2007), 
-# we do not obtain out-of-sample predictions for their relative time to treatment food-desert/low-access status. 
-# We obtain predictions for relative time to treatment at t = -1 for the event_year == 2008 because the first
-# fold corresponds to 2007-2008. As another example, for the event_year == 2009, we obtain relative time to treatment
-# predictions for t = -2 and -1 in the years 2007 and 2008, respectively. 
 # -------------------------------------------------------------------------------------------- #
 untreated_preds <- model_output$cv_errors_opt %>% 
   
@@ -52,14 +42,7 @@ treated_preds <- model_output$data_cf_preds %>%
   
   rename(preds = pred_class_cf) %>%
   
-  filter(year >= '2006') # Counterfactual predictions are made for years 2007-2020 in the figures for consistency with CV error preds. 
-# Post-treatment effects are assessed from 2006-2020.
-# -------------------------------------------------------------------------------------------- #
-# Note: We do obtain counterfactual predictions from 2006, whereby for block-groups treated 
-# in 2006, we obtain predictions at rel_year = 0. However, the ML model CV predictions are made from years 2007-2020. 
-# Therefore, subsetting from 2007 to 2020 in the post-treatment period is consistent with out-of-sample prediction 
-# periods in the pre-treatment data. Beginning in 2007 in post-treatment data, we obtain rel_year predictions for t = 0 
-# for block-groups treated in 2007 and rel_year predictions t = 1 for treated block groups in 2006. 
+  filter(year >= '2006') # Post-treatment effects are assessed from 2006-2020.
 # -------------------------------------------------------------------------------------------- #
 model_preds <- bind_rows(untreated_preds, treated_preds) %>%
   

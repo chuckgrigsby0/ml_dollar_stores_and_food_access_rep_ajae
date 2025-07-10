@@ -1,6 +1,6 @@
 # Functions to efficiently load bootstrap data for a give model_geography and dependent variable. 
-# Functions exist for either parallel or array processed bootstrap data. The former yields a single list the B total elements
-# of bootstrapped data. The latter loads in 1:B bootstrap results from a specific director contatining the B bootstrap results. 
+# Functions exist for either parallel or array processed bootstrap data. The former yields a single list of the B total elements
+# of bootstrapped data. The latter loads in 1:B bootstrap results from a specific directory containing the B bootstrap results. 
 # -------------------------------------------------------------------------------------------- #
 load_bootstrap_errors_and_predictions_parallel <- function(model_geography_str, model_dep_var_str, bootstrap_by_tracts){ 
   

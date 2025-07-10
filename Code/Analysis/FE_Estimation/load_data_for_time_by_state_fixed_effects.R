@@ -1,23 +1,16 @@
 # Script that loads the data for statistical models.  
 # -------------------------------------------------------------------------------------------- #
-# Load packages
-# -------------------------------------------------------------------------------------------- #
-library(pacman)
-p_load('here', 'dplyr', 'sf', 'purrr', 'tidyr', 'stringr', 'recipes', 
-       'broom', 'tidymodels', 'fixest', 'doParallel')
-# -------------------------------------------------------------------------------------------- #
-# -------------------------------------------------------------------------------------------- #
 # Low-Access indicators for a given drive time or distance. 
 # -------------------------------------------------------------------------------------------- #
-load(here::here('Data', 'Data_2_and_10_Miles', 'food_access_indicators_block_groups_2_and_10mile.RData')) # 10min, 3mile, 5mile 
+load(here::here('Data', 'Data_2_and_10_Miles', 'food_access_indicators_block_groups_2_and_10mile.RData')) 
 # -------------------------------------------------------------------------------------------- #
 # Dollar store entries - This data set is needed to separate the treated from the yet-to-be-treated and never-treated. 
 # -------------------------------------------------------------------------------------------- #
-load(here::here('Data', 'Data_2_and_10_Miles', 'ds_entries_panel_treated_wbins_and_untreated_2_and_10mile.RData')) #10min, 3mile
+load(here::here('Data', 'Data_2_and_10_Miles', 'ds_entries_panel_treated_wbins_and_untreated_2_and_10mile.RData')) 
 # -------------------------------------------------------------------------------------------- #
 # Pre-Entry Retail Store Counts
 # -------------------------------------------------------------------------------------------- #
-load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData')) #10min, 3mile
+load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData'))
 # -------------------------------------------------------------------------------------------- #
 # Demographic and socioeconomic data. 
 # -------------------------------------------------------------------------------------------- #
@@ -121,7 +114,7 @@ dta_untreated <- list(panel_df_ds_entry_2_and_10mile$untreated,
   left_join(schools, by = 'GEOID') %>%
   left_join(dist_to_urb, by = 'GEOID') %>%
   left_join(roads, by = 'GEOID') %>%
-  select(-c('DS_Count_10mile':'Grocery_Count_10mile_diff', total_low_access)) #10min
+  select(-c('DS_Count_10mile':'Grocery_Count_10mile_diff', total_low_access))
 
 # Add the geography variables to identify areas by STATE, urban, urban-cluster, and rural. 
 dta_untreated <- dta_untreated %>%

@@ -10,8 +10,8 @@
 #SBATCH --qos=useraccount
 #SBATCH --time=01:00:00
 #SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban
-#SBATCH --output=./bootstrap_output/rural_bootstrap_low_access/cv_and_att_summary_lhs_w_time_trends/bootstrap_change_in_outcomes_lhs_w_time_trends_%A_%a.out
-#SBATCH --error=./bootstrap_output/rural_bootstrap_low_access/cv_and_att_summary_lhs_w_time_trends/bootstrap_change_in_outcomes_lhs_w_time_trends_%A_%a.error
+#SBATCH --output=./output/bootstrap_change_in_outcomes_lhs_w_time_trends_%A_%a.out
+#SBATCH --error=./output/bootstrap_change_in_outcomes_lhs_w_time_trends_%A_%a.error
 
 #Record the time and compute node the job ran on
 date; hostname; pwd

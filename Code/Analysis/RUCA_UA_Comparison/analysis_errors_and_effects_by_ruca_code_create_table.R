@@ -2,7 +2,7 @@
 # Compare ATTs using different definitions of geography. 
 # ----------------------------------- #
 pacman::p_load('here', 'dplyr', 'stringr', 'tidyr', 'purrr')
-model_dep_var = 'low_access' # Used in script below. If running for low_access_pers, must change settings below.
+model_dep_var = 'low_access' # Used in script below. 
 model_geography = 'Urban' # Used in script below to subset by either Urban or Rural.
 options(scipen = 999)
 

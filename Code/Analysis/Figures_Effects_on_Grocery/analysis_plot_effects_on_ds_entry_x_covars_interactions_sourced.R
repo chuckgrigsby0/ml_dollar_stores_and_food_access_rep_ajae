@@ -1,5 +1,9 @@
+# Run with sbatch_figures.sh
+
+# Creates Figures 3 (main text) and Figures C.1, C.2, C.3, C.6, and C.7 (supplementary text)
+# Used in conjunction with `analysis_plot_effects_on_ds_entry_x_covars_interactions.R`
+
 # -------------------------------------------------------------------------------------------- #
-# Run to create figures for rural area models.
 # Specify Urban/Rural, dependent variable, and results based on census-tract bootstrap. 
 # -------------------------------------------------------------------------------------------- #
 model_geography <- 'Rural' 
@@ -10,8 +14,6 @@ source(here::here('Code', 'Analysis', 'analysis_plot_effects_on_ds_entry_x_covar
 rm(list = ls())
 gc()
 Sys.sleep(time = 5.0)
-# -------------------------------------------------------------------------------------------- #
-# Run to create figures for urban area models.
 # -------------------------------------------------------------------------------------------- #
 model_geography <- 'Urban' 
 model_dep_var <- 'low_access'

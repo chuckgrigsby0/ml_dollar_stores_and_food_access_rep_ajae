@@ -2,7 +2,7 @@
 # Used to compute bootstrapped SEs. 
 # -------------------------------------------------------------------------------------------- #
 model_dep_var = Sys.getenv('model_dep_var') # Used in script below.
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_geography = Sys.getenv("model_geography") # Used in script below.
 options(scipen = 999)
 print(model_dep_var); print(model_geography)
 # -------------------------------------------------------------------------------------------- #
@@ -33,9 +33,6 @@ model_output <- readRDS(here::here('Analysis',
                                    filename))
 # -------------------------------------------------------------------------------------------- #
 # Using the bootstrap data as the primary data source, join treatment timing information to each observation. 
-# -------------------------------------------------------------------------------------------- #
-# Note: We filter >= 2007 because for the untreated/yet-to-be-treated observations, we only have 
-# holdout predictions for years 2007-2020. 
 # -------------------------------------------------------------------------------------------- #
 untreated_preds <- model_output$cv_errors_opt %>% 
   
@@ -71,7 +68,6 @@ fname_posttr_binned_covars = paste0('posttreatment_binned_and_factor_covariates_
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 

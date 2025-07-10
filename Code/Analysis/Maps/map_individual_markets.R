@@ -35,17 +35,6 @@ load(here::here('Data', 'bg_pop_centroids_2010_projected_w_urban_areas.RData'))
 # ------------------------- #
 us_states <- st_read(dsn = here::here('Data', 'us_states_shp', 'us_states.shp'))
 
-
-# Additional data
-# ------------------------- #
-# Optimal model results from XGBoost. 
-# ------------------------- #
-
-# xgb_mods <- paste0('xgboost_10m_', c("urban_", "rural_"), "low_access_final.rds")
-# 
-# xgb_urban <- readRDS(here::here('Analysis', 'Model_Training', 'Low_Access', xgb_mods[1]))
-# xgb_rural <- readRDS(here::here('Analysis', 'Model_Training', 'Low_Access', xgb_mods[2]))
-
 # ------------------------- #
 # BGs with DS policies. 
 # ------------------------- #
@@ -97,20 +86,7 @@ block_groups_w_ds_policies <- block_groups_w_ds_policies %>%
     select(bg_pop_centroids_10_sfp_geo, GEOID, Geography, market_name), 
     by = 'GEOID')
 
-# block_groups_w_ds_policies %>% 
-#   
-#   filter(Geography == 'Rural' & policy_total > 0) %>% 
-#   distinct(City, State, market_name) %>%
-#   View()
-
-# block_groups_w_ds_policies %>%
-#   
-#   filter(str_detect(City, 'Salina') & 
-#            State == 'KS' & 
-#            Geography == 'Rural &
-#            policy_total == 1)
-
-# Salina, KS
+# Birmingham, AL. 
 # --------------------------- #
 bans_city <- block_groups_w_ds_policies %>% 
   
@@ -189,12 +165,8 @@ tm = tm_shape(drive_dist_city)+
   tm_basemap(server = 'CartoDB.Positron', 
              alpha = 0.8)+
   
-  # tm_credits(text = 'Census block group and centroid in Birmingham, AL with two-mile drive boundary.', 
-  #          position = tm_pos_in(pos.h = 'right', pos.v = 'bottom', align.h = 'right', align.v = 'bottom'), 
-  #            fontface = 'bold')+ 
   
-  tmap_options(# credits.size = 1, 
-               unit = 'mi', 
+  tmap_options(unit = 'mi', 
                component.autoscale = FALSE)
 
 
@@ -276,12 +248,7 @@ tm <- tm_shape(drive_dist_county)+
   tm_basemap(server = 'CartoDB.Positron', 
              alpha = 0.8)+
   
-  # tm_credits(text = 'Census block group and centroid in Salinas County, KS with two-mile drive boundary.', 
-  #          position = tm_pos_in(pos.h = 'right', pos.v = 'bottom', align.h = 'right', align.v = 'bottom'), 
-  #            fontface = 'bold')+ 
-  
-  tmap_options(# credits.size = 1, 
-               unit = 'mi', 
+  tmap_options(unit = 'mi', 
                component.autoscale = FALSE)
 
 tmap_save(tm = tm, 

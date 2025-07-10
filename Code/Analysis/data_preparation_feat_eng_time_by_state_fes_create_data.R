@@ -2,12 +2,12 @@
 # Create state by time fixed effects data frame objects for use in models. 
 # Function to compile FEs by FE type. 
 # -------------------------------------------------------------------------------------------- #
-source(here::here('Code', 'Functions', 'Function_Compile_Market_Time_FE.R')) # Works with state or market fixed effects. 
-# -------------------------------------------------------------------------------------------- #
 # Load packages
 # -------------------------------------------------------------------------------------------- #
 library(pacman)
 p_load('here', 'dplyr', 'ggplot2', 'purrr', 'tidyr', 'stringr', 'recipes', 'sf', 'rsample')
+# -------------------------------------------------------------------------------------------- #
+source(here::here('Code', 'Functions', 'Function_Compile_Market_Time_FE.R')) # Works with state or market fixed effects. 
 # -------------------------------------------------------------------------------------------- #
 # Load the output containing the state and year FEs from the regression of low-access status of the untreated
 # on the covariates. 

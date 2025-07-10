@@ -1,15 +1,12 @@
 # Script to estimate bootstrap average CV errors and treatment effects across multiple dollar store entries and baseline retail store counts. 
 # Does not include estimates for baseline grocery stores, which are produced in other scripts. 
 # -------------------------------------------------------------------------------------------- #
-# Load empirical data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
 model_dep_var = Sys.getenv('model_dep_var') # Used in script below. 
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_geography = Sys.getenv("model_geography") # Used in script below.
+bootstrap_by_tracts = '_tracts' 
 options(scipen = 999)
-# -------------------------------------------------------------------------------------------- #
-# Specify bootstrap type. 
-# -------------------------------------------------------------------------------------------- #  
-bootstrap_by_tracts = '_tracts' # or NULL to bootstrap by block-group and stratify by relative time. 
 # -------------------------------------------------------------------------------------------- #
 # Load data based on parameters above. 
 # -------------------------------------------------------------------------------------------- #
@@ -39,7 +36,7 @@ fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', s
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
+
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 # From the SLURM sbatch script save/store the job array ID number, which is used to load the bootstrapped ML model. 

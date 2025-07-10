@@ -9,8 +9,8 @@
 #SBATCH --mem=8gb #8gb for Urban
 #SBATCH --time=01:00:00
 #SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban
-#SBATCH --output=./bootstrap_output/rural_bootstrap_low_access/cv_error_and_att/bootstrap_cv_error_and_att_%A_%a.out
-#SBATCH --error=./bootstrap_output/rural_bootstrap_low_access/cv_error_and_att/bootstrap_cv_error_and_att_%A_%a.error
+#SBATCH --output=./output/bootstrap_cv_error_and_att_%A_%a.out
+#SBATCH --error=./output/bootstrap_cv_error_and_att_%A_%a.error
 
 #Record the time and compute node the job ran on
 date; hostname; pwd

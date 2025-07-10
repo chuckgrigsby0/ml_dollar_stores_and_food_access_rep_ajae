@@ -1,7 +1,7 @@
 # Script to compute bootstrap average CV errors and ATTs based on latin-hypercube sampling schemes. 
 # -------------------------------------------------------------------------------------------- #
-model_dep_var = Sys.getenv('model_dep_var') # Used in script below. 
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_dep_var = Sys.getenv('model_dep_var') 
+model_geography = Sys.getenv("model_geography") 
 options(scipen = 999)
 print(model_dep_var); print(model_geography)
 # -------------------------------------------------------------------------------------------- #
@@ -34,9 +34,6 @@ model_output <- readRDS(here::here('Analysis',
                                    filename))
 # -------------------------------------------------------------------------------------------- #
 # Using the bootstrap data as the primary data source, join treatment timing information to each observation. 
-# -------------------------------------------------------------------------------------------- #
-# Note: We filter >= 2007 because for the untreated/yet-to-be-treated observations, we only have 
-# holdout predictions for years 2007-2020.
 # -------------------------------------------------------------------------------------------- #
 untreated_preds <- model_output$cv_errors_opt %>% 
   

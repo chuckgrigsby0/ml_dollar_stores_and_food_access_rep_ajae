@@ -63,7 +63,7 @@ treated_preds <- model_output$data_cf_preds %>%
   rename(preds = pred_class_cf) %>%
   rename(pred_probs = pred_probs_cf) %>%
   
-  filter(year >= '2006') # Counterfactual predictions from 2007 to 2020. 
+  filter(year >= '2006') # Counterfactual predictions from 2006 to 2020. 
 # -------------------------------------------------------------------------------------------- #
 model_preds <- bind_rows(untreated_preds, treated_preds) %>%
   

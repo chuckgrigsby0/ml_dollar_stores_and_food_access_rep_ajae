@@ -2,7 +2,7 @@
 # -------------------------------------------------------------------------------------------- #
 library('here')
 # -------------------------------------------------------------------------------------------- #
-# Food Desert indicators for a given drive time or distance. 
+# Low-access indicators for a given drive time or distance. 
 # -------------------------------------------------------------------------------------------- #
 load(here::here('Data', 'Data_2_and_10_Miles', 'food_access_indicators_block_groups_2_and_10mile.RData')) 
 # -------------------------------------------------------------------------------------------- #
@@ -12,7 +12,7 @@ load(here::here('Data', 'Data_2_and_10_Miles', 'ds_entries_panel_treated_wbins_a
 # -------------------------------------------------------------------------------------------- #
 # Pre-Entry Retail Store Counts
 # -------------------------------------------------------------------------------------------- #
-load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData')) #10min, 3mile
+load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData')) 
 # -------------------------------------------------------------------------------------------- #
 # Demographic and socioeconomic data. 
 # -------------------------------------------------------------------------------------------- #
@@ -109,8 +109,8 @@ roads <- roads %>%
 
 roads_vars <- names(roads)[!grepl('GEOID|year', names(roads))]
 # -------------------------------------------------------------------------------------------- #
-# The following scripts will source a function to combine the state and time estimated fixed effects and 
-# combine the state and time fixed effects into data.frame friendly formats for use in statistical models. 
+# The following scripts will source a function to combine the state-by-time estimated fixed effects and 
+# combine the state-time fixed effects into data.frame friendly formats for use in statistical models. 
 # -------------------------------------------------------------------------------------------- #
 # For State by Time FEs. 
 source(here::here('Code', 'Analysis', 'data_preparation_feat_eng_time_by_state_fes_create_data.R'))

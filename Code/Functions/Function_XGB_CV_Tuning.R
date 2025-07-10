@@ -1,6 +1,5 @@
-
 #--------------------------------------------------------------------------------------------#
-# Function for classification. 
+# Helper script and function for classification using BO tuning/training approach. 
 #--------------------------------------------------------------------------------------------#
 # Number of low-access to access (0/1)
 class_counts <- dta_untreated_wfolds %>% reframe(across(.cols = matches('^low_access'), .fns = table))
@@ -71,15 +70,14 @@ set.seed(243444)
                          nrounds = ntrees, # Specified above. 
                          showsd = TRUE, 
                          early_stopping_rounds = early_stop_global, # Specified above. 
-                         # metrics = 'error', 
-                         maximize = FALSE, #We are not maximizing the logloss function. 
+                         maximize = FALSE, 
                          folds = val_folds_list, 
                          train_folds = train_folds_list, 
                          prediction = TRUE, 
                          nthread = ncores, 
                          verbose = FALSE)
   
-  # The function finds the maximium so we set the Score to finding the negative of min(cv error). 
+  # BO maximizes the objective, so we use negative error to minimize the actual error rate. 
   output <- list(Score = -min(xgb_cv_model$evaluation_log$test_error_mean), 
                  nrounds_opt = xgb_cv_model$best_iteration)
   
@@ -97,8 +95,8 @@ param_bounds <- list(eta = c(0.025, 0.3),
 xgb_cv <- bayesOpt(FUN = objective_function, 
                    bounds = param_bounds, 
                    initPoints = length(param_bounds) + 1, 
-                   iters.n = 10, # 10 
-                   iters.k = 1, # 1
+                   iters.n = 10, 
+                   iters.k = 1, 
                    parallel = FALSE)
 
 #--------------------------------------------------------------------------------------------#

@@ -6,8 +6,8 @@
 options(scipen = 999)
 pacman::p_load('future', 'furrr', 'parallel', 'tidymodels')
 # -------------------------------------------------------------------------------------------- #
-model_dep_var <- Sys.getenv("model_dep_var") # Used in script below to subset by either Urban or Rural.
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_dep_var <- Sys.getenv("model_dep_var") # Used in script below.
+model_geography = Sys.getenv("model_geography") # Used in script below.
 print(model_dep_var); print(model_geography)
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'))
@@ -39,7 +39,7 @@ directory_geography <- paste(model_geography, 'Bootstrap', sep = '_')
 
 directory_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_')
 
-directory_boot_diag_type <- paste0('bootstrap_errors_and_predictions_mult_thresh', bootstrap_by_tracts) # diag implies diagnostic.
+directory_boot_diag_type <- paste0('bootstrap_errors_and_predictions_mult_thresh', bootstrap_by_tracts) 
 
 filename <- paste0('bootstrap_', 
                    'errors_and_preds_mult_thresh_', 

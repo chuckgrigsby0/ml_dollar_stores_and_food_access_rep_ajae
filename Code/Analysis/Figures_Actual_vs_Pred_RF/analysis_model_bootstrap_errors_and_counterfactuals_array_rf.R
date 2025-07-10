@@ -7,7 +7,7 @@ options(scipen = 999)
 pacman::p_load('future', 'furrr', 'parallel')
 # -------------------------------------------------------------------------------------------- #
 model_dep_var <- Sys.getenv("model_dep_var") # Used in script below. 
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_geography = Sys.getenv("model_geography") # Used in script below.
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'))
 # -------------------------------------------------------------------------------------------- #
@@ -17,14 +17,13 @@ source(here::here('Code', 'Functions', 'Function_tidy_regression.R'))
 
 source(here::here('Code', 'Functions', 'Function_bootstrap_errors_and_preds_rf.R'))
 # -------------------------------------------------------------------------------------------- #
-# -------------------------------------------------------------------------------------------- #
 # From the SLURM sbatch script save/store the job array ID number, which is used to load each bootstrapped ML model. 
 # -------------------------------------------------------------------------------------------- #
 bootstrap_id <- Sys.getenv("SLURM_ARRAY_TASK_ID")
 bootstrap_iter <- as.numeric(bootstrap_id)
 print(paste('Bootstrap model number', bootstrap_iter))
 bootstrap_group = '01_499' # Folder designated in directory specifying number of bootstrap iterations. 
-bootstrap_by_tracts = '_tracts' # NULL or '_tracts'
+bootstrap_by_tracts = '_tracts'
 # -------------------------------------------------------------------------------------------- #
 
 # -------------------------------------------------------------------------------------------- #

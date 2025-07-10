@@ -1,10 +1,8 @@
+# Script computes ATT by year, relative treatment timing, and overall using placebo data. 
+
 print('Sourced: bootstrap_change_in_outcomes <- function(bootstrap_ids, iter)')
 
 bootstrap_change_in_outcomes <- function(dta, iter){ 
-# dta <- model_preds; iter = bootstrap_id
-  # -------------------------------------------------------------------------------------------- #
-  # Net increase in low-access (i.e., Net increase of grocery exit)
-  # Relative time at period 0 and greater implies years from 2006-2020. 
   # -------------------------------------------------------------------------------------------- #
   posttre_effects <- dta %>% 
     filter(rel_year >= 0) %>% 
@@ -13,13 +11,6 @@ bootstrap_change_in_outcomes <- function(dta, iter){
   
   join_sel_vars <- c('GEOID', 'year', 'event_year', 'rel_year')
   # -------------------------------------------------------------------------------------------- #
-  # Net increase. 
-  # tau includes c(1, -1, 0), where 
-  # 1 indicates increase in low access (counterfactual predicts not low access but actually low-access), 
-  # -1 indicates decrease in low access (counterfactual predicts low access but actually not low-access), 
-  # 0 indicates no change. 
-  # -------------------------------------------------------------------------------------------- #
-  
   # Percentage change in the ATT by relative time. 
   # -------------------------------------------------------------------------------------------- #
   outcome_pct_change_relyear <- posttre_effects %>% 

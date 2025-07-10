@@ -2,9 +2,10 @@
 options(scipen = 999)
 library(readr)
 # -------------------------------------------------------------------------------------------- #
-# Load empirical data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
 # Specify Urban/Rural, dependent variable, and results based on census-tract bootstrap.
+# -------------------------------------------------------------------------------------------- #
 model_geography <- 'Urban' # Used in script below to subset by either Urban or Rural.
 model_dep_var <- 'low_access'
 bootstrap_by_tracts <- '_tracts' 
@@ -17,7 +18,7 @@ source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'
 # -------------------------------------------------------------------------------------------- #
 filename <- paste0(str_to_lower(model_geography), '_', model_dep_var, '_rf_bootstrap_0', '.rds'); filename
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title 
 results_dir <- 'bootstrap_01_499_tracts_rf'
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis', paste0(model_geography, '_Bootstrap'), dir_dep_var, 

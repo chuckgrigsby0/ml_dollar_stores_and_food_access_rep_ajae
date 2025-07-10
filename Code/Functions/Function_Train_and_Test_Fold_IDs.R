@@ -1,4 +1,4 @@
-# Function to obtain a list of indices for each training and validation fold observation to be used in XGBoost algorithm. 
+# Function to obtain a list of indices for each training and validation fold observation to be used in ML algorithms. 
 # Note that the dta_w_cv_folds must contain a column called fold_id. 
 # By changing the return_training_ids function from TRUE to FALSE, we can obtain either the training or validation/test folds. 
 # --------------------------------------------------------------------------------------------#

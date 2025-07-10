@@ -3,13 +3,13 @@
 options(scipen = 999)
 library(readr)
 # -------------------------------------------------------------------------------------------- #
-# Load empirical data and point estimates. 
+# Load data. 
 # -------------------------------------------------------------------------------------------- #
 # Specify Urban/Rural, dependent variable, and results based on census-tract bootstrap.
 # -------------------------------------------------------------------------------------------- #
-model_geography <- 'Rural' # Used in script below to subset by either Urban or Rural.
+model_geography <- 'Rural' 
 model_dep_var <- 'low_access'
-bootstrap_by_tracts <- '_tracts' # NULL for bootstrap at block-group level; '_tracts' for bootstrap at census-tract level.
+bootstrap_by_tracts <- '_tracts'
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis', 'data_preparation_imputation_estimation.R'))
 # -------------------------------------------------------------------------------------------- #
@@ -22,13 +22,8 @@ filename <- paste0('xgboost_10m_',
                    model_dep_var, '_', 
                    'final.rds')
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title 
 model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, filename))
-# -------------------------------------------------------------------------------------------- #
-
-# -------------------------------------------------------------------------------------------- #
-# Note: We filter >= 2007 because for the untreated/yet-to-be-treated observations, we only have 
-# holdout predictions for years 2007-2020.
 # -------------------------------------------------------------------------------------------- #
 untreated_preds <- model_output$cv_errors_opt %>% 
   

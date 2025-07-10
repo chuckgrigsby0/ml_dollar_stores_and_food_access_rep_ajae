@@ -1,9 +1,7 @@
 # Script used to estimate bootstrap estimates of average CV errors and ATTs across binned predictor values and treatment effects on standardized predictors.
 # -------------------------------------------------------------------------------------------- #
-# Load bootstrap data and point estimates. 
-# -------------------------------------------------------------------------------------------- #
 model_dep_var = Sys.getenv('model_dep_var') # Used in script below. 
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_geography = Sys.getenv("model_geography") # Used in script below.
 bootstrap_by_tracts = '_tracts' 
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #
@@ -151,7 +149,6 @@ fname_posttr_binned_covars = paste0('posttreatment_binned_and_factor_covariates_
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment dollar store bins and factors. 
@@ -161,7 +158,6 @@ fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', s
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 # tidy_regression functions are used in script: 'Function_effects_and_errors_on_covars.R'

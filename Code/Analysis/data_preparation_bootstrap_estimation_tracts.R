@@ -31,7 +31,7 @@ dta_untreated <- dta_untreated[complete.cases(dta_untreated), ]
 # -------------------------------------------------------------------------------------------- #
 
 # -------------------------------------------------------------------------------------------- #
-# Create bootstrap sample of block groups stratified by year. 
+# Create bootstrap sample at census-tract level.
 # -------------------------------------------------------------------------------------------- #
 geoids <- dta_untreated %>% 
   mutate(GEOID_TR = str_sub(GEOID, start = 1, end = -2)) %>%
@@ -48,9 +48,6 @@ geoids_btst <- analysis(bootstrap_sample$splits[[1]]) # btst = bootstrap
 
 print(length(unique(geoids_btst$GEOID_TR))/nrow(geoids_btst)) # Share of unique tracts to total number of tracts.
 # -------------------------------------------------------------------------------------------- #
-# If block-group, g, is selected x times, then copies of all of its years of data are made x times. 
-# -------------------------------------------------------------------------------------------- #
-
 dta_untreated %>% group_by(event_year) %>% arrange(event_year) %>% 
   count() %>% ungroup() %>% mutate(total = sum(n), share = n/total)
 

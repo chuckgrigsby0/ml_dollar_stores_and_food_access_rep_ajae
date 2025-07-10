@@ -106,7 +106,7 @@ kable(table_att_comb,
       escape = TRUE, # Note: This is the default.
       digits = 4,
       position = '!h',
-      linesep = '', # Remove \addlinespace every 5 rows. 
+      linesep = '',
       centering = TRUE, # Note: This is the default. 
       col.names = c('Parameter', rep(c('Urban', 'Rural'), 2) ),
       caption = paste0("Average Treatment Effects of Dollar Store Entry on Low Food Access Status with 

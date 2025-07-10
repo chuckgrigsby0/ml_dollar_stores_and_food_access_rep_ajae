@@ -1,10 +1,9 @@
 # Script to estimate bootstrap average treatment effects by dollar store entry and pre-entry grocery store counts. 
 # -------------------------------------------------------------------------------------------- #
-# Load data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
-# Specify Urban/Rural, dependent variable, and results based on CT bootstrap. 
-model_dep_var = Sys.getenv('model_dep_var') # Used in script below. If running for low_access_pers, must change settings below.
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_dep_var = Sys.getenv('model_dep_var') 
+model_geography = Sys.getenv("model_geography")
 bootstrap_by_tracts = '_tracts'
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #
@@ -95,7 +94,6 @@ fname_posttr_binned_covars = paste0('posttreatment_binned_quartile_covars_', str
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment dollar store bins and factors. 
@@ -105,7 +103,7 @@ fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', s
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
+
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment observations, year 2005 Grocery Store bins. 

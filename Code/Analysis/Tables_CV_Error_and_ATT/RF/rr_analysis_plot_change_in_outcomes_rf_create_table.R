@@ -1,14 +1,15 @@
 # Script to create latex code for comparison table of random forest and xgboost cv errors and atts. 
 # Developed for R&R submission.
+# -------------------------------------------------------------------------------------------- #
 options(scipen = 999)
 pacman::p_load('here', 'dplyr', 'purrr', 'stringr', 'tidyr')
-
+# -------------------------------------------------------------------------------------------- #
 rootname_rf <- 'average_change_in_outcomes_relative_time_rf.rds'
 urban_att_rf <- readRDS(here::here('Analysis', 'Tables', 'Low_Access', 'Urban', paste0('urban_', rootname_rf) ) )
 rural_att_rf <- readRDS(here::here('Analysis', 'Tables', 'Low_Access', 'Rural', paste0('rural_', rootname_rf) ) )
 
 att_rf <- bind_rows(urban_att_rf, rural_att_rf) %>% rename(estimate = estiamte)
-
+# -------------------------------------------------------------------------------------------- #
 # Compute confidence intervals based on bootstrapped SDs. 
 alpha_levels <- c(0.01, 0.05, 0.10)
 ci_thresholds <- map(alpha_levels, function(.x) qnorm(p = 1 - .x/2) ); ci_thresholds

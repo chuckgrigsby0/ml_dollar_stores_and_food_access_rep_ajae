@@ -1,3 +1,4 @@
+# Helper script called in analysis_plot_errors_on_ds_entry_x_grocery.R. 
 # -------------------------------------------------------------------------------------------- #
 err_on_ds_policy_boot <- boot_data %>% 
   map(function(.x){ 

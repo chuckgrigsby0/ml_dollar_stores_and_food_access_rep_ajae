@@ -7,11 +7,11 @@
 #SBATCH --array=1-499%100
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=10gb
-#SBATCH --qos=useraccount
+#SBATCH --qos=useraccount-b
 #SBATCH --time=00:60:00
-#SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban, low_access/low_access_pers
-#SBATCH --output=./bootstrap_output/rural_bootstrap_low_access/summary_fit_metrics/bootstrap_summary_fit_metrics_%A_%a.out
-#SBATCH --error=./bootstrap_output/rural_bootstrap_low_access/summary_fit_metrics/bootstrap_summary_fit_metrics_%A_%a.error
+#SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban
+#SBATCH --output=./output/bootstrap_summary_fit_metrics_%A_%a.out
+#SBATCH --error=./output/bootstrap_summary_fit_metrics_%A_%a.error
 
 #Record the time and compute node the job ran on
 date; hostname; pwd

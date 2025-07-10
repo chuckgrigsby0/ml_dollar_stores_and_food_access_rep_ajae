@@ -31,7 +31,7 @@ dta_untreated <- dta_untreated[complete.cases(dta_untreated), ]
 # -------------------------------------------------------------------------------------------- #
 
 # -------------------------------------------------------------------------------------------- #
-# Create bootstrap sample of block groups stratified by year. 
+# Create bootstrap sample at census-tract level. 
 # -------------------------------------------------------------------------------------------- #
 geoids <- dta_untreated %>% 
   mutate(GEOID_TR = str_sub(GEOID, start = 1, end = -2)) %>%
@@ -48,10 +48,6 @@ geoids_btst <- analysis(bootstrap_sample$splits[[1]]) # btst = bootstrap
 
 print(length(unique(geoids_btst$GEOID_TR))/nrow(geoids_btst)) # Share of unique tracts to total number of tracts.
 # -------------------------------------------------------------------------------------------- #
-# One to many join. 
-# If block-group, g, is selected x times, then copies of all of its years of data are made x times. 
-# -------------------------------------------------------------------------------------------- #
-#geoids_btst %>% group_by(event_year) %>% count() %>% arrange(desc(n)) %>% ungroup() %>% mutate(total = sum(n), share = n/total)
 dta_untreated %>% group_by(event_year) %>% arrange(event_year) %>% 
   count() %>% ungroup() %>% mutate(total = sum(n), share = n/total)
 
@@ -109,10 +105,8 @@ dta_treated <- dta_treated %>% select(all_of(model_vars))
 source(here::here('Code', 'Functions', 'Function_Cross_Validation_Folds.R'))
 # -------------------------------------------------------------------------------------------- #
 dta_untreated_wfolds <- CV_Function(untreated_dta = dta_untreated,
-                                    cv_type = 'horizontal equal-sized-block-cv', #  'horizontal rolling-origin-block-cv', 'horizontal equal-sized-block-cv'
-                                    k = 7) # For horizontal CV try 6 or 8 to obtain 5 or 7 folds.  
-# Use 5 when cv_type = 'vertical'. 
-#'vertical' implies stratified sampling by GEOID. 
+                                    cv_type = 'horizontal equal-sized-block-cv', 
+                                    k = 7) 
 
 for (i in 1:7) print( dta_untreated_wfolds %>% filter(fold_id == i) %>% distinct(year) ) 
 for (i in 1:7) print( dta_untreated_wfolds %>% filter(fold_id == i) %>% nrow() ) 

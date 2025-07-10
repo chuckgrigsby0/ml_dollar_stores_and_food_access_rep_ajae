@@ -1,8 +1,9 @@
-# -------------------------------------------------------------------------------------------- #
-# Load empirical data and point estimates. 
+# Script creates pre- and post-treatment binned covariates, dollar store entry counts, and baseline grocers. 
+# Output data are used in analyses of CV errors and treatment effect heterogeneity.
 # -------------------------------------------------------------------------------------------- #
 # Specify Urban/Rural, dependent variable, and results based on CT bootstrap. 
-model_geography <- 'Rural' # Used in script below to subset by either Urban or Rural.
+# -------------------------------------------------------------------------------------------- #
+model_geography <- 'Rural'
 model_dep_var <- 'low_access'
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #
@@ -20,8 +21,8 @@ bg_regs_and_divs <- readRDS(here::here('Data', 'block_group_regions_and_division
 # Load the optimal estimated model following tuning/training. 
 # -------------------------------------------------------------------------------------------- #
 filename <- paste0('xgboost_10m_', str_to_lower(model_geography), '_', model_dep_var, '_final', '.rds'); filename
-dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
+dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, filename))
 # -------------------------------------------------------------------------------------------- #
@@ -51,7 +52,7 @@ treated_preds <- model_output$data_cf_preds %>%
   
   left_join(select(dta_treated, GEOID, year, all_of(model_covars)), by = c('GEOID', 'year')) %>%
   
-  filter(year >= '2006') %>% # we obtain counterfactual predictions from 2006 to 2020.
+  filter(year >= '2006') %>% # We obtain counterfactual predictions from 2006 to 2020.
   
   left_join(bg_regs_and_divs, by = 'GEOID') # Regional and divisional indicators. 
 # -------------------------------------------------------------------------------------------- #

@@ -16,7 +16,7 @@ bg_regs_and_divs <- readRDS(here::here('Data', 'block_group_regions_and_division
 # -------------------------------------------------------------------------------------------- #
 filename <- paste0('xgboost_10m_', str_to_lower(model_geography), '_', model_dep_var, '_final', '.rds'); filename
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.g., Low Access
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title 
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, filename))
 # -------------------------------------------------------------------------------------------- #
@@ -71,7 +71,6 @@ fname_posttr_binned_covars = paste0('posttreatment_binned_quartile_covars_', str
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 
 
@@ -83,7 +82,7 @@ fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', s
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
+
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
 
 
@@ -136,8 +135,7 @@ boot_data <- seq(1, 499, 1) %>%
     
   })
 # -------------------------------------------------------------------------------------------- #
-# Functions to subset the named elements 'errors' or the 'predictions', 
-# compute standard errors, and join standard errors to empirical point estimates. 
+# Helper functions for computing bootstrapped standard errors and joining to empirical estimates. 
 # -------------------------------------------------------------------------------------------- #
 # Select from the list of bootstrapped output. 
 source(here::here('Code', 'Functions', 'Function_bootstrap_subset_errors_and_predictions.R')) 

@@ -1,10 +1,10 @@
 # Script to estimate bootstrap treatment effects by presence of dollar store restriction policies.  
 # -------------------------------------------------------------------------------------------- #
-# Load data and point estimates. 
+# Load data.
 # -------------------------------------------------------------------------------------------- #
 # Specify Urban/Rural, dependent variable, and results based on CT bootstrap. 
 model_dep_var = Sys.getenv('model_dep_var') # Used in script below. 
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_geography = Sys.getenv("model_geography") # Used in script below.
 bootstrap_by_tracts = '_tracts'
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #

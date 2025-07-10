@@ -1,4 +1,8 @@
 #--------------------------------------------------------------------------------------------#
+# Helper script and function for classification using LHS tuning/training approach. 
+#--------------------------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------------------------#
 # Number of low-access to access (0/1)
 class_counts <- dta_untreated_wfolds %>% reframe(across(.cols = matches('^low_access'), .fns = table)) ; class_counts
 # Ratio of not low-access to low-access. (0 to 1)
@@ -21,7 +25,6 @@ print(paste('scale_pos_weight_data =', scale_pos_weight_data))
 #If after 10 cross-validation iterations, the model does not improve w.r.t cv error, stop tree building/boosting. 
 #--------------------------------------------------------------------------------------------#
 early_stop_global = 10
-#--------------------------------------------------------------------------------------------#
 #--------------------------------------------------------------------------------------------#
 #Number of trees = Number of iterations of tree building. 
 #--------------------------------------------------------------------------------------------#
@@ -55,7 +58,7 @@ xgb_cv_model <- xgb.cv(data = xgb_train,
                        nrounds = ntrees, # Specified above. 
                        showsd = TRUE, 
                        early_stopping_rounds = early_stop_global, # Specified above. 
-                       maximize = FALSE, #We are not maximizing the logloss function. 
+                       maximize = FALSE,
                        folds = val_folds_list, 
                        train_folds = train_folds_list, 
                        prediction = TRUE, 

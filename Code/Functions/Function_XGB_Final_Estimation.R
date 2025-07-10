@@ -1,4 +1,4 @@
-# Estimate final CV model and the estimated model to find counterfactuals. 
+# Estimate final CV model and apply the estimated model to predict counterfactuals. 
 # -------------------------------------------------------------------------------------------- #
 xgboost_imputation_estimation <- function(dep_var_string, cv_models){
   
@@ -12,7 +12,7 @@ xgboost_imputation_estimation <- function(dep_var_string, cv_models){
   opt_params <- append(opt_params, 
                        list(subsample = 0.80, 
                             colsample_bytree = 0.75,
-                            scale_pos_weight = scale_pos_weight_data)) # Add defaults. 
+                            scale_pos_weight = scale_pos_weight_data)) 
   
   
   opt_tuning_params <- append(list(booster = 'gbtree', 
@@ -47,7 +47,7 @@ xgboost_imputation_estimation <- function(dep_var_string, cv_models){
                                nrounds = ntrees, # Specified outside of function
                                showsd = TRUE, 
                                early_stopping_rounds = early_stop_global, # Specified outside of function 
-                               maximize = FALSE, #We are not maximizing the logloss function. 
+                               maximize = FALSE,
                                folds = val_folds_list, 
                                train_folds = train_folds_list, 
                                prediction = TRUE, 
@@ -106,14 +106,14 @@ xgboost_imputation_estimation <- function(dep_var_string, cv_models){
   if (isTRUE(cv_models)){ 
     
     model_results <- list(cv_mse_by_tuning_params = tuning_output, # error rates for each tuning parameter combination. 
-                          min_cv_mse = min_cv_mse, #The min_cv_mse is not the MSE, but is actually the mininum misclassification rate.  
+                          min_cv_mse = min_cv_mse, #The min_cv_mse is not the MSE, but is the mininum misclassification rate.  
                           tuning_params_opt = opt_tuning_params, # Optimal set of tuning parameters corresponding to min_cv_mse_index. 
                           cv_errors_opt = xgb_cv_preds, # The combined cross-validated errors from each cross-validation fit. 
                           xgb_model_final = xgb_model_final, # The final XGBoost model using the complete set of training observations. 
                           data_cf_preds = dta_cf_preds) # Estimated counterfactuals.
   } else { 
       
-    model_results <- list(min_cv_mse = min_cv_mse, #The min_cv_mse is not the MSE, but is actually the mininum misclassification rate.  
+    model_results <- list(min_cv_mse = min_cv_mse, #The min_cv_mse is the mininum misclassification rate.  
                           tuning_params_opt = opt_tuning_params, # Optimal set of tuning parameters corresponding to min_cv_mse_index. 
                           cv_errors_opt = xgb_cv_preds, # The combined cross-validated errors from each cross-validation fit. 
                           data_cf_preds = dta_cf_preds) # Estimated counterfactuals.

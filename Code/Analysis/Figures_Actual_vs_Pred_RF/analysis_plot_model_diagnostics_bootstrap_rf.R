@@ -1,8 +1,9 @@
 # Script to create event-study type plots from random forest models. 
 # Results provided for R&R and available upon request. 
 # -------------------------------------------------------------------------------------------- #
-# Specify Urban/Rural, dependent variable, and results based on census-tract bootstrap. 
-model_geography <- 'Urban' # Used in script below to subset by either Urban or Rural.
+# Specify Urban/Rural, dependent variable, and results based on census-tract bootstrap.
+# -------------------------------------------------------------------------------------------- #
+model_geography <- 'Urban'
 model_dep_var <- 'low_access'
 bootstrap_by_tracts <- '_tracts'
 # -------------------------------------------------------------------------------------------- #
@@ -13,7 +14,7 @@ bootstrap_by_tracts <- '_tracts'
 filename <- paste('bootstrap_errors_and_preds', str_to_lower(model_geography), model_dep_var, 'tracts', 'rf', '0.rds', sep = '_'); filename
 dir_geography = paste0(model_geography, '_', 'Bootstrap')
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_')
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')) # For plot titles (below). 
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' '))
 emp_estimates <- readRDS(here::here('Analysis', 
                                    dir_geography, 
                                    dir_dep_var, 
@@ -88,8 +89,6 @@ plot_actual_on_predicted(dta = emp_preds,
                          standard_error = estimate_sd,
                          y_axis_title = 'Low-Access (Shares)', 
                          x_axis_title = 'Time from Treatment', 
-                         # plot_title = 'Cross-Validated Predicted and Actual Outcomes by Time from Treatment', 
-                         # plot_subtitle = paste(paste('Geography:', model_geography), paste('Outcome:', dep_var_title), sep = '\n'),
                          plot_title = NULL, 
                          plot_subtitle = NULL,
                          x_intercept_val = 0,
