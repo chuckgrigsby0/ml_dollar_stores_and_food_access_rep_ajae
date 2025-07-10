@@ -42,6 +42,4 @@ echo "Create figures of treatment effects across dollar store policy variables."
 # Run R script
 Rscript Figures_Effects_on_DS_Policies/analysis_plot_effects_and_ds_policy_vars_sourced.R
 
-
-
 date

@@ -23,7 +23,7 @@ echo "Running script on $SLURM_CPUS_ON_NODE CPU cores"
 echo "This job requested $SLURM_MEM_PER_NODE MB RAM"
 
 # Run R scripts for bootstrap estiamtes. These results are used to compute bootstrap standard errors. 
-# Note: Must first train models in 'Code/Analysis/Imputation_Xgboost/Main/Training' and 'Code/Analysis/Imputation_Xgboost/Main/Bootstrap'
+# Note: To run the scripts below, one must first train models in 'Code/Analysis/Imputation_Xgboost/Main/Training' and 'Code/Analysis/Imputation_Xgboost/Main/Bootstrap'
 
 Rscript Figures_Actual_vs_Pred/analysis_model_bootstrap_errors_and_counterfactuals_array.R $SLURM_ARRAY_TASK_ID
 
@@ -44,6 +44,8 @@ Rscript Tables_Entry_by_Grocery_Stores/bootstrap_err_and_att_by_entry_and_grocer
 Rscript Tables_CV_Error_and_ATT/analysis_model_bootstrap_cv_error_and_att_array.R $SLURM_ARRAY_TASK_ID
 
 Rscript Tables_Total_vs_Pred_Outcome_2020/rr_analysis_total_new_grocers_cf_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Tables_Rel_Treat_Time_Het/analysis_section_5_1_heterogeneity_by_rel_time_array.R $SLURM_ARRAY_TASK_ID
 
 Rscript RUCA_UA_Comparison/analysis_errors_and_effects_by_ruca_code_bootstrap_array.R
 
