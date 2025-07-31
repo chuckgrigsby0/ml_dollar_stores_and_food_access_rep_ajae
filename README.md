@@ -45,7 +45,7 @@ We set `-mail-user=useremail` and `qos=accountname-b` as placeholders for the us
 
 In practice, users would include their own email and usernames. 
 
-## Code/Analsys/sbatch_bootstrap_all_output.sh
+## Code/Analysis/sbatch_bootstrap_all_output.sh
 
 The helper script calls the various .R programs located in sub-directories to analyze cross-validation errors and treatment effect heterogeneity using the bootstrapped estimates 
 produced in `Code/Analysis/Imputation_Xgboost/Main`. One can alternatively run individual bash scripts from the sub-directories. 
