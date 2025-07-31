@@ -7,9 +7,9 @@ This repository contains the scripts used for statistical analyses in "The Varyi
 This directory and sub-directories contain scripts to produce results in main analyses and parts of supplementary findings. The following documents the most relevant
 scripts for re-producing main results. 
 
-### Scripts called to prepare and load data. 
+# Helper scripts
 
-The following helper scripts are called in other scripts to more cleanly prepare and load data. These files do not need to be separately and are typically 
+The following helper scripts in `Code/Analysis` are called in main scripts to more cleanly prepare and load data. These files do not need to be separately and are typically 
 called in other programs. 
 
  [1] `data_preparation_bootstrap_estimation_tracts_w_time_trends.R`            
@@ -28,6 +28,7 @@ called in other programs.
 [14] `load_data_for_imputation_estimation_w_time_trends.R`                     
 [15] `load_data_for_imputation_estimation.R`
 
+In addition, the directory `Code/Functions` contains helper functions and programs. 
 
 ## Code/Analysis/Imputation_Xgboost
 
@@ -49,12 +50,18 @@ In practice, users would include their own email and usernames.
 The helper script calls the various .R programs located in sub-directories to analyze cross-validation errors and treatment effect heterogeneity using the bootstrapped estimates 
 produced in `Code/Analysis/Imputation_Xgboost/Main`. One can alternatively run individual bash scripts from the sub-directories. 
 
-## Code/Analsys/sbatch_figures.sh
+## Code/Analysis/sbatch_figures.sh
 
 This helper script calls the .R programs located in sub-directories to produce and save all figures in the main text and parts of the supplementary analyses. 
+
+## Code/Analysis/Tables_*
+
+Directories with the prefix `Tables_*` contain scripts that create `.csv` or `.tex` formattted tables shown in main and supplementary analyses. 
 
 ## Code/Analysis_Supplementary_w_Superettes
 
 The `Code/Analysis_Supplementary_w_Superettes` directory and sub-directories follow the same organizational structure as `Code/Analysis`.  
 
 However, these models and results use the modified low-access indicator that includes superettes. 
+
+
