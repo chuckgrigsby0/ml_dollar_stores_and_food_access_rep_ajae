@@ -1,4 +1,4 @@
-# Script that, when sourced, will obtain a list of covariate names, separated by predictor category (model_covars_list), and 
+# Script obtains a list of covariate names, separated by predictor category (model_covars_list), and 
 # a list of "tidy" covariate names to be used for plots (model_covar_names). 
 #--------------------------------------------------------------------------------------------#
 Get_Vars_Function <- function(grepl_string, dta){

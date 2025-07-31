@@ -42,7 +42,7 @@ effects_on_ds_entry_x_covars_x_grocery <- function(national, geography_str, mode
   
   # Prepare data. 
   # Note: While posttre_effects_wdsentry originates with bootstrap output, posttr_binned_covars is created with 
-  # original data, allowing for smooth joins.
+  # original data, allowing for easy joins.
   
   posttre_effects_winteracts <- posttre_effects_wdsentry %>% # dta
     
@@ -73,10 +73,7 @@ effects_on_ds_entry_x_covars_x_grocery <- function(national, geography_str, mode
                     .fn = ~str_remove_all(., entry_var_str)  ) ) %>%
       
       mutate(across(.cols = term, 
-                    .fn = ~str_remove_all(., covariate)  ) )  # %>%
-    
-    # filter(!grepl('^0:', term)) # In the gross_entry_cumsum case, remove cases in which treated obs. 
-    # had NAs at the start of treatment but later included data. 
+                    .fn = ~str_remove_all(., covariate)  ) )  
     
     # Split up the term column and add to the estimates data.frame().
     new_cols <- data.frame((str_split_fixed(tidy_reg$term, ':', n = 2)))
@@ -130,9 +127,7 @@ effects_on_ds_entry_x_covars_x_grocery <- function(national, geography_str, mode
                     .fn = ~str_remove_all(., entry_var_str)  ) ) %>%
       
       mutate(across(.cols = term, 
-                    .fn = ~str_remove_all(., covariate)  ) )  # %>%
-    
-    # filter(!grepl('^0:', term))
+                    .fn = ~str_remove_all(., covariate)  ) )  
     
     
     # Split up the term column and add to the estimates data.frame().

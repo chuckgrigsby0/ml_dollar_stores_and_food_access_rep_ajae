@@ -2,8 +2,8 @@
 # Compare ATTs using different definitions of geography. 
 # ----------------------------------- #
 pacman::p_load('dplyr', 'purrr', 'tidyr', 'stringr', 'readxl', 'here')
-model_dep_var = Sys.getenv('model_dep_var') # Used in script below. If running for low_access_pers, must change settings below.
-model_geography = Sys.getenv("model_geography") # Used in script below to subset by either Urban or Rural.
+model_dep_var = Sys.getenv('model_dep_var') 
+model_geography = Sys.getenv("model_geography")
 bootstrap_id <- Sys.getenv("SLURM_ARRAY_TASK_ID")
 bootstrap_id <- as.numeric(bootstrap_id)
 print(paste('Bootstrap model number', bootstrap_id))
@@ -15,7 +15,7 @@ if (bootstrap_id == 0){
   # -------------------------------------------------------------------------------------------- #
   filename <- paste0('xgboost_10m_', str_to_lower(model_geography), '_', model_dep_var, '_final', '.rds'); filename
   dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-  dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
+  dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title 
   # -------------------------------------------------------------------------------------------- #
   model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, filename))
   # -------------------------------------------------------------------------------------------- #

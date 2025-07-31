@@ -1,17 +1,17 @@
 #!/bin/bash
 #SBATCH --job-name=bootstrap_ruca_comparison
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=cgrigsby0@gmail.com
+#SBATCH --mail-user=useremail
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --array=0-499%200
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=2gb
-#SBATCH --qos=connerm-b
+#SBATCH --qos=useraccount-b
 #SBATCH --time=01:00:00
-#SBATCH --export=model_geography=Urban,model_dep_var=low_access # Rural/Urban, low_access/low_access_pers
-#SBATCH --output=./hpg_output/bootstrap_ruca_urban_%A_%a.out
-#SBATCH --error=./hpg_output/bootstrap_ruca_urban_%A_%a.error
+#SBATCH --export=model_geography=Urban,model_dep_var=low_access # Rural/Urban
+#SBATCH --output=./output/bootstrap_ruca_urban_%A_%a.out
+#SBATCH --error=./output/bootstrap_ruca_urban_%A_%a.error
 
 #Record the time and compute node the job ran on
 date; hostname; pwd

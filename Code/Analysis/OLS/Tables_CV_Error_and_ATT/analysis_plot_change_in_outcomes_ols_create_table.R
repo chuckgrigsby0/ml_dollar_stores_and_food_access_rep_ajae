@@ -1,0 +1,143 @@
+# Creates latex table showing xgboost, random forest, and OLS-LPM CV errors and ATT results. 
+# -------------------------------------------------- #
+pacman::p_load('here', 'dplyr', 'purrr', 'stringr')
+
+# Load OLS Results. 
+rootname <- 'average_change_in_outcomes_relative_time_ols.rds'
+urban_att_ols <- readRDS(here::here('Analysis', 'Tables', 'Low_Access', 'Urban', paste0('urban_', rootname) ) )
+rural_att_ols <- readRDS(here::here('Analysis', 'Tables', 'Low_Access', 'Rural', paste0('rural_', rootname) ) )
+
+att_ols <- bind_rows(urban_att_ols, rural_att_ols) %>% 
+  
+  mutate(Algorithm = 'OLS')
+
+# Load RF results. 
+rootname_rf <- 'average_change_in_outcomes_relative_time_rf.rds'
+urban_att_rf <- readRDS(here::here('Analysis', 'Tables', 'Low_Access', 'Urban', paste0('urban_', rootname_rf) ) )
+rural_att_rf <- readRDS(here::here('Analysis', 'Tables', 'Low_Access', 'Rural', paste0('rural_', rootname_rf) ) )
+
+att_rf <- bind_rows(urban_att_rf, rural_att_rf) %>% 
+  
+  rename(estimate = estiamte) %>%
+  
+  mutate(Algorithm = 'RF')
+
+
+att_ols <- bind_rows(att_ols, att_rf)
+
+# Compute confidence intervals based on bootstrapped SDs. 
+alpha_levels <- c(0.01, 0.05, 0.10)
+ci_thresholds <- map(alpha_levels, function(.x) qnorm(p = 1 - .x/2) ); ci_thresholds
+ci_thresholds <- set_names(ci_thresholds, nm = c('one', 'five', 'ten'))
+
+att_ols <- att_ols %>%
+  group_by(Measure, Geography, variable, Algorithm) %>%
+  mutate(estimate_lead = dplyr::lead(estimate),
+         # Calculate CIs using threshold list values
+         CI_lower_01 = case_when(
+           Statistic == "Avg" ~ estimate - ci_thresholds$one * estimate_lead,
+           TRUE ~ NA_real_
+         ),
+         CI_upper_01 = case_when(
+           Statistic == "Avg" ~ estimate + ci_thresholds$one * estimate_lead,
+           TRUE ~ NA_real_
+         ),
+         CI_lower_05 = case_when(
+           Statistic == "Avg" ~ estimate - ci_thresholds$five * estimate_lead,
+           TRUE ~ NA_real_
+         ),
+         CI_upper_05 = case_when(
+           Statistic == "Avg" ~ estimate + ci_thresholds$five * estimate_lead,
+           TRUE ~ NA_real_
+         ),
+         CI_lower_10 = case_when(
+           Statistic == "Avg" ~ estimate - ci_thresholds$ten * estimate_lead,
+           TRUE ~ NA_real_
+         ),
+         CI_upper_10 = case_when(
+           Statistic == "Avg" ~ estimate + ci_thresholds$ten * estimate_lead,
+           TRUE ~ NA_real_
+         ),
+         # Determine significance levels with nested case_when
+         Significance = case_when(
+           Statistic == "Avg" & (CI_lower_01 > 0 | CI_upper_01 < 0) ~ "***",
+           Statistic == "Avg" & (CI_lower_05 > 0 | CI_upper_05 < 0) ~ "**",
+           Statistic == "Avg" & (CI_lower_10 > 0 | CI_upper_10 < 0) ~ "*",
+           TRUE ~ ""
+         )
+  ) %>% 
+  mutate(across(.cols = where(is.numeric), 
+                .fn = \(x) case_when(str_detect(variable, pattern = '^pct') ~ x * 100, 
+                                     TRUE ~ x) ) 
+  ) %>%
+  mutate(
+    estimate = round(estimate, digits = 4) 
+  ) %>% 
+  mutate(
+    estimate = case_when(
+      Statistic == "Avg" & str_detect(variable, pattern = '^err|^tau|^pct') ~ paste0(format(estimate, scientific = FALSE, trim = TRUE), Significance),
+      TRUE ~ as.character(estimate)
+    )
+  ) %>%
+  mutate(
+    estimate = case_when(
+      Statistic == "SD" ~ paste0('(', trimws(format(estimate, scientific = FALSE, trim = TRUE)), ')'),
+      TRUE ~ as.character(estimate)
+    )
+  ) %>%
+  select(-starts_with("CI_"), -Significance, -estimate_lead) %>%
+  pivot_wider(names_from = c(Geography, Algorithm), 
+              values_from = estimate) %>%
+  filter(!(Statistic == 'SD' & variable %in% c('actual_avg', 'preds_avg') ) )
+
+# --------------------------------- # 
+# Create a final table. 
+# --------------------------------- # 
+table_att_ols <- att_ols %>% 
+  mutate(Parameter = case_when( 
+    variable == 'actual_avg' & Measure == 'CV Error' ~ 'Proportion low access, pre-entry (observed)', 
+    variable == 'preds_avg' & Measure == 'CV Error' ~ 'Proportion low access, pre-entry (predicted)',
+    variable == 'err_avg' & Measure == 'CV Error' & Statistic == 'Avg' ~ 'CV Error',
+    variable == 'pct_err' & Measure == 'CV Error' & Statistic == 'Avg' ~ 'CV Error (%)',
+    
+    variable == 'actual_avg' & Measure == 'ATT' ~ 'Proportion low access, post-entry (observed)', 
+    variable == 'preds_avg' & Measure == 'ATT' ~ 'Proportion low access, post-entry (predicted)',
+    variable == 'tau_avg' & Measure == 'ATT' & Statistic == 'Avg' ~ 'ATT',
+    variable == 'pct_att' & Measure == 'ATT' & Statistic == 'Avg' ~ 'ATT (%)', 
+    
+    TRUE ~ ''
+  )
+  ) %>% 
+  ungroup() %>%
+  select(Parameter, matches('RF$'), matches('OLS$') )
+
+source(here::here('Code', 'Analysis', 'Tables_CV_Error_and_ATT', 'rr_analysis_cv_error_and_att_create_table.R'))
+table_att_comb <- bind_cols(table_att, select(table_att_ols, matches('OLS$|RF$')))
+
+# Create the LaTeX table
+library(kableExtra)
+kable(table_att_comb, 
+      format = "latex", 
+      align = 'lcccc', 
+      booktabs = TRUE,
+      escape = TRUE, # Note: This is the default.
+      digits = 4,
+      position = '!h',
+      linesep = '',
+      centering = TRUE, # Note: This is the default. 
+      col.names = c('Parameter', rep(c('Urban', 'Rural'), 3) ),
+      caption = paste0("Average Treatment Effects of Dollar Store Entry on Low Food Access Status Comparing XGBoost, Random Forest, and OLS-LPM, Block Groups Receiving a Dollar Store from 2006-2020")) %>% 
+  kable_styling() %>%
+  add_header_above(c('', 'XGBoost' = 2, 'Random Forest' = 2, 'OLS-LPM' = 2)) %>%
+  footnote(general = paste0(
+    "Notes: Bootstrapped standard errors are in parentheses. ",
+    "*$p<0.10$, **$p<0.05$, ***$p<0.01$. ",
+    "$\\text{ATT} (\\%)$ gives the \\text{ATT} as a percentage of ",
+    "the estimated proportion of low access block groups in the absence ",
+    "of dollar store entry over the observed time horizon.", 
+    "The table compares the model performance of XGBoost, random forest, and an ordinary least squares (OLS) linear probability regression model (LPM)."
+  ),
+  general_title = '', 
+  threeparttable = TRUE, 
+  escape = FALSE, 
+  footnote_as_chunk = TRUE)

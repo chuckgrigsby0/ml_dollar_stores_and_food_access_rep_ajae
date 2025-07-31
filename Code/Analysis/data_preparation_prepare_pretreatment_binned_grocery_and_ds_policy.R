@@ -1,9 +1,6 @@
+# Script to create binned dollar store policy variables and baseline grocery store variables to assess CV errors across these variables. 
 # -------------------------------------------------------------------------------------------- #
-.libPaths()
-# Load empirical data and point estimates. 
-# -------------------------------------------------------------------------------------------- #
-# Specify Urban/Rural, dependent variable, and results based on BG bootstrap or CT bootstrap. 
-model_geography <- 'Urban' # Used in script below to subset by either Urban or Rural.
+model_geography <- 'Urban'
 model_dep_var <- 'low_access'
 options(scipen = 999)
 # -------------------------------------------------------------------------------------------- #
@@ -26,8 +23,8 @@ ds_bans_binned <- prepare_binned_ds_policy_vars(df = ds_bans)
 # Load the optimal estimated model following tuning/training. 
 # -------------------------------------------------------------------------------------------- #
 filename <- paste0('xgboost_10m_', str_to_lower(model_geography), '_', model_dep_var, '_final', '.rds'); filename
-dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var # e.g., Low_Access
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title # For plot titles (below). e.e., Low Access
+dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_'); dir_dep_var
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')); dep_var_title
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, filename))
 # -------------------------------------------------------------------------------------------- #
@@ -68,13 +65,6 @@ treated_preds <- model_output$data_cf_preds %>%
 # -------------------------------------------------------------------------------------------- #
 treated_preds <- treated_preds %>% 
   select(GEOID, event_year, entry_events, net_entry_cumsum)
-# -------------------------------------------------------------------------------------------- #
-# pretr_preds_aug <- untreated_preds %>%
-#   
-#   filter(is.finite(rel_year) ) %>% # Filter out observations with rel_year == Inf because these are never-treated observations. 
-#     
-#     left_join(treated_preds,  by = c('GEOID', 'event_year'), 
-#               relationship = 'many-to-many', multiple = 'all' )
 # -------------------------------------------------------------------------------------------- #
 pretr_preds <- untreated_preds %>%
   

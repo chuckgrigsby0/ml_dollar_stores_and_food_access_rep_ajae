@@ -1,5 +1,4 @@
-# Script that loads the data for statistical models.  
-.libPaths()
+# Script that creates data for conventional DID methods. 
 # ----------------------------------- #
 # Load packages
 # ----------------------------------- #
@@ -8,22 +7,20 @@ p_load('here', 'dplyr', 'ggplot2', 'purrr', 'tidyr', 'stringr',
        'recipes', 'rsample', 'fixest', 'sf', 'tictoc', 'xgboost', 
        'haven')
 # -------------------------------------------------------------------------------------------- #
-model_geography = 'Urban'
+model_geography = 'Urban' # Change according to Rural/Urban data needs. 
 model_dep_var = 'low_access'
 # -------------------------------------------------------------------------------------------- #
 # Food Desert indicators for a given drive time or distance. 
 # -------------------------------------------------------------------------------------------- #
-load(here::here('Data', 'Data_2_and_10_Miles', 'food_access_indicators_block_groups_2_and_10mile.RData')) # 10min, 3mile, 5mile 
+load(here::here('Data', 'Data_2_and_10_Miles', 'food_access_indicators_block_groups_2_and_10mile.RData'))
 # -------------------------------------------------------------------------------------------- #
 # Dollar store entries - This dataset is needed to separate the treated from the yet-to-be-treated and never-treated. 
 # -------------------------------------------------------------------------------------------- #
-load(here::here('Data', 'Data_2_and_10_Miles', 'ds_entries_panel_treated_wbins_and_untreated_2_and_10mile.RData')) #10min, 3mile
+load(here::here('Data', 'Data_2_and_10_Miles', 'ds_entries_panel_treated_wbins_and_untreated_2_and_10mile.RData'))
 # -------------------------------------------------------------------------------------------- #
 # Pre-Entry Retail Store Counts
 # -------------------------------------------------------------------------------------------- #
-# load(here::here('Data', 'dollar_store_counts_3mile_2005_feature.RData')) #10min, 3mile Same variable in retail_store.*
-load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData')) #10min, 3mile
-# -------------------------------------------------------------------------------------------- #
+load(here::here('Data', 'Data_2_and_10_Miles', 'retail_store_counts_2_and_10mile_2005_feature.RData'))
 # -------------------------------------------------------------------------------------------- #
 # Demographic and socioeconomic data. 
 # -------------------------------------------------------------------------------------------- #

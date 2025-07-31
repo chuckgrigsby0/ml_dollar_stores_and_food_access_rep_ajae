@@ -1,7 +1,8 @@
-model_dep_var = 'low_access'; model_geography = 'Urban'
+model_dep_var = 'low_access'
+model_geography = 'Urban' # Change for Urban/Rural results. 
 options(scipen=999)
 # -------------------------------------------------------------------------------------------- #
-# Load data based on parameters specified in analysis_plot_effects_and_errors_on_covars 
+# Load data based on parameters specified above. 
 # -------------------------------------------------------------------------------------------- #
 source(here::here('Code', 'Analysis_Supplementary_w_Superettes', 'data_preparation_imputation_estimation.R'))
 # -------------------------------------------------------------------------------------------- #
@@ -10,11 +11,7 @@ source(here::here('Code', 'Analysis_Supplementary_w_Superettes', 'data_preparati
 source(here::here('Code', 'Analysis_Supplementary_w_Superettes', 'data_preparation_model_covars_lists.R'))
 model_covars <- unlist(model_covars_list, use.names = FALSE) 
 # -------------------------------------------------------------------------------------------- #
-# Filter out urban_area and uc_area from the Rural models. 
-# -------------------------------------------------------------------------------------------- #
-# if (model_geography == 'Rural'){ 
-#   model_covars <- model_covars[!grepl('^urban_area$|^uc_area$', model_covars)]
-# }
+
 # -------------------------------------------------------------------------------------------- #
 # Load regional and divisional labels. 
 # -------------------------------------------------------------------------------------------- #
@@ -53,10 +50,7 @@ treated_preds <- model_output$data_cf_preds %>%
   
   left_join(select(dta_treated, GEOID, year, all_of(model_covars)), by = c('GEOID', 'year')) %>%
   
-  # For consistency with the out-of-sample predictions during CV, 
-  # we obtain counterfactual predictions from 2007 to 2020.
-  
-  filter(year >= '2006') %>%
+  filter(year >= '2006') %>% # We obtain post-treatment predictions from 2006-2020
   
   left_join(bg_regs_and_divs, by = 'GEOID') # Regional and divisional indicators. 
 # -------------------------------------------------------------------------------------------- #
@@ -69,14 +63,6 @@ model_preds <- bind_rows(untreated_preds, treated_preds) %>%
 # Load post-treatment binned and factor data. 
 # -------------------------------------------------------------------------------------------- #
 # See file 'data_preparation_prepare_binned_and_factor_covars.R' and associated Functions called in script. 
-
-# Note: These data.frames are from the original data so they must be joined 
-# to the bootrapped data for the current bootstrap iteration. 
-# -------------------------------------------------------------------------------------------- #
-
-# -------------------------------------------------------------------------------------------- #
-# Post-treatment bins (quartiles)
-
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment bins (quartiles) 
 # -------------------------------------------------------------------------------------------- #
@@ -85,7 +71,6 @@ fname_posttr_binned_covars = paste0('posttreatment_binned_quartile_covars_', str
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 fname_posttr_binned_covars = paste0('posttreatment_binned_and_factor_covariates_w_superettes_', str_to_lower(model_geography), '.rds')
@@ -93,7 +78,6 @@ fname_posttr_binned_covars = paste0('posttreatment_binned_and_factor_covariates_
 posttr_binned_covars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_covars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_covars <- posttr_binned_covars %>% select(-tau)
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment dollar store bins and factors. 
@@ -103,10 +87,7 @@ fname_posttr_binned_dsvars = paste0('posttreatment_binned_and_factor_dsvars_', s
 posttr_binned_dsvars <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_dsvars))
 
 # Remove tau calculated from the original/empirical data 
-# because the pretr_preds from model_preds contains the bootstrapped error. 
 posttr_binned_dsvars <- posttr_binned_dsvars %>% select(-tau)
-
-
 # -------------------------------------------------------------------------------------------- #
 # Post-treatment observations, year 2005 Grocery Store bins. 
 # -------------------------------------------------------------------------------------------- #
@@ -114,7 +95,6 @@ fname_posttr_binned_grocery = paste0('posttreatment_binned_grocery_and_superette
 
 posttr_binned_grocery <- readRDS(here::here('Data', 'Data_2_and_10_Miles', fname_posttr_binned_grocery))
 # -------------------------------------------------------------------------------------------- #
-
 posttre_effects <- model_preds %>% 
   
   filter(rel_year >= 0) %>% 
@@ -123,11 +103,9 @@ posttre_effects <- model_preds %>%
   
   mutate(rel_year = factor(rel_year))
 # -------------------------------------------------------------------------------------------- #
-# Prepare data for pre-treatment analyses and post-treatment analyses. 
-# Note: data preparation is already completed for pre-treatment data. See pretr_binned_covars. 
+# Prepare data for post-treatment analyses. 
 # -------------------------------------------------------------------------------------------- #
 posttr_key_vars <- c('GEOID', 'year', 'event_year', 'rel_year')
-# tau and dollar store entry/counts w/ grocery stores from 2005. 
 
 posttre_effects_wdsentry <- posttre_effects %>%
   select(all_of(posttr_key_vars), actual, preds, tau, inc_per_capita, poverty_rate, pop_black) %>%
@@ -143,8 +121,6 @@ sel_covars_bins <- c('poverty_rate_bins', 'pop_black_bins', 'inc_per_capita_bins
 sel_dsvars_bins <- c('gross_entry_cumsum_bins', 'entry_events_bins', 'net_entry_cumsum_bins')
 
 # Prepare data. 
-# Note: While posttre_effects_wdsentry originates with bootstrap output, posttr_binned_covars is created with 
-# original data, allowing for smooth joins.
 
 posttre_effects_winteracts <- posttre_effects_wdsentry %>% # dta
   
@@ -197,7 +173,6 @@ summary_stats_by_covar <- function(dta, covar_bins){
   
 }
 # -------------------------------------------------------------------------------------------- #
-
 sum_stats_list <- sel_covars_bins %>% 
   map(function(.x){
     summary_stats_by_covar(dta = posttre_effects_winteracts, covar_bins = .x)
@@ -208,6 +183,7 @@ sum_stats_list <- set_names(sum_stats_list, nm = sel_covars_bins)
 sum_stats_df <- sum_stats_list %>% bind_rows() %>% mutate(across(.cols = where(is.numeric), .fns = \(x) round(x, digits = 4)))
 # -------------------------------------------------------------------------------------------- #
 # Create a data frame of tidy variable names. 
+# -------------------------------------------------------------------------------------------- #
 model_covar_df_vars_tidy <- tibble::enframe(model_covar_names, name = "category", value = "varname_tidy") %>% 
   unnest(varname_tidy)
 

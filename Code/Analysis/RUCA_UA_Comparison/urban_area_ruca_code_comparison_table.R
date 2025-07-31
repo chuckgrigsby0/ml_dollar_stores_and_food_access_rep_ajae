@@ -2,8 +2,7 @@ library('pacman')
 library('here')
 pacman::p_load('dplyr', 'stringr', 'purrr', 'tidyr', 'sf')
 # Load and prepare data. 
-model_dep_var = 'low_access' # Used in script below. If running for low_access_pers, must change settings below.
-# model_geography = 'Urban' # Used in script below to subset by either Urban or Rural.
+model_dep_var = 'low_access' # Used in script below. 
 print(model_dep_var)
 options(scipen=999)
 # Load data. 

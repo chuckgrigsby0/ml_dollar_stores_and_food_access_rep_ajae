@@ -17,21 +17,7 @@ Combine_Data_Function <- function(dta, panel_df_access_inds_x_and_ymile, retail_
     left_join(roads, by = 'GEOID') %>%
     left_join(geog_data, by = 'GEOID') %>%
     # --------------------- #
-    # Lasso State and Time FEs. 
-    # --------------------- #
-    #left_join(time_fixed_effects, by = 'year') %>%
-    #left_join(state_fixed_effects, by = 'STATE') %>%
-    # --------------------- #
-    # OLS Market and Time FEs.
-    # --------------------- #
-    # left_join(fes_year, by = 'year') %>%
-    # left_join(fes_market, by = 'market') %>%
-    # left_join(fes_market_by_time, by = c('year', 'market')) %>%
-    # --------------------- #
-    # OLS State and Time FEs. 
-    # --------------------- #
-    # left_join(fes_year, by = 'year') %>%
-    # left_join(fes_state, by = 'STATE') %>%
+    # Time-x-State FEs. 
     # --------------------- #
     left_join(fes_state_by_time, by = c('year', 'STATE')) %>%
     # --------------------- #
@@ -40,7 +26,7 @@ Combine_Data_Function <- function(dta, panel_df_access_inds_x_and_ymile, retail_
     mutate(across(.cols = matches('^fe_'), 
                   .fns = ~if_else(is.na(.), 0, .)))  
   
-  if (isFALSE(national)){
+  if (isFALSE(national)){ # In practice, national is always set to FALSE, as we estimate models across urban and rural areas. 
     dta <- dta %>% filter(grepl(geography_str, Geography))
   } 
   
@@ -55,6 +41,9 @@ Combine_Data_Function <- function(dta, panel_df_access_inds_x_and_ymile, retail_
 }
 # -------------------------------------------------------------------------------------------- #
 print('Sourced: Combine_Data_w_Trends_Function')
+# -------------------------------------------------------------------------------------------- #
+# For revise-and-resubmit reviewer request, function combines state-, year-FEs, and linear-state trends. 
+# -------------------------------------------------------------------------------------------- #
 Combine_Data_w_Trends_Function <- function(dta, panel_df_access_inds_x_and_ymile, retail_counts_2005_x_and_ymile, national, geography_str){ # Treated or untreated data. 
   
   dta <- list(dta, # Untreated/Treated dollar store entry data with relative treatment timing. 
@@ -69,7 +58,6 @@ Combine_Data_w_Trends_Function <- function(dta, panel_df_access_inds_x_and_ymile
     left_join(dist_to_urb, by = 'GEOID') %>% 
     left_join(roads, by = 'GEOID') %>%
     left_join(geog_data, by = 'GEOID') %>%
-    # --------------------- #
     # --------------------- #
     # OLS State, Time, and State trend FEs. 
     # --------------------- #

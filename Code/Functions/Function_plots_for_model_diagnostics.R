@@ -6,9 +6,7 @@ library(RColorBrewer)
 display.brewer.pal(n = 9, name = 'Greys')
 greys <- brewer.pal(n = 9, name = 'Greys')
 #--------------------------------------------------------------------------------------------#
-# Create a new data frame to include in the plot_effects_on_covars_norm function and the plot_errors_on_covars_binned function.
-# This allows us to specify a vertical line in each facet to indicate a null effect of the predictor 
-# on the causal estimate. 
+# Create a new data frame that  allows us to plot a vertical line in figures to indicate null treatment effects. 
 null_effect_df <- data.frame(null_effect = 0)
 print(paste('Loaded: null_effect_df$null_effect =', null_effect_df$null_effect))
 #--------------------------------------------------------------------------------------------#
@@ -20,8 +18,6 @@ plot_errors_on_relyear <- function(dta, ci_label_str, ci_level,
                                    plot_title, plot_subtitle,
                                    decimal_place_y, 
                                    y1_lim, y2_lim){
-  #y_value <- sym(y_value)
-  #standard_error <- sym(standard_error)
   
   dta <- dta %>% mutate(ci_label = paste0(ci_label_str))
   
@@ -67,8 +63,6 @@ plot_errors_on_relyear <- function(dta, ci_label_str, ci_level,
     labs(title = plot_title, 
          subtitle = plot_subtitle)+
     
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
-    
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=90, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 12), 
           axis.title.y = element_text(size = 12, face = 'bold'),
@@ -109,7 +103,7 @@ plot_actual_on_predicted <- function(dta, y_value, standard_error,
                size = 4, 
                position = position_dodge(width = 0.6)) +
     
-    geom_linerange(aes(ymax = {{y_value}} + ci_level*{{standard_error}}, # Computes 99% CIs
+    geom_linerange(aes(ymax = {{y_value}} + ci_level*{{standard_error}},
                        ymin = {{y_value}} - ci_level*{{standard_error}}, 
                        color = Outcome, 
                        alpha = Outcome), 
@@ -139,8 +133,6 @@ plot_actual_on_predicted <- function(dta, y_value, standard_error,
     
     labs(title = plot_title, 
          subtitle = plot_subtitle)+
-    
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=90, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 12), 
@@ -175,11 +167,8 @@ plot_effects_on_relyear <- function(dta,
                                     y_axis_title, x_axis_title, 
                                     plot_title, plot_subtitle,
                                     legend_lab,
-                                    #breaks_y, 
                                     decimal_place_y, 
                                     y1_lim, y2_lim){
-  #y_value <- sym(y_value)
-  #standard_error <- sym(standard_error)
   
   dta <- dta %>% mutate(ci_label = ci_label_str, 
                         legend_lab = legend_lab_str)
@@ -208,7 +197,7 @@ plot_effects_on_relyear <- function(dta,
     
     scale_linetype_manual(values = 'solid') +
     
-    scale_color_manual(values = greys[8], labels = 'ATT')+ # Need to include twice to not replicate legend point.
+    scale_color_manual(values = greys[8], labels = 'ATT')+
     
     guides(color = guide_legend(order = 1), 
            line = guide_legend(order = 2))+
@@ -224,7 +213,7 @@ plot_effects_on_relyear <- function(dta,
     labs(title = plot_title,
          subtitle = plot_subtitle)+
     
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
+    
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=90, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 12), 
@@ -257,8 +246,8 @@ plot_effects_on_relyear_by_entry_bin <- function(dta, y_value, standard_error,
                                                  plot_title, plot_subtitle,
                                                  decimal_place_y, 
                                                  y1_lim, y2_lim){
-  #y_value <- sym(y_value)
-  #standard_error <- sym(standard_error)
+  
+  
   
   dta %>% 
     
@@ -301,7 +290,7 @@ plot_effects_on_relyear_by_entry_bin <- function(dta, y_value, standard_error,
     labs(title = plot_title, 
          subtitle = plot_subtitle)+
     
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
+    
     
     theme(axis.text.x = element_text(color = 'black', size = 14, angle=90, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 14), 
@@ -378,7 +367,7 @@ plot_pred_and_actual_by_year <- function(dta,
     
     labs(title= plot_title, subtitle = plot_subtitle)+
     
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
+    
     
     theme(axis.text.x = element_text(color = 'black', size = 14, angle=0, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 14), 
@@ -470,10 +459,6 @@ plot_errors_on_covars_binned <- function(dta,
     
     labs(title = title_str, 
          subtitle = subtitle_str) +
-    # labs(title= 'Pre-Treatment Cross-Validation Errors and Predictors', 
-         
-      #    subtitle = paste0('Geography: ', model_geography, "\n", 
-        #                    'Outcome: ', dep_var_subtitle)) + 
     
     facet_wrap2(~tidy_name, ncol = 1, scales = 'free')+
     
@@ -560,10 +545,6 @@ plot_errors_on_int_covars <- function(dta,
     labs(title = title_str, 
          subtitle = subtitle_str) +
     
-    # labs(title= 'Pre-Treatment Cross-Validation Errors and Predictors', 
-         
-      #    subtitle = paste0('Geography: ', model_geography, "\n", 
-        #                    'Outcome: ', dep_var_subtitle)) + 
     
     facet_wrap2(~tidy_name, ncol = 1, scales = 'free')+
     
@@ -632,8 +613,6 @@ plot_errors_on_covars_norm <- function(dta,
     
     coord_flip() +
     
-    # facet_wrap(covariate_type~., nrow = 2, scales = 'free_y')+ #This means that the variable categories are on y-axis and and store types are on x-axis. 
-    
     scale_y_continuous(name = 'Effect Size', 
                        breaks = scales::breaks_pretty(n = 15), 
                        labels = scales::label_number(accuracy = decimal_place_y))+
@@ -649,11 +628,6 @@ plot_errors_on_covars_norm <- function(dta,
     
     labs(title = title_str, 
          subtitle = subtitle_str) +
-    
-    # labs(title = 'Treatment Effect Heterogeneity by Predictor', 
-    
-    #      subtitle = paste0('Geography: ', model_geography, "\n", 
-    #                        'Outcome: ', dep_var_subtitle)) + 
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=45, hjust = 1, vjust = 1), 
           axis.text.y = element_text(color = 'black', size = 12, angle=0), 
@@ -743,10 +717,7 @@ plot_effects_on_covars_binned <- function(dta,
     
     labs(title = title_str, 
          subtitle = subtitle_str) +
-    # labs(title= 'Pre-Treatment Cross-Validation Errors and Predictors', 
-    
-    #    subtitle = paste0('Geography: ', model_geography, "\n", 
-    #                    'Outcome: ', dep_var_subtitle)) + 
+     
     
     facet_wrap2(~tidy_name, ncol = 1, scales = 'free')+
     
@@ -836,10 +807,6 @@ plot_effects_on_int_covars <- function(dta,
     labs(title = title_str, 
          subtitle = subtitle_str) +
     
-    # labs(title= 'Pre-Treatment Cross-Validation Errors and Predictors', 
-    
-    #    subtitle = paste0('Geography: ', model_geography, "\n", 
-    #                    'Outcome: ', dep_var_subtitle)) + 
     
     facet_wrap2(~tidy_name, ncol = 1, scales = 'free')+
     
@@ -913,8 +880,6 @@ plot_effects_on_covars_norm <- function(dta,
       
       coord_flip() +
       
-      # facet_wrap(covariate_type~., nrow = 2, scales = 'free_y')+ #This means that the variable categories are on y-axis and and store types are on x-axis. 
-      
       scale_y_continuous(name = 'Effect Size', 
                          breaks = scales::breaks_pretty(n = 15), 
                          labels = scales::label_number(accuracy = decimal_place_y))+
@@ -930,10 +895,6 @@ plot_effects_on_covars_norm <- function(dta,
       
       labs(title = title_str, 
            subtitle = subtitle_str) +
-      # labs(title = 'Treatment Effect Heterogeneity by Predictor', 
-      
-      #      subtitle = paste0('Geography: ', model_geography, "\n", 
-      #                        'Outcome: ', dep_var_subtitle)) + 
       
       theme(axis.text.x = element_text(color = 'black', size = 12, angle=45, hjust = 1, vjust = 1), 
             axis.text.y = element_text(color = 'black', size = 12, angle=0), 
@@ -976,9 +937,9 @@ plot_effects_on_dsvars <- function(dta,
   
   dta <- dta %>% filter(!!!filter_covariate_type) 
   
-  if (grepl('Gross', unique(dta$tidy_name))){ # If Gross entry, filter out the term in which gross entry was zero, which only occurs due to 
-    dta <- dta %>% filter(term != '0') # Missing values for observations in post-treatment periods, causing their initial gross entry to be zero temporarily
-    } # until the following entry. 
+  if (grepl('Gross', unique(dta$tidy_name))){ 
+    dta <- dta %>% filter(term != '0') 
+    }
     
     dta <- dta %>% 
       
@@ -1010,10 +971,6 @@ plot_effects_on_dsvars <- function(dta,
                linetype = 'dashed', 
                linewidth = 0.5)+
     
-    # Need to include in scale_color_manual and scale_shape_manual to not replicate legend point.
-    # c(expression(paste(tau, ' ~ Counts')), 
-    # expression(paste(tau, ' ~ Entries'))) )+
-    
     
     scale_y_continuous(name= y_axis_title, 
                        breaks = scales::breaks_pretty(n = 10), 
@@ -1030,11 +987,6 @@ plot_effects_on_dsvars <- function(dta,
     
     labs(title = title_str, 
          subtitle = subtitle_str) +
-    # labs(title = paste('Treatment Effect Heterogeneity by Dollar Store Counts and Entry Events'),
-    #       subtitle = paste0('Geography: ', model_geography, "\n", 
-    #                      'Outcome: ', dep_var_subtitle))+
-    
-    # ggh4x::facet_grid2(tidy_name ~ ., scales = 'free_x', independent = 'x')+ #This means that the variable categories are on y-axis and and store types are on x-axis. 
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=0), 
           axis.text.y = element_text(color = 'black', size = 12), 
@@ -1095,8 +1047,6 @@ plot_effects_vs_region_division <- function(dta, ci_label_str, ci_level, reg_div
     
     coord_flip() +
     
-    # facet_wrap(label~., nrow = fwrap_nrow, ncol = fwrap_ncol, scales = 'fixed')+ #This means that the variable categories are on y-axis and and store types are on x-axis. 
-    
     scale_y_continuous(name = 'Effect Size',  
                        breaks = scales::breaks_pretty(n = 10), 
                        labels = scales::label_number(accuracy = decimal_place_y))+
@@ -1112,9 +1062,7 @@ plot_effects_vs_region_division <- function(dta, ci_label_str, ci_level, reg_div
     
     labs(title = title_str, 
          subtitle = subtitle_str) +
-    # labs(title = paste('Treatment Effect Heterogeneity by', reg_div_str, sep = ' '), 
-    #      paste0('Geography: ', model_geography, "\n", 
-    #           'Outcome: ', dep_var_subtitle)) + 
+    
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle = 45, hjust = 1, vjust = 1), 
           axis.text.y = element_text(color = 'black', size = 12, angle = 0, hjust = 0.9), 
@@ -1181,15 +1129,7 @@ plot_ds_counts_entries_on_time <- function(dta,
                    alpha = 1, 
                    linewidth = 0.75)+
     
-    # geom_hline(data = null_effect_df, aes(yintercept = null_effect), 
-    #            color = greys[6], 
-    #            alpha = 0.70, 
-    #            linetype = 'dashed', 
-    #            linewidth = 0.5)+
-    
-    # ggh4x::facet_grid2(label ~ tidy_name, scales = 'free_x', independent = 'x')+ # This means that the grid is arranged where each row represents an outcome variables. 
-    # facet_wrap(~tidy_name, scales = 'free')+ # This means that the grid is arranged where each row represents an outcome variables. 
-    
+       
     scale_y_continuous(name= y_axis_title, 
                        breaks = scales::breaks_pretty(n = 5),
                        labels = scales::label_comma(accuracy = decimal_place_y))+
@@ -1206,10 +1146,7 @@ plot_ds_counts_entries_on_time <- function(dta,
     
     labs(title = title_str, 
          subtitle = subtitle_str) +
-    # labs(title = plot_title, 
-    #      
-    #    subtitle = paste0('Geography: ', model_geography, "\n", 
-    #                      'Outcome: ', dep_var_subtitle)) + 
+    
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=0), 
           axis.text.y = element_text(color = 'black', size = 12), 
@@ -1356,7 +1293,8 @@ plot_ds_entry_on_grocery_interacts <- function(dta,
   filter_covariate_type <- dplyr::enquos(filter_covariate_type)
   
   # Remove cases in which year 2005 grocery stores were 0, implying low-food access in 2005. 
-  # Estimates were negative, implying dollar stores improved food access following entry.   
+  # Estimates were negative, implying dollar stores improved food access following entry.  
+  
  if (isTRUE(one_or_more_grocers)){
   grocery_of_interest <- as.character(1:4)  # For grocers 1 to 4
   } else {
@@ -1448,8 +1386,8 @@ plot_ds_entry_on_grocery_interacts <- function(dta,
          plot.margin = margin(t = 0.5, r = 0.5, b = 0.5, l = .5, unit = "cm"))
  
  if (isTRUE(one_or_more_grocers)) { 
-   p <- p  # If this is meant to represent the plot without modifications
- } else {  # No condition after 'else'
+   p <- p  
+ } else {
    p <- p + coord_cartesian(ylim = c(lower_ylim, upper_ylim))
  }
  
@@ -1502,7 +1440,6 @@ plot_change_in_outcome_on_relyear <- function(dta,
     scale_y_continuous(name= y_axis_title, 
                        breaks = scales::breaks_pretty(n = 10), 
                        labels = scales::percent_format(accuracy = decimal_place_y))+
-                       #labels = scales::label_number(accuracy = decimal_place_y))+
     
     scale_x_discrete(name = x_axis_title)+
     
@@ -1512,7 +1449,7 @@ plot_change_in_outcome_on_relyear <- function(dta,
     labs(title = plot_title,
          subtitle = plot_subtitle)+
     
-    # facet_wrap(~Geography, scales='fixed', nrow =2)+
+    
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle=90, vjust=0.75), 
           axis.text.y = element_text(color = 'black', size = 12), 
@@ -1547,7 +1484,7 @@ plot_effects_on_ds_policy_vars <- function(dta,
                                            decimal_place_y, 
                                            analysis_dir){
 
-# filter_reg_type <- dplyr::enquos(filter_reg_type)
+
 
 dta_for_plot <- dta %>%
   
@@ -1596,11 +1533,11 @@ dta_for_plot %>%
   
   scale_x_discrete(name = 'Dollar Store Policy')+
   
-  scale_color_manual(values = greys[c(8, 6, 4)], # 12, 15, 18, 21, 24, 27, 30 # sequential_levels_mako[c(12, 10, 8, 6)]
+  scale_color_manual(values = greys[c(8, 6, 4)],
                      labels = legend_labels,
                      name = NULL)+
   
-  scale_fill_manual(values = greys[c(8, 6, 4)],# sequential_levels_mako[c(12, 10, 8, 6)],
+  scale_fill_manual(values = greys[c(8, 6, 4)],
                     labels = legend_labels,
                     name = NULL)+
   
@@ -1838,11 +1775,11 @@ plot_errors_on_ds_policy_vars <- function(dta,
     
     scale_x_discrete(name = 'Dollar Store Policy')+
     
-    scale_color_manual(values = greys[c(8, 6, 4)], # 12, 15, 18, 21, 24, 27, 30 # sequential_levels_mako[c(12, 10, 8, 6)]
+    scale_color_manual(values = greys[c(8, 6, 4)],
                        labels = legend_labels,
                        name = NULL)+
     
-    scale_fill_manual(values = greys[c(8, 6, 4)],# sequential_levels_mako[c(12, 10, 8, 6)],
+    scale_fill_manual(values = greys[c(8, 6, 4)],
                       labels = legend_labels,
                       name = NULL)+
     
@@ -1930,8 +1867,6 @@ plot_errors_vs_region <- function(dta,
     
     coord_flip() +
     
-    # facet_wrap(label~., nrow = fwrap_nrow, ncol = fwrap_ncol, scales = 'fixed')+ #This means that the variable categories are on y-axis and and store types are on x-axis. 
-    
     scale_y_continuous(name = 'Average Cross-Validation Error',  
                        breaks = scales::breaks_pretty(n = 10), 
                        labels = scales::label_number(accuracy = decimal_place_y))+
@@ -1947,9 +1882,7 @@ plot_errors_vs_region <- function(dta,
     
     labs(title = title_str, 
          subtitle = subtitle_str) +
-    # labs(title = paste('Treatment Effect Heterogeneity by', reg_div_str, sep = ' '), 
-    #      paste0('Geography: ', model_geography, "\n", 
-    #           'Outcome: ', dep_var_subtitle)) + 
+    
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle = 45, hjust = 1, vjust = 1), 
           axis.text.y = element_text(color = 'black', size = 12, angle = 0, hjust = 0.9), 
@@ -2031,9 +1964,7 @@ plot_errors_on_grocery_stores_2005 <- function(dta,
     
     labs(title = title_str, 
          subtitle = subtitle_str) +
-    # labs(title = paste('Treatment Effect Heterogeneity by Dollar Store Counts and Entry Events'),
-    #       subtitle = paste0('Geography: ', model_geography, "\n", 
-    #                      'Outcome: ', dep_var_subtitle)
+    
     
     theme(axis.text.x = element_text(color = 'black', size = 12, angle = 45, hjust = 1, vjust = 1), 
           axis.text.y = element_text(color = 'black', size = 12), 
@@ -2102,9 +2033,6 @@ plot_errors_on_ds_entry_x_grocery_stores <- function(dta,
                alpha = 0.70, 
                linetype = 'dashed', 
                linewidth = 0.5)+
-    
-    # ggh4x::facet_grid2(label ~ tidy_name, scales = 'free_x', independent = 'x')+ # This means that the grid is arranged where each row represents an outcome variables. 
-    # facet_wrap(~tidy_name, scales = 'free')+ # This means that the grid is arranged where each row represents an outcome variables. 
     
     scale_y_continuous(name= y_axis_title, 
                        breaks = scales::breaks_pretty(n = nbreaks),
@@ -2198,18 +2126,11 @@ plot_errors_on_ds_entry_x_baseline_stores <- function(dta,
                linetype = 'dashed', 
                linewidth = 0.5)+
     
-    # ggh4x::facet_grid2(label ~ tidy_name, scales = 'free_x', independent = 'x')+ # This means that the grid is arranged where each row represents an outcome variables. 
-    # facet_wrap(~tidy_name, scales = 'free')+ # This means that the grid is arranged where each row represents an outcome variables. 
-    
     scale_y_continuous(name= y_axis_title, 
                        breaks = scales::breaks_pretty(n = nbreaks),
                        labels = scales::label_comma(accuracy = decimal_place_y))+
     
     scale_x_discrete(name = x_axis_title)+
-    
-    # scale_color_manual(values = greys[seq(from = 8, to = 3)], # 12, 15, 18, 21, 24, 27, 30 
-    #                    labels = legend_labels_store_str,
-    #                    name = legend_title_str)+
     
     scale_fill_manual(values = greys[seq(from = 8, to = 3)], 
                       labels = legend_labels_store_str, 
@@ -2217,17 +2138,11 @@ plot_errors_on_ds_entry_x_baseline_stores <- function(dta,
     
     scale_linetype_manual(values = 'solid',
                           name = '') +
-    # scale_shape_manual(values = c(16, 17, 15), 
-    #                    labels = paste(c('First', 'Middle', 'Third'), 'Quartile'), 
-    #                    name = legend_title_str)+
     
     guides(color = guide_legend(order = 1, title.position = 'top', title.hjust = 0.5),  
            fill = guide_legend(order = 1, title.position = 'top', title.hjust = 0.5), 
            linetype = guide_legend(order = 2, title.position = 'top', title.hjust = 0.5)) +
     
-    # guides(color = guide_legend(order = 1, title.position = 'top'),  
-    #        fill = guide_legend(order = 1, title.position = 'left'), 
-    #        linetype = guide_legend(order = 1, title.position = 'left') ) +
     
     labs(title = title_str, 
          subtitle = subtitle_str) +

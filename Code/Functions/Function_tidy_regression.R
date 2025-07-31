@@ -17,7 +17,6 @@ tidy_regression_err_vs_covar_binned <- function(lm_model){
   coef_table <- broom::tidy(lm_model)
   coef_table$term <- str_replace_all(coef_table$term, '.*bins', '')
   
-  #first_bin <- which(stringr::str_detect(coef_table$term, '^\\[0,')) # Set the first bin to zero for plots. 
   first_bin <- coef_table$term[1]
   first_bin <- str_remove_all(first_bin, '\\[0,') # Remove everything just after [0, in the bin. 
   first_bin <- paste0('\u2264 ', str_remove_all(first_bin, '\\]')) # Unicode for less than or equal to. 
@@ -43,10 +42,7 @@ tidy_regression_err_vs_covar_binned <- function(lm_model){
                             term == '(6,7]' ~ '7',
                             term == '(7,8]' ~ '8',
                             term == '(8,9]' ~ '9', 
-                            TRUE ~ term) ) # %>%
-    
-    #mutate(across(.cols = term, 
-     #             .fns = ~factor(., levels = unique(.))))
+                            TRUE ~ term) ) 
   
   return(coef_table)
 }

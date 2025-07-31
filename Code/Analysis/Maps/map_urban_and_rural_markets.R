@@ -34,24 +34,6 @@ load(here::here('Data', 'bg_pop_centroids_2010_projected_w_urban_areas.RData'))
 # US States
 # ------------------------- #
 us_states <- st_read(dsn = here::here('Data', 'us_states_shp', 'us_states.shp'))
-
-
-# Additional data
-# ------------------------- #
-# Optimal model results from XGBoost. 
-# ------------------------- #
-
-# xgb_mods <- paste0('xgboost_10m_', c("urban_", "rural_"), "low_access_final.rds")
-# 
-# xgb_urban <- readRDS(here::here('Analysis', 'Model_Training', 'Low_Access', xgb_mods[1]))
-# xgb_rural <- readRDS(here::here('Analysis', 'Model_Training', 'Low_Access', xgb_mods[2]))
-
-# ------------------------- #
-# BGs with DS policies. 
-# ------------------------- #
-
-# block_groups_w_ds_policies <- read_csv("Data/block_groups_w_ds_policies.csv")
-
 # ------------------------- #
 
 bg_polygons_sfp <- st_transform(block_groups_2010_tigris, crs = 'EPSG:5070')
@@ -147,9 +129,6 @@ tm = tm_shape(urban_mkts)+
   
   tm_polygons(fill = colors[1], 
               col = NULL)+
-  # Additional arguments not used. : 
-  #fill.scale = tm_scale_categorical(values = colors[1]), 
-  #fill.legend = tm_legend(show = FALSE),
   
   tm_shape(rural_mkts)+
 
@@ -157,10 +136,6 @@ tm = tm_shape(urban_mkts)+
               fill_alpha = 0.3,
               col = colors[2],
               lwd = 0.5)+
-  # Additional arguments not used. 
-  # col.scale = tm_scale_categorical(values = colors[2]),
-  # col.legend = tm_legend(show = FALSE),
-  # col_alpha = 0.9,
   
   tm_shape(missing_county)+
   
@@ -177,7 +152,6 @@ tm = tm_shape(urban_mkts)+
                 fill = colors, 
                 labels = c('Urban', 'Rural'), 
                 text.size = 1.1,
-                #item.height = 0.9,
                 position = c('left', 'bottom'), 
                 orientation = 'portrait')
 

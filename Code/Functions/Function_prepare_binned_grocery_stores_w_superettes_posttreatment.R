@@ -1,7 +1,7 @@
 print('Sourced: prepare_binned_grocery_stores_post <- function(national, geography_str, model_preds_dta)')
 # -------------------------------------------------------------------------------------------- #
-# Function is run for Urban and Rural posttreatment data to obtain binned and factor formatted dollar store 
-# counts and entries to assess relationships between causal effects and dollar store entries/counts. 
+# Function is run for Urban and Rural posttreatment data to obtain binned and factor formatted grocery store counts to 
+# assess relationships between causal effects and dollar store entries/counts conditioned on pre-entry retailer counts. 
 # Integers/Counts are converted to factors. Numeric data are converted to bins. 
 # -------------------------------------------------------------------------------------------- #
 prepare_binned_grocery_stores_post <- function(national, geography_str, model_preds_dta){
@@ -82,9 +82,6 @@ prepare_binned_grocery_stores_post <- function(national, geography_str, model_pr
   
   grocery_store_bins[[store_var_2005_bins]] <- forcats::fct_recode(grocery_store_bins[[store_var_2005_bins]], 
                                                                    !!last_factor_replace := last_factor_str)
-  
-  # levels(grocery_store_bins[[store_var_2005]])[last_factor] <- last_factor_replace
-  
   # -------------------------------------------------------------------------------------------- #
   return(grocery_store_bins)
   # -------------------------------------------------------------------------------------------- #

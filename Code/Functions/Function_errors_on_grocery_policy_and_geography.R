@@ -1,7 +1,7 @@
 print('Sourced: errors_on_grocery_x_entry_and_policy <- function()')
-
-errors_on_grocery_x_entry_and_policy <- function(){
 # -------------------------------------------------------------------------------------------- #
+errors_on_grocery_x_entry_and_policy <- function(){
+
 pretr_preds <- pretr_preds %>% # Varies by bootstrap iteration. 
   
   mutate(err = actual - preds, # Bootstrap error. 
@@ -84,6 +84,7 @@ error_on_region <- pretr_preds %>%
 
 # -------------------------------------------------------------------------------------------- #
 err_on_grocery_reg <- pretr_preds %>% 
+  
   select(err, Grocery_Count_10mile_2005_bins)
 
 err_on_grocery_reg_formula <- xpd(err ~ -1 + Grocery_Count_10mile_2005_bins, data = err_on_grocery_reg)
@@ -115,6 +116,7 @@ pretr_preds_aug <- pretr_preds_aug %>% # Varies by bootstrap iteration.
 # -------------------------------------------------------------------------------------------- #
 
 err_on_grocery_x_entry_reg <- pretr_preds_aug %>% 
+  
   select(err, Grocery_Count_10mile_2005_bins, matches('entry_'))
 
 entry_vars <- str_subset(names(err_on_grocery_x_entry_reg), pattern = 'entry_'); entry_vars

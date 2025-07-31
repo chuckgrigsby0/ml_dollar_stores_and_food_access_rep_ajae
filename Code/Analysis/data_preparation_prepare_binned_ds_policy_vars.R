@@ -1,13 +1,9 @@
+# Script creates binned post-treatment dollar store policy variables for use in figures. 
 # -------------------------------------------------------------------------------------------- #
-.libPaths()
-# Load empirical data and point estimates. 
-model_dep_var = 'low_access'; model_geography = 'Rural' # Change arguments from Urban to Rural 
-print(model_geography); print(model_dep_var)
+model_dep_var = 'low_access'
+model_geography = 'Rural' # Change arguments from Urban to Rural 
+bootstrap_by_tracts = '_tracts'
 options(scipen = 999)
-# -------------------------------------------------------------------------------------------- #
-# Specify bootstrap type. 
-# -------------------------------------------------------------------------------------------- #  
-bootstrap_by_tracts = '_tracts' # or NULL to bootstrap by block-group and stratify by relative time. 
 # -------------------------------------------------------------------------------------------- #
 # Load data based on parameters above. 
 # -------------------------------------------------------------------------------------------- #
@@ -21,7 +17,8 @@ model_covars <- unlist(model_covars_list, use.names = FALSE)
 # Load the dollar store bans and restrictions data. 
 # -------------------------------------------------------------------------------------------- #
 ds_bans <- readr::read_csv(here::here('Data', 'block_groups_w_ds_policies.csv'), show_col_types = FALSE )
-# Use to select relvant variables below. 
+
+# Use to select relevant variables below. 
 policy_vars = names(ds_bans) %>% str_subset(string=., pattern='^Def|^Mor|^Ord|^policy_*')
 # -------------------------------------------------------------------------------------------- #
 # Load the block-group level data with geographic information. 
@@ -37,11 +34,11 @@ ds_bans <- ds_bans %>% left_join(bg_pop_centroids_10_sfp_geo, by = 'GEOID')
 # -------------------------------------------------------------------------------------------- #
 filename <- paste0('xgboost_10m_', str_to_lower(model_geography), '_', model_dep_var, '_final', '.rds'); filename
 dir_dep_var <- str_replace_all(str_to_title(str_replace_all(model_dep_var, '_', ' ')), ' ', '_')
-dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')) # For plot titles (below). 
+dep_var_title <- str_to_title(str_replace_all(model_dep_var, '_', ' ')) 
 # -------------------------------------------------------------------------------------------- #
 model_output <- readRDS(here::here('Analysis', 'Model_Training', dir_dep_var, filename))
 # -------------------------------------------------------------------------------------------- #
-# Using the bootstrap data as the primary data source, join treatment timing information to each observation. 
+
 # -------------------------------------------------------------------------------------------- #
 untreated_preds <- model_output$cv_errors_opt %>% 
   

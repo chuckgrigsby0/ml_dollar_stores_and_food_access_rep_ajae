@@ -1,0 +1,26 @@
+# Run with sbatch_figures.sh
+
+# Script used in conjunction with `analysis_plot_effects_and_ds_policy_vars.R` to produce figures
+# of average treatment effects across dollar store policy presence variables (Figures 5 and C.9.).
+
+# -------------------------------------------------------------------------------------------- #
+# Specify Urban/Rural, dependent variable, and results based on census-tract bootstrap.
+# -------------------------------------------------------------------------------------------- #
+model_geography <- 'Rural' 
+model_dep_var <- 'low_access'
+bootstrap_by_tracts <- '_tracts' 
+source(here::here('Code', 'Analysis', 'analysis_plot_effects_and_ds_policy_vars.R'))
+# -------------------------------------------------------------------------------------------- #
+rm(list = ls())
+gc()
+Sys.sleep(time = 5.0)
+# -------------------------------------------------------------------------------------------- #
+model_geography <- 'Urban' 
+model_dep_var <- 'low_access'
+bootstrap_by_tracts <- '_tracts' 
+source(here::here('Code', 'Analysis', 'analysis_plot_effects_and_ds_policy_vars.R'))
+# -------------------------------------------------------------------------------------------- #
+rm(list = ls())
+gc()
+Sys.sleep(time = 5.0)
+# -------------------------------------------------------------------------------------------- #

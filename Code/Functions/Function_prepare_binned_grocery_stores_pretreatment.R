@@ -1,8 +1,8 @@
 print('Sourced: prepare_binned_grocery_stores_pre <- function(model_preds_dta)')
 # -------------------------------------------------------------------------------------------- #
-# Function is run for Urban and Rural posttreatment data to obtain binned and factor formatted dollar store 
-# counts and entries to assess relationships between causal effects and dollar store entries/counts. 
-# Integers/Counts are converted to factors. Numeric data are converted to bins. 
+# Function is run for Urban and Rural pre-treatment data to obtain binned and factor formatted dollar store 
+# counts and entries to assess relationships between cv errors and dollar store entries/counts conditional 
+# on pre-entry/baseline grocery store counts. 
 # -------------------------------------------------------------------------------------------- #
 prepare_binned_grocery_stores_pre <- function(model_preds_dta){
   

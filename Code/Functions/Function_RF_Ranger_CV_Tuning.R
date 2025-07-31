@@ -84,10 +84,6 @@ nfolds <- seq_along(train_folds_list)
 ncores_inner <- floor(ncores/length(nfolds))
 
 plan(multicore, workers = length(nfolds))
-# plan(list(
-#   tweak(multicore, workers = length(nfolds)),      # Outer level for folds
-#   tweak(multisession, workers = ncores_inner) # Inner level for ranger
-# ))
 
 rf_tuning_trees <- function(param_idx){ 
   
@@ -99,9 +95,6 @@ rf_tuning_trees <- function(param_idx){
   
   # Use function below for converting factor to numeric. 
   as.numeric_from_factor <- function(x) as.numeric(as.character(x) )
-  
- 
-  
   
   # Cross-Validation Modeling - Pre-treatment data. 
   tic()

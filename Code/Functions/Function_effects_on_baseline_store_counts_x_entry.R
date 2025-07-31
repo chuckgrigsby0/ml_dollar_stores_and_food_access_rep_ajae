@@ -5,7 +5,7 @@ effects_on_baseline_store_counts_x_entry <- function(){
   
   # -------------------------------------------------------------------------------------------- #
   
-  # Regression of cv effects on binned retail stores at baseline (2005) interacted with entry events. 
+  # Regression of treatment effects on binned retail stores at baseline (2005) interacted with entry events. 
   
   # -------------------------------------------------------------------------------------------- #
   posttr_preds <- treated_preds %>% # Varies by bootstrap iteration. 

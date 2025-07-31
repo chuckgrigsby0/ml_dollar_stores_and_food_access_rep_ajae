@@ -1,14 +1,10 @@
-# -------------------------------------------------------------------------------------------- #
-# -------------------------------------------------------------------------------------------- #
-#.libPaths(c("K:/Home/grigsby-charles/Documents/R/win-library/4.0", "C:/Program Files/R/R-4.0.4/library"))
-.libPaths()
+# Helper function to load and prepare data for analyses. 
 # ----------------------------------- #
 # Load packages
 # ----------------------------------- #
 library(pacman)
 p_load('here', 'dplyr', 'ggplot2', 'purrr', 'tidyr', 'stringr', 
        'recipes', 'rsample', 'fixest', 'sf', 'tictoc', 'xgboost')
-# -------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------- #
 # Load data. 
 # -------------------------------------------------------------------------------------------- #
@@ -60,10 +56,8 @@ dta_treated <- dta_treated %>% select(all_of(model_vars))
 source(here::here('Code', 'Functions', 'Function_Cross_Validation_Folds.R'))
 # -------------------------------------------------------------------------------------------- #
 dta_untreated_wfolds <- CV_Function(untreated_dta = dta_untreated,
-                                    cv_type = 'horizontal equal-sized-block-cv', #  'horizontal rolling-origin-block-cv', 'horizontal equal-sized-block-cv'
-                                    k = 7) # For horizontal CV try 6 or 8 to obtain 5 or 7 folds.  
-                                              # Use 5 when cv_type = 'vertical'. 
-                                              #'vertical' implies stratified sampling by GEOID. 
+                                    cv_type = 'horizontal equal-sized-block-cv', 
+                                    k = 7)
 
 for (i in 1:7) print( dta_untreated_wfolds %>% filter(fold_id == i) %>% distinct(year) ) 
 for (i in 1:7) print( dta_untreated_wfolds %>% filter(fold_id == i) %>% nrow() ) 

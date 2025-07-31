@@ -1,31 +1,52 @@
 #!/bin/bash
-#SBATCH --job-name=bootstrap_errors_and_effects_on_covars
+#SBATCH --job-name=bootstrap_all_estimates
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=charlesgrigsby@ufl.edu
+#SBATCH --mail-user=useremail
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --array=1-499%112
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=12gb
-#SBATCH --qos=connerm-b
+#SBATCH --mem=20gb
+#SBATCH --qos=useraccount-b
 #SBATCH --time=01:00:00
-#SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban, low_access/low_access_pers
-#SBATCH --output=./bootstrap_output/rural_bootstrap_low_access/bootstrap_all_output_%A_%a.out
-#SBATCH --error=./bootstrap_output/rural_bootstrap_low_access/bootstrap_all_output_%A_%a.error
+#SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban
+#SBATCH --output=./output/bootstrap_all_output_%A_%a.out
+#SBATCH --error=./output/bootstrap_all_output_%A_%a.error
 
 #Record the time and compute node the job ran on
 date; hostname; pwd
 
 #Use modules to load the environment for R
-module load R
+module load R/4.2
 
 echo "Running script on $SLURM_CPUS_ON_NODE CPU cores"
 echo "This job requested $SLURM_MEM_PER_NODE MB RAM"
 
-#Run R script
-Rscript analysis_model_bootstrap_errors_and_counterfactuals_array.R $SLURM_ARRAY_TASK_ID
-Rscript analysis_model_bootstrap_change_in_outcomes_array.R $SLURM_ARRAY_TASK_ID
-Rscript analysis_model_bootstrap_effects_and_errors_on_covars_array.R $SLURM_ARRAY_TASK_ID
-Rscript analysis_model_bootstrap_effects_on_ds_entry_x_covars_array.R $SLURM_ARRAY_TASK_ID
+# Run R scripts for bootstrap estiamtes. These results are used to compute bootstrap standard errors. 
+# Note: To run the scripts below, one must first train models in 'Code/Analysis/Imputation_Xgboost/Main/Training' and 'Code/Analysis/Imputation_Xgboost/Main/Bootstrap'
+
+Rscript Figures_Actual_vs_Pred/analysis_model_bootstrap_errors_and_counterfactuals_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Figures_ATT_Percent/analysis_model_bootstrap_change_in_outcomes_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Figures_Errors_and_Effects_on_Covars/analysis_model_bootstrap_effects_and_errors_on_covars_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Figures_Errors_and_Effects_on_Retail/analysis_model_bootstrap_errors_and_effects_on_ds_entry_x_baseline_store_counts_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Figures_Effects_on_Grocery/analysis_model_bootstrap_effects_on_ds_entry_x_covars_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Figures_Errors_on_Grocery_and_DS_Policy/analysis_model_bootstrap_errors_on_ds_entry_x_grocery_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Figures_Effects_on_DS_Policies/analysis_model_bootstrap_effects_on_ds_policy_vars_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Tables_Entry_by_Grocery_Stores/bootstrap_err_and_att_by_entry_and_grocery_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Tables_CV_Error_and_ATT/analysis_model_bootstrap_cv_error_and_att_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Tables_Total_vs_Pred_Outcome_2020/rr_analysis_total_new_grocers_cf_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript Tables_Rel_Treat_Time_Het/analysis_section_5_1_heterogeneity_by_rel_time_array.R $SLURM_ARRAY_TASK_ID
+
+Rscript RUCA_UA_Comparison/analysis_errors_and_effects_by_ruca_code_bootstrap_array.R $SLURM_ARRAY_TASK_ID
 
 date

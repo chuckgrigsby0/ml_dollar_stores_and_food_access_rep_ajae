@@ -1,5 +1,4 @@
 print('Sourced: bootstrap_errors_and_preds <- function(bootstrap_ids, iter)')
-library('tidymodels')
 bootstrap_errors_and_preds <- function(prep_bootstrap_data, bootstrap_ids, iter, bootstrap_by_tracts){ 
   
   if (isTRUE(prep_bootstrap_data)){
@@ -20,11 +19,7 @@ bootstrap_errors_and_preds <- function(prep_bootstrap_data, bootstrap_ids, iter,
     
     # -------------------------------------------------------------------------------------------- #
     # Note: We filter >= 2007 because for the untreated/yet-to-be-treated observations, we only have 
-    # holdout predictions for years 2007-2020. For block groups whose year of treatment (event_year == 2007), 
-    # we do not obtain out-of-sample predictions for their relative time to treatment food-desert/low-access status. 
-    # We obtain predictions for relative time to treatment at t = -1 for the event_year == 2008 because the first
-    # fold corresponds to 2007-2008. As another example, for the event_year == 2009, we obtain relative time to treatment
-    # predictions for t = -2 and -1 in the years 2007 and 2008, respectively. 
+    # holdout predictions for years 2007-2020. 
     # -------------------------------------------------------------------------------------------- #
     untreated_preds <- model_output$cv_errors_opt %>% 
       
@@ -49,7 +44,7 @@ bootstrap_errors_and_preds <- function(prep_bootstrap_data, bootstrap_ids, iter,
       rename(preds = pred_class_cf) %>%
       rename(pred_probs = pred_probs_cf) %>%
       
-      filter(year >= '2006') 
+      filter(year >= '2006') # Post-treatment counterfactuals from 2006 onward.
     # -------------------------------------------------------------------------------------------- #
     model_preds <- bind_rows(untreated_preds, treated_preds) %>%
       # Filter out observations with rel_year == Inf because these are never-treated observations. 
@@ -121,7 +116,7 @@ bootstrap_errors_and_preds <- function(prep_bootstrap_data, bootstrap_ids, iter,
   est_errors <- str_subset(names(pretr_preds), '^err')
   
   pretr_model_errors <- feols(.[est_errors] ~ rel_year - 1, data = pretr_preds)
-  # pretr_model_errors <- lm(err ~ rel_year - 1, data = pretr_preds)
+  
   pretr_model_errors <- set_names(pretr_model_errors, nm = est_errors)
   
   model_errors_coefs <- map2_dfr(pretr_model_errors, est_errors, 
@@ -150,7 +145,9 @@ bootstrap_errors_and_preds <- function(prep_bootstrap_data, bootstrap_ids, iter,
   
   # -------------------------------------------------------------------------------------------- #
   est_preds <- str_subset(names(posttr_preds), '^preds'); est_preds
+  
   # Regress predictions on relative time, which includes both pre- and post-treatement data. 
+  
   cf_preds_coefs <- feols(.[est_preds] ~ rel_year - 1, data = posttr_preds)
   
   cf_preds_coefs <- set_names(cf_preds_coefs, nm = est_preds)
@@ -167,7 +164,8 @@ bootstrap_errors_and_preds <- function(prep_bootstrap_data, bootstrap_ids, iter,
                                    
                                  })
   # -------------------------------------------------------------------------------------------- #
-  # Regress actual on relative time, which includes both pre- and post-treatement data.
+  # Regress actual on relative time, which includes both pre- and post-treatment data.
+  
   reg_form <- xpd(actual ~ rel_year - 1, data = posttr_preds)
   
   actual_coefs <- lm(reg_form, data = posttr_preds)
@@ -188,7 +186,6 @@ bootstrap_errors_and_preds <- function(prep_bootstrap_data, bootstrap_ids, iter,
   preds_vs_actual <- preds_vs_actual %>% relocate(id, .after = last_col())
   
   # -------------------------------------------------------------------------------------------- #
-  
   # Estimation of causal effects.   
   
   # Effects on relative time. 
@@ -318,7 +315,6 @@ bootstrap_errors_and_preds <- function(prep_bootstrap_data, bootstrap_ids, iter,
                       'att' = outcome_change,
                       'optimal_thresholds' = opt_threshold_dta, 
                       'roc_dta' = roc_dta) 
-  #'effects_rel_year_x_entry_bin' = effects_rel_year_x_entry_bin)
   
   return(reg_results)
   
