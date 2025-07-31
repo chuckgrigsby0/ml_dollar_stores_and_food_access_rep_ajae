@@ -18,6 +18,7 @@ module load R/4.2
 echo "Running script on $SLURM_CPUS_ON_NODE CPU cores"
 echo "This job requested $SLURM_MEM_PER_NODE Megabytes RAM"
 
+# R scripts to create figures for supplementary analyses using the modified low-access indicator with superettes. 
 
 echo "Create figures of CV errors and counterfactual predictions versus actual outcomes on relative time."
 #Run R script
