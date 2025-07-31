@@ -1,8 +1,7 @@
 # The Varying Effects of Dollar Stores on Food Access: A Machine Learning Analysis
 
-This repository contains the scripts used for statistical analyses in "The Varying Effects of Dollar Stores on Food Access: A Machine Learning Analysis"
-
-Estimating models typically requires approximately 20-100 GB RAM, varying by urban and rural models and tuning approach. Bayesian optimization required the most RAM and compute time. 
+This repository contains the scripts for replicating all analyses in the main text and supplementary materials. We used a combination of R and bash shell scripts, as 
+we have access to cluster computing facilities through the University of Florida. Estimating models typically requires approximately 20-100 GB RAM, varying by urban and rural models and tuning approach.
 
 
 ## Scripts called to load data. 

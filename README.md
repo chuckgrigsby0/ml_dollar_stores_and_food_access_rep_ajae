@@ -9,7 +9,8 @@ scripts for re-producing main results.
 
 ### Scripts called to prepare and load data. 
 
-The following helper scripts are called in other scripts to cleanly prepare and load data and do not need to be run separately. 
+The following helper scripts are called in other scripts to more cleanly prepare and load data. These files do not need to be separately and are typically 
+called in other programs. 
 
  [1] `data_preparation_bootstrap_estimation_tracts_w_time_trends.R`            
  [2] `data_preparation_bootstrap_estimation_tracts.R`                          
@@ -39,20 +40,21 @@ Model training required approximately 30-100 GB RAM, varying by urban and rural 
 
 The SBATCH arguments `mem` and `-export=model_geography` should be adjusted according to urban/rural models. 
 
-We set `-mail-user=useremail` and `qos=accountname-b` as placeholders for the user's actual email and account username. In our implementation we use our email and usernames. 
+We set `-mail-user=useremail` and `qos=accountname-b` as placeholders for the user's actual email and account username. 
+
+In practice, users would include their own email and usernames. 
 
 ## Code/Analsys/sbatch_bootstrap_all_output.sh
 
-This helper script calls the Rscripts located in sub-directories that produce bootstrap estimates for all analyses of cross-validation errors and treatment-effect heterogeneity. 
-
-One can alternatively run individual bash scripts from the sub-directories. However, `sbatch_bootstrap_all_output.sh` produces all bootstrap estimates in a single script. 
+The helper script calls the various .R programs located in sub-directories to analyze cross-validation errors and treatment effect heterogeneity using the bootstrapped estimates 
+produced in `Code/Analysis/Imputation_Xgboost/Main`. One can alternatively run individual bash scripts from the sub-directories. 
 
 ## Code/Analsys/sbatch_figures.sh
 
-This helper script calls the Rscripts located in sub-directories that produce all figures in main and supplementary text, with the exception of results that include
-superettes in the low-access outcome variable, as described below. 
-
+This helper script calls the .R programs located in sub-directories to produce and save all figures in the main text and parts of the supplementary analyses. 
 
 ## Code/Analysis_Supplementary_w_Superettes
 
-The `Code/Analysis_Supplementary_w_Superettes` directory and sub-directories follow the same organizational structure as `Code/Analysis`, but results are based on the inclusion of superettes in the low-access outcome. 
+The `Code/Analysis_Supplementary_w_Superettes` directory and sub-directories follow the same organizational structure as `Code/Analysis`.  
+
+However, these models and results use the modified low-access indicator that includes superettes. 
