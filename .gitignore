@@ -3,6 +3,24 @@ README_COPY.md
 
 # Not-used-code
 Code/Analysis_Supplementary_w_Superettes/Unused_Code/
+Code/Functions/data_preparation_cross_validation_folds.R
+Code/Functions/Function_check_cpu_config.R
+Code/Functions/Function_Compile_State_Time_FE.R
+Code/Functions/Function_Compile_Time_FE.R
+Code/Functions/Function_Custom_Bins_For_Entries.R
+Code/Functions/Function_Drug_and_Grocery_Mutate.R
+Code/Functions/Function_effects_on_ds_entry_x_covars_parallel.R
+Code/Functions/Function_tidy_glmnet.R
+Code/Functions/Function_Store_Drive_Distance_Counts_Function.R
+Code/Functions/Function_Store_Densities_Distances_Tract_Counts.R
+Code/Functions/Function_Store_Counts_Drive_Times_and_Distances.R
+Code/Functions/Function_state_by_time_interactions.R
+Code/Functions/Function_sort_complex_levels.R
+Code/Functions/Function_prepare_binned_and_factor_covars.R
+Code/Functions/Function_preds_and_actual_on_time.R
+Code/Functions/Function_Lasso_FE_Estimates.R
+Code/Functions/Function_First_Treatment_Year.R
+Code/Functions/Function_errors_vs_covars.R
 
 # History files
 .Rhistory
