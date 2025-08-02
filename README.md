@@ -1,67 +1,165 @@
 # The Varying Effects of Dollar Stores on Food Access: A Machine Learning Analysis
 
-This repository contains the scripts used for statistical analyses in "The Varying Effects of Dollar Stores on Food Access: A Machine Learning Analysis"
+## Code Repository
 
-# Code/Analysis
+This repository contains all scripts and code necessary to replicate the analyses conducted in "The Varying Effects of Dollar Stores on Food Access: A Machine Learning Analysis."
 
-This directory and sub-directories contain scripts to produce results in main analyses and parts of supplementary findings. The following documents the most relevant
-scripts for re-producing main results. 
+**Note:** This read-me file documents the project organization and workflow for replication. However, because of the proprietary nature of the data, the actual datasets are not included. 
 
-# Helper scripts
+This repository serves as a guide for researchers with access to similar data, methodological approach, and computational resources.
 
-The following helper scripts in `Code/Analysis` are called in main scripts to more cleanly prepare and load data. These files do not need to be separately and are typically 
-called in other programs. 
+## Repository Structure
 
- [1] `data_preparation_bootstrap_estimation_tracts_w_time_trends.R`            
- [2] `data_preparation_bootstrap_estimation_tracts.R`                          
- [3] `data_preparation_did_regressions.R`                                      
- [4] `data_preparation_feat_eng_time_by_state_fes_create_data.R`               
- [5] `data_preparation_feat_eng_time_state_and_linear_trends_fes_create_data.R`
- [6] `data_preparation_get_hyperparameters.R`                                  
- [7] `data_preparation_imputation_estimation_national.R`                       
- [8] `data_preparation_imputation_estimation_w_time_trends.R`                  
- [9] `data_preparation_imputation_estimation.R`                                
-[10] `data_preparation_model_covars_lists.R`                                   
-[11] `data_preparation_prepare_binned_and_factor_covars.R`                     
-[12] `data_preparation_prepare_binned_ds_policy_vars.R`                        
-[13] `data_preparation_prepare_pretreatment_binned_grocery_and_ds_policy.R`    
-[14] `load_data_for_imputation_estimation_w_time_trends.R`                     
-[15] `load_data_for_imputation_estimation.R`
+```
+├── Code/
+│   ├── Analysis/                          # Main analysis scripts
+│   │   ├── Imputation_Xgboost/           # XGBoost model training and bootstrap
+│   │   │   ├── Main/
+│   │   │   │   ├── Training/             # Model training scripts
+│   │   │   │   └── Bootstrap/            # Bootstrap estimation scripts
+│   │   ├── Tables_*/                     # Table generation scripts
+│   │   ├── Figures_*/                    # Figure generation scripts
+│   │   └── [Directories for individual analysis scripts]
+│   ├── Analysis_Supplementary_w_Superettes/ # Supplementary analysis including superettes in low-access indicator (same structure)
+│   ├── Analysis_Placebo # Supplementary analysis for placebo treatment effects (same structure)
+│   └── Functions/                        # Helper functions and utilities
+└── README.md
+```
 
-In addition, the directory `Code/Functions` contains helper functions and programs. 
+## Computational Requirements
 
-## Code/Analysis/Imputation_Xgboost
+### System Requirements
+- **Memory**: 30-100 GB RAM for model training (varies by urban/rural models)
+- **Memory**: 21-80 GB RAM for bootstrap procedures
+- **Software**: R with required packages, SLURM job scheduler (for cluster computing). We used R version 4.2 throughout our analyses. 
 
-The `Main/Training` subdirectory contains a bash script and an accompanying Rscript to tune and train Xgboost models using the full sample, while
-`Main/Bootstrap` contains a bash and Rscript that implements the bootstrap procedure using the optimal hyperparameters found in model training.  
+### Required R Packages
+**Core Packages:**
+- `pacman` - `p_load()` to install and load packages
+- `here` - reference directories 
+- `dplyr`, `purrr`, `tidyr`, `stringr` - data manipulation
+- `xgboost` - gradient boosting models
+- `fixest` - fixed effects estimation
+- `future`, `furrr`, `parallelly` - parallel processing
 
-Scripts are run using the `sbatch_*` scripts in the respective directories. 
+**Note:** Each script contains the necessary package loading commands at the top using `pacman::p_load()`. Additional packages may be required depending on specific analyses.
 
-Model training required approximately 30-100 GB RAM, varying by urban and rural models and tuning approach, while we set the memory to 21 and 80 GB for bootstrap models. 
+## Replication Instructions
 
-The SBATCH arguments `mem` and `-export=model_geography` should be adjusted according to urban/rural models. 
+### Step 1: Data Preparation
+`Code/Analysis/` contains several helper scripts that prepare and load data. These scripts are automatically called by programs and do not need to be run separately:
 
-We set `-mail-user=useremail` and `qos=accountname-b` as placeholders for the user's actual email and account username. 
+**Helper Scripts** (located in `Code/Analysis/`):
+- `data_preparation_bootstrap_estimation_tracts_w_time_trends.R`
+- `data_preparation_bootstrap_estimation_tracts.R`
+- `data_preparation_did_regressions.R`
+- `data_preparation_feat_eng_time_by_state_fes_create_data.R`
+- `data_preparation_feat_eng_time_state_and_linear_trends_fes_create_data.R`
+- `data_preparation_get_hyperparameters.R`
+- `data_preparation_imputation_estimation_national.R`
+- `data_preparation_imputation_estimation_w_time_trends.R`
+- `data_preparation_imputation_estimation.R`
+- `data_preparation_model_covars_lists.R`
+- `data_preparation_prepare_binned_and_factor_covars.R`
+- `data_preparation_prepare_binned_ds_policy_vars.R`
+- `data_preparation_prepare_pretreatment_binned_grocery_and_ds_policy.R`
+- `load_data_for_imputation_estimation_w_time_trends.R`
+- `load_data_for_imputation_estimation.R`
 
-In practice, users would include their own email and usernames. 
+### Step 2: Model Training and Bootstrap Estimation
 
-## Code/Analysis/sbatch_bootstrap_all_output.sh
+#### XGBoost Model Training
 
-The helper script calls the various .R programs located in sub-directories to analyze cross-validation errors and treatment effect heterogeneity using the bootstrapped estimates 
-produced in `Code/Analysis/Imputation_Xgboost/Main`. One can alternatively run individual bash scripts from the sub-directories. 
+To train the XGBoost models and determine optimal parameters, go to `Code/Analysis/Imputation_Xgboost/Main/Training/` and run:
 
-## Code/Analysis/sbatch_figures.sh
+```bash
+sbatch sbatch_models_training_imputation_xgboost.sh
+```
 
-This helper script calls the .R programs located in sub-directories to produce and save all figures in the main text and parts of the supplementary analyses. 
+**Configuration Notes:**
+- Adjust SBATCH `--mem` parameter based on model type (approx. 30 GB in rural models and 100 GB in urban)
+- Set `--export=model_geography` to specify Urban or Rural models
+- Update `--mail-user=useremail` with your email address
+- Update `--qos=accountname-b` with your account username
 
-## Code/Analysis/Tables_*
+#### Bootstrap Procedures
 
-Directories with the prefix `Tables_*` contain scripts that create `.csv` or `.tex` formattted tables shown in main and supplementary analyses. 
+Using the optimal parameter values from training, we estimate 499 XGBoost models using bootstrapped samples, generating 499 sets of pre-treatment cross-validation errors, post-treatment counterfactual low-access status, and treatment effects using bootstrapped samples. 
 
-## Code/Analysis_Supplementary_w_Superettes
+After model training is complete, open `Code/Analysis/Imputation_Xgboost/Main/Bootstrap/` and run:
 
-The `Code/Analysis_Supplementary_w_Superettes` directory and sub-directories follow the same organizational structure as `Code/Analysis`.  
+```bash
+sbatch sbatch_models_bootstrap_imputation_xgboost.sh
+```
 
-However, these models and results use the modified low-access indicator that includes superettes. 
+**Configuration Notes:**
+- Memory requirements: 21-80 GB depending on rural versus urban models
+- Same email and account configuration as training step
+
+### Step 3: Analysis and Results Generation
+
+#### Generate All Bootstrap Outputs
+
+The following script uses the cross-validation error estimates, post-treatment predictions of counterfactual low-access status, and treatment effects from the bootstrapped samples to execute various R programs that:
+- Analyze cross-validation errors, conduct model diagnostics, evaluate model assumptions, etc. 
+- Examine treatment effect heterogeneity
+- Process bootstrapped estimates
+
+In `Code/Analysis`, run the following script:
+
+```bash
+bash Code/Analysis/sbatch_bootstrap_all_output.sh
+```
+
+**Note** Individual analyses can be run separately, but `sbatch_bootstrap_all_output.sh` contains all analyses in a single script. 
+
+#### Generate Tables
+Tables are created using scripts in directories with the `Tables_*` prefix. These generate output in both `.csv` and `.tex` formats for main and supplementary analyses.
+
+#### Generate Figures
+
+With the appropriate directories created to save the output figures, the following bash scripts can be used to generate all figures presented in the main analyses at once. 
+
+```bash
+bash Code/Analysis/sbatch_figures.sh
+```
+
+Alternatively individual figures can be created by running the code found in each of the `Figures_*` directories. 
+
+### Step 4: Supplementary Analysis with Superettes
+
+For the supplementary analysis using the modified low-access indicator that includes superettes:
+
+1. Navigate to `Code/Analysis_Supplementary_w_Superettes/`
+2. Follow the same procedure as the main analysis (Steps 1-3)
+3. The directory structure mirrors `Code/Analysis/` but uses the modified indicator
+
+## Output Files
+
+The scripts will generate:
+- **Model Results**: Trained XGBoost models using the full data and models using bootstrapped samples. 
+- **Analysis Results**: Cross-validation errors, post-treatment counterfactuals, treatment effects, model diagnostics, assessment of treatment effect heterogeneity
+- **Tables**: `.csv` and `.tex` formatted tables (main and supplementary)
+- **Figures**: Figures for main text and appendix. 
+
+## Customization
+
+### For Different Computing Environments
+If not using SLURM, you can adjust the R scripts to run on your local machine with sufficient memory and processing capabilities. 
+Also, you may need to update file paths as necessary. 
+
+### Email and Account Settings
+Before running the SBATCH scripts, update the following placeholders in all scripts:
+- `useremail` → your email address
+- `accountname-b` → your cluster account name
+
+**Note:** Due to our use of proprietary data, the actual datasets cannot be provided with this code repository.
+
+## Support and Issues
+
+For questions about the methods or code structure, please contact xxxx.
+
+## Citation
 
 
+---
