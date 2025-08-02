@@ -32,7 +32,7 @@ This repository contains all scripts and code necessary to replicate the analyse
 - **Software**: R with required packages, SLURM job scheduler (for cluster computing). We used R version 4.2 throughout our analyses. 
 
 ### Required R Packages
-**Core Packages:**
+**Main Packages:**
 - `pacman` - `p_load()` to install and load packages
 - `here` - reference directories 
 - `dplyr`, `purrr`, `broom`, `tidyr`, `stringr` - data manipulation
@@ -99,7 +99,7 @@ Open `Code/Analysis/Imputation_Xgboost/Main/Bootstrap/` and run:
 sbatch sbatch_models_bootstrap_imputation_xgboost.sh
 ```
 
-The bash script will produce 499 sets of pre-treatment cross-validation predictions and errors, post-treatment counterfactual low-access status, and estimated treatment effects based on bootstrapped samples. 
+The bash script will produce 499 sets of pre-treatment cross-validation predicted outcomes and errors, post-treatment counterfactual predicted low-access status, and estimated treatment effects using bootstrapped samples. 
 
 **Configuration Notes:**
 - Memory requirements: 21-80 GB depending on rural versus urban models
@@ -107,9 +107,9 @@ The bash script will produce 499 sets of pre-treatment cross-validation predicti
 
 ### Step 3: Generate Bootstrapped Estimates of Model Diagnostics and Analyses of Treatment Effects
 
-Using the bootstrapped pre-treatment cross-validation errors, post-treatment counterfactual predicted outcomes, and treatment effects estimated above:
-- Assess cross-validation errors, conduct model diagnostics, evaluate model assumptions, etc. 
-- Examine treatment effect heterogeneity 
+We use the bootstrapped results above (pre-treatment cross-validation errors, predicted post-treatment counterfactual outcomes, and estimated treatment effects) to:
+- Assess average cross-validation errors, conduct model diagnostics, and evaluate model assumptions 
+- Examine average treatment effects and treatment effect heterogeneity 
 
 In `Code/Analysis`, run the following script:
 
@@ -117,11 +117,11 @@ In `Code/Analysis`, run the following script:
 bash Code/Analysis/sbatch_bootstrap_all_output.sh
 ```
 
-This produces bootstrapped estimates of analyses evaluating model fit on pre-treatment data, average cross-validation errros and treatment effects with respect to time from treatment, 
+This produces bootstrapped estimates of analyses evaluating model fit on pre-treatment data (i.e., comparing actual vs predicted low-access status), average cross-validation errors and treatment effects with respect to time from treatment, 
 and variation of treatment effects across socio-demographic and geographic characteristics, baseline grocery store counts, and presence of dollar store policies.
 
 **Configuration Notes:**
-- Memory requirements: We set `--mem=20gb` in rural and urban models to ensure that all data and analyses could be run without errors. 
+- Memory requirements: we set `--mem=20gb` in rural and urban models to ensure that all data and analyses could be run without errors. 
 - Set `--export=model_geography` to specify Urban or Rural models
 - Same email and account configuration training. 
 
@@ -139,28 +139,27 @@ bash Code/Analysis/sbatch_figures.sh
 ```
 
 **Configuration Notes:**
-- Memory requirements: We set `--mem=20gb` to ensure that all figures are created without errors. 
-- Script creates figures for urban and rural model results. 
+- Memory requirements: We set `--mem=20gb` to ensure all figures are created without exceeding memory limits. 
+- Script creates figures for both urban and rural model results. 
 - Directories for figures should be created prior to running script. 
 
-Alternatively individual figures can be created by running the code found in each of the `Figures_*` directories. 
-
+Alternatively, individual figures can be created by running the code found in each of the `Figures_*` directories. 
 
 ### Step 4: Supplementary Analyses with Superettes
 
 For the supplementary analysis using the modified low-access indicator that includes superettes:
 
-1. Navigate to `Code/Analysis_Supplementary_w_Superettes/`
+1. Open `Code/Analysis_Supplementary_w_Superettes/`
 2. Follow the same procedure as the main analysis (Steps 1-3)
 3. The directory structure mirrors `Code/Analysis/` but uses the modified indicator
 
-### Additional Analyses
+### Additional Supplementary Analyses
 
-The additional scripts and programs included in the repository can be run individually or were run as supplementary analyses to address reviewer comments. 
+The additional scripts and programs included in the repository can be run individually or are supplementary analyses addressing reviewer comments. 
 
 ## Questions 
 
-For questions about the methods or code structure, please contact xxxx.
+For questions about the methods or code structure, please contact xxx.
 
 ## Citation
 
