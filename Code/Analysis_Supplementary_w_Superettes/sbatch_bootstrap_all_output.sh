@@ -9,7 +9,7 @@
 #SBATCH --mem=20gb
 #SBATCH --qos=useraccount-b
 #SBATCH --time=01:00:00
-#SBATCH --export=model_geography=Urban,model_dep_var=low_access # Rural/Urban, low_access/low_access_pers
+#SBATCH --export=model_geography=Urban,model_dep_var=low_access # Rural/Urban
 #SBATCH --output=./output/bootstrap_all_output_%A_%a.out
 #SBATCH --error=./output/bootstrap_all_output_%A_%a.error
 
@@ -27,8 +27,11 @@ echo "This job requested $SLURM_MEM_PER_NODE MB RAM"
 # and 'Code/Analysis_Supplementary_w_Superettes/Imputation_Xgboost/Bootstrap'
 
 Rscript Figures_Actual_vs_Pred/analysis_model_bootstrap_errors_and_counterfactuals_array.R $SLURM_ARRAY_TASK_ID
+
 Rscript Figures_Errors_and_Effects_on_Covars/analysis_model_bootstrap_effects_and_errors_on_covars_array.R $SLURM_ARRAY_TASK_ID
+
 Rscript Figures_Effects_on_Grocery_and_Superette/analysis_model_bootstrap_effects_on_grocery_and_superettes_array.R $SLURM_ARRAY_TASK_ID
+
 Rscript Figures_Effects_on_DS_Policies/analysis_model_bootstrap_effects_on_ds_policy_vars_array.R $SLURM_ARRAY_TASK_ID
 
 
