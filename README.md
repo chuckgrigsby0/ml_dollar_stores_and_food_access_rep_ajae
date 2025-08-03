@@ -23,7 +23,7 @@ This repository contains all scripts and code necessary to replicate the analyse
 ```
 
 
-**Note** The repository contains several other folders and scripts that run additional machine learning algorithms (e.g., random forest), implement alternative tuning strategies, and perform various robustness checks of our main results to address reviewer comments.
+**Note:** The repository contains several other folders and scripts that run additional machine learning algorithms (e.g., random forest), implement alternative tuning strategies, and perform various robustness checks of our main results to address reviewer comments.
 While included in the repository for transparency, we do not describe in detail the procedures for running these supplementary scripts. However, the folders and scripts generally follow the same organization and workflow as our main analyses. 
 
 
@@ -132,7 +132,7 @@ and variation of treatment effects across socio-demographic and geographic chara
 - Set `--export=model_geography` to specify Urban or Rural models
 - Same email and account configuration training. 
 
-**Note** Individual analyses can be run separately, but `sbatch_bootstrap_all_output.sh` runs all analyses in a single script. 
+**Note:** Individual analyses can be run separately, but `sbatch_bootstrap_all_output.sh` runs all analyses in a single script. 
 
 #### Figures
 
