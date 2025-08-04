@@ -4,7 +4,7 @@
 
 This repository contains all scripts and code necessary to replicate the analyses conducted in "The Varying Effects of Dollar Stores on Food Access: A Machine Learning Analysis."
 
-**Note:** Due to proprietary data restrictions, actual datasets are not included. This repository documents the workflow and code structure used in our research and can serve as a guide for researchers adopting a similar methodology. 
+**Note:** Due to proprietary data restrictions, actual datasets are not included. This repository documents the workflow and code structure used in our research and can serve as a guide for adopting a similar methodology. 
 
 ## Repository Structure
 
@@ -41,7 +41,8 @@ While these additional scripts are included in the repository for transparency, 
 
 - **Software**: R version 4.2, SLURM job scheduler for cluster computing. 
 
-- **Note on runtimes**: Running rural models sequentially, as opposed to job arrays, would take approximately 21 hours, while urban models would take approximately 125 hours. 
+- **Runtime Notes**: Our analysis uses 2,128,234 urban and 801,771 rural block-group observations from 2005-2020. Running models sequentially would require ~21 hours (rural areas) and ~125 hours (urban areas), making cluster computing essential for our analysis. 
+Researchers with smaller datasets may find the approach feasible on standard computing resources. Runtimes will also vary with machine learning algorithm, tuning, and training strategies employed. 
 
 ### Required R Packages
 
@@ -67,7 +68,7 @@ While these additional scripts are included in the repository for transparency, 
 `Code/Analysis/` contains various helper scripts that automatically load and prepare data for analyses. 
 These scripts are called by the main analysis programs and do not need to be run separately.
 
-**Loading/Preparing Data for Main Analysis:**
+**Scripts to load and prepare data for main analysis:**
 - `load_data_for_imputation_estimation.R` - Loads data. 
 - `data_preparation_feat_eng_time_by_state_fes_create_data.R` - Called in above script to load and prepare feature-engineered fixed effects
 - `data_preparation_imputation_estimation.R`: Prepares data for analysis (original sample)
@@ -77,13 +78,13 @@ These scripts are called by the main analysis programs and do not need to be run
 <details>
 <summary>Additional helper scripts</summary>
 
-**Scripts for evaluating cross-validation errors and treatment effect heterogeneity**
+**Scripts used in evaluating cross-validation errors and treatment effect heterogeneity**
 - `data_preparation_model_covars_lists.R`
 - `data_preparation_prepare_binned_and_factor_covars.R`
 - `data_preparation_prepare_binned_ds_policy_vars.R`
 - `data_preparation_prepare_pretreatment_binned_grocery_and_ds_policy.R`
 
-**Scripts for loading and preparing data in supplementary analyses**
+**Scripts to load and prepare data in supplementary analyses**
 - `load_data_for_imputation_estimation_w_time_trends.R`
 - `data_preparation_feat_eng_time_state_and_linear_trends_fes_create_data.R`
 - `data_preparation_imputation_estimation_w_time_trends.R`
@@ -94,17 +95,17 @@ These scripts are called by the main analysis programs and do not need to be run
 
 ### Model Training and Bootstrap Estimation
 
-#### Step 1: XGBoost Model Training
+#### Step 1: Model Training
 
-To train the XGBoost models, find optimal hyperparameter configurations, and estimate final models using optimal parameter combinations, go to `Code/Analysis/Imputation_Xgboost/Main/Training/` and run:
+For training and hyperparameter optimization of XGBoost models, open the directory `Code/Analysis/Imputation_Xgboost/Main/Training/` and run:
 
 ```bash
 sbatch sbatch_models_training_imputation_xgboost.sh
 ```
-This script creates three main outputs: 
+This script generates three main outputs: 
 1. **Model Tuning**: Determines optimal set of XGBoost hyperparameters 
-2. **Cross-validation**: Out-of-sample predictions and errors using full set of pre-treatment block groups
-3. **Treatment effect estimates**: Counterfactual low-access status in the absence of dollar store entry and treatment effects for full set of treated block groups
+2. **Cross-validation (CV)**: Out-of-sample predictions and errors using full set of pre-treatment block groups
+3. **Treatment effect estimates**: Counterfactual low-access status in the absence of dollar store entry and treatment effect estimates for full set of treated block groups
 
 Before running the SBATCH script, the following placeholders or arguments should be updated:
 
@@ -116,18 +117,18 @@ Before running the SBATCH script, the following placeholders or arguments should
 - Update `--qos=accountname-b`, replacing `accountname` with account username
 - Update file paths in R scripts as necessary. 
 
-#### Step 2: Bootstrap Procedure of XGBoost
+#### Step 2: Bootstrap Procedure
 
-For statistical inference, we generate bootstrapped standard errors using 499 bootstrap samples. Block groups are resampled at the census-tract level, and the entire training procedure is repeated for each sample.
+For statistical inference, we estimate bootstrapped standard errors from 499 bootstrap samples. Block groups are resampled at the census-tract level, and the entire training procedure is repeated for each sample.
 
-Open `Code/Analysis/Imputation_Xgboost/Main/Bootstrap/` and run:
+To implement the bootstrap procedure, open `Code/Analysis/Imputation_Xgboost/Main/Bootstrap/` and run:
 
 ```bash
 sbatch sbatch_models_bootstrap_imputation_xgboost.sh
 ```
 
 The bash script produces 499 bootstrap iterations, each generating:
-1. **Cross-validation results**: Out-of-sample predictions and errors using pre-treatment data
+1. **CV results**: Out-of-sample predictions and errors using pre-treatment data
 2. **Treatment effect estimates**: Counterfactual predictions and treatment effects using post-treatment data
 
 **Configuration Notes:**
@@ -137,8 +138,8 @@ The bash script produces 499 bootstrap iterations, each generating:
 
 ### Step 3: Bootstrapped Estimates of Model Diagnostics and Analyses of Treatment Effects
 
-We use the bootstrapped results above (cross-validation predictions and errors, predicted counterfactual outcomes and treatment effect estimates) to:
-- Assess average cross-validation errors, conduct model diagnostics, and evaluate model assumptions 
+We use the bootstrapped results above (CV predictions and errors, predicted counterfactual outcomes and estimated treatment effects) to:
+- Assess average CV errors, conduct model diagnostics, and evaluate model assumptions 
 - Examine average treatment effects and treatment effect heterogeneity 
 
 In `Code/Analysis`, run the following script:
@@ -147,7 +148,7 @@ In `Code/Analysis`, run the following script:
 bash Code/Analysis/sbatch_bootstrap_all_output.sh
 ```
 
-This produces bootstrapped estimates for analyses that evaluate model fit on pre-treatment data (i.e., comparing actual vs predicted low-access status), average cross-validation errors and treatment effects with respect to time from treatment and covariates, 
+This produces bootstrapped estimates for analyses that evaluate model fit on pre-treatment data (i.e., comparing actual vs predicted low-access status), average CV errors and treatment effects with respect to time from treatment and covariates, 
 and treatment effect heterogeneity across socio-demographic and geographic characteristics, baseline grocery store counts, and presence of dollar store policies.
 
 **Configuration Notes:**
@@ -187,10 +188,12 @@ For the supplementary analyses using the modified low-access indicator that incl
 
 ## Questions 
 
-For questions about the code structure, please contact paper authors.
+For questions about the code structure, please contact authors.
 
 ## Citation
 
-xxx
+Grigsby-Calage, Chuck and Mullally, Conner and Volpe, Richard and Kropp, Jaclyn D. and Stevens, Alexander, 
+The Varying Effects of Dollar Stores on Food Access: A Machine Learning Analysis (August 4, 2025). 
+Available at SSRN: https://ssrn.com/abstract=4822647 or http://dx.doi.org/10.2139/ssrn.4822647
 
 ---
