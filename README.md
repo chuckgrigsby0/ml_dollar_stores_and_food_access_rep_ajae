@@ -202,17 +202,15 @@ Our results are saved in directories with the following structure:
 │   │   │   ├── [Subdirectories to save bootstrap output]       # Saves results from bootstrap estimation
 │   ├── Figures/                                                
 │   │   ├── Low_Access/
-│   │   │   ├── Rural/
-│   │   │   |   ├──[Subdirectories to save figures]             # Saves figures from main results and appendix
 │   │   │   ├── Urban/
+│   │   │   |   ├──[Subdirectories to save figures]             # Saves figures from main results and appendix
+│   │   │   ├── Rural/
 │   │   │   |   ├──[Subdirectories to save figures]             # Saves figures from main results and appendix
 │   ├── Tables/                                                 
 │   │   ├── Low_Access/
-│   │   │   ├── Rural/                                          # Saves tables from main results and appendix
 │   │   │   ├── Urban/                                          # Saves tables from main results and appendix
+│   │   │   ├── Rural/                                          # Saves tables from main results and appendix
 ```
-
-
 
 ## Questions 
 
