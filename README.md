@@ -70,9 +70,9 @@ The analysis uses helper scripts in `Code/Analysis/` that automatically load and
 **Scripts to load and prepare data for main analysis:**
 - `load_data_for_imputation_estimation.R` - Loads primary datasets. 
 - `data_preparation_feat_eng_time_by_state_fes_create_data.R` - Prepares state-by-time estimated fixed effects. 
-- `data_preparation_imputation_estimation.R`: Prepares data for analysis (original sample)
-- `data_preparation_bootstrap_estimation_tracts.R`: Prepares bootstrap sample data
-- `data_preparation_get_hyperparameters.R`: Loads optimal hyperparameter settings
+- `data_preparation_imputation_estimation.R` - Prepares data for analysis (original sample)
+- `data_preparation_bootstrap_estimation_tracts.R` - Prepares bootstrap sample data
+- `data_preparation_get_hyperparameters.R` - Loads optimal hyperparameter settings
  
 <details>
 <summary>Additional helper scripts</summary>
@@ -174,9 +174,9 @@ bash Code/Analysis/sbatch_figures.sh
 
 Individual figures can alternatively be created by running the appropriate code found in each of the `Figures_*` directories. 
 
-**Note**: Figures for supplementary analyses that include superettes in the low-access indicator are produced separately as described in Step 4.  
+**Note:** Figures for supplementary analyses where we include superettes in the low-access indicator are produced separately as described in Step 4.  
 
-**Tables**: Tables are produced using scripts within `Tables_*` directories, creating `.csv` and `.tex` files based on outputs from Steps 1-3. 
+**Tables:** Generate tables using scripts within `Tables_*` directories, creating `.csv` and `.tex` files based on outputs from Steps 1-3. 
 
 ### Supplementary Analyses with Superettes
 
@@ -186,31 +186,30 @@ For the supplementary analyses using the modified low-access indicator that incl
 2. Follow the same procedure as the main analysis (Steps 1-3)
 3. The directory structure mirrors `Code/Analysis/` but uses the modified indicator
 
+
 ## Output
 
-Our results are saved in directories with the following structure: 
+Results are organized in the following directory structure: 
 
 ```
 ├── Analysis/
 │   ├── Model_Training/                                         
-│   │   ├── Low_Access/                                         # Saves results from model training
+│   │   ├── Low_Access/         # Model training results and hyperparameters
 │   ├── Urban_Bootstrap/                                        
-│   │   ├── Low_Access/ 
-│   │   │   ├── [Subdirectories to save bootstrap output]       # Saves results from bootstrap estimation
+│   │   ├── Low_Access/         # Bootstrap estimation results (urban models)
 │   ├── Rural_Bootstrap/                                        
-│   │   ├── Low_Access/ 
-│   │   │   ├── [Subdirectories to save bootstrap output]       # Saves results from bootstrap estimation
+│   │   ├── Low_Access/         # Bootstrap estimation results (urban models)
 │   ├── Figures/                                                
-│   │   ├── Low_Access/
-│   │   │   ├── Urban/
-│   │   │   |   ├──[Subdirectories to save figures]             # Saves figures from main results and appendix
-│   │   │   ├── Rural/
-│   │   │   |   ├──[Subdirectories to save figures]             # Saves figures from main results and appendix
+│   │   ├── Low_Access/       
+│   │   │   ├── Urban/          # Figures (urban models)                     
+│   │   │   ├── Rural/          # Figures (rural models)
 │   ├── Tables/                                                 
 │   │   ├── Low_Access/
-│   │   │   ├── Urban/                                          # Saves tables from main results and appendix
-│   │   │   ├── Rural/                                          # Saves tables from main results and appendix
+│   │   │   ├── Urban/          # Tables (urban models)
+│   │   │   ├── Rural/          # Tables (rural models)
 ```
+
+**Note:** Steps 1-3 populate the estimation directories (Model_Training, Urban_Bootstrap, and Rural_Bootstrap), while figures and tables are output from these results and saved in their respective directories.
 
 ## Questions 
 
