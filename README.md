@@ -209,7 +209,7 @@ Results are organized in the following directory structure:
 │   │   │   ├── Rural/          # Tables (rural models)
 ```
 
-**Note:** Steps 1-3 populate the estimation directories (Model_Training, Urban_Bootstrap, and Rural_Bootstrap), while figures and tables are output from these results and saved in their respective directories.
+**Note:** Steps 1-3 populate the training and bootstrap directories with estimation results, while figures and tables are output from these results and saved in their respective directories.
 
 ## Questions 
 
