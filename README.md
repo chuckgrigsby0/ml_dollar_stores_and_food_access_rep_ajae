@@ -68,8 +68,8 @@ Researchers with smaller datasets may find the approach feasible on standard com
 The analysis uses helper scripts in `Code/Analysis/` that automatically load and prepare data. These scripts are called by main analysis programs and do not require separate execution. 
 
 **Scripts to load and prepare data for main analysis:**
-- `load_data_for_imputation_estimation.R` - Loads primary datasets. 
-- `data_preparation_feat_eng_time_by_state_fes_create_data.R` - Prepares state-by-time estimated fixed effects. 
+- `load_data_for_imputation_estimation.R` - Loads primary datasets
+- `data_preparation_feat_eng_time_by_state_fes_create_data.R` - Prepares state-by-time estimated fixed effects
 - `data_preparation_imputation_estimation.R` - Prepares data for analysis (original sample)
 - `data_preparation_bootstrap_estimation_tracts.R` - Prepares bootstrap sample data
 - `data_preparation_get_hyperparameters.R` - Loads optimal hyperparameter settings
@@ -198,7 +198,7 @@ Results are organized in the following directory structure:
 │   ├── Urban_Bootstrap/                                        
 │   │   ├── Low_Access/         # Bootstrap estimation results (urban models)
 │   ├── Rural_Bootstrap/                                        
-│   │   ├── Low_Access/         # Bootstrap estimation results (urban models)
+│   │   ├── Low_Access/         # Bootstrap estimation results (rural models)
 │   ├── Figures/                                                
 │   │   ├── Low_Access/       
 │   │   │   ├── Urban/          # Figures (urban models)                     
@@ -209,7 +209,7 @@ Results are organized in the following directory structure:
 │   │   │   ├── Rural/          # Tables (rural models)
 ```
 
-**Note:** Steps 1-3 populate the training and bootstrap directories with estimation results, while figures and tables are output from these results and saved in their respective directories.
+**Note:** Steps 1-3 fill the estimation directories (Model_Training, Urban_Bootstrap, and Rural_Bootstrap), while figures and tables are created from these results and saved in their respective directories.
 
 ## Questions 
 
