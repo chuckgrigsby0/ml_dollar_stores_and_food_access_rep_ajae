@@ -4,7 +4,7 @@
 #SBATCH --mail-user=useremail
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=6
+#SBATCH --cpus-per-task=3
 #SBATCH --mem=30gb  # Used 100 gb for urban models; Used 30 gb for rural models.
 #SBATCH --qos=useraccount-b
 #SBATCH --time=20:00:00

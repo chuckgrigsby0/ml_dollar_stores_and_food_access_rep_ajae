@@ -6,7 +6,7 @@
 #SBATCH --ntasks=1
 #SBATCH --array=1-499%50
 #SBATCH --cpus-per-task=3
-#SBATCH --mem=21gb # 21gb for Rural and 80gb for Urban
+#SBATCH --mem=21gb # 21gb for Rural and 60gb for Urban
 #SBATCH --qos=useraccount-b
 #SBATCH --time=20:00:00
 #SBATCH --export=model_geography=Rural,model_dep_var=low_access # Rural/Urban
