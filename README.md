@@ -10,7 +10,7 @@ This repository contains all scripts and code necessary to replicate the analyse
 
 ```
 ├── Code/
-│   ├── Analysis/                          # Main analysis scripts
+│   ├── Analysis/                         # Main analysis scripts
 │   │   ├── Imputation_Xgboost/           # XGBoost model training and bootstrap
 │   │   │   ├── Main/
 │   │   │   │   ├── Training/             # Model training scripts
@@ -65,15 +65,14 @@ Researchers with smaller datasets may find the approach feasible on standard com
 
 ### Data Preparation
 
-`Code/Analysis/` contains various helper scripts that automatically load and prepare data for analyses. 
-These scripts are called by the main analysis programs and do not need to be run separately.
+The analysis uses helper scripts in `Code/Analysis/` that automatically load and prepare data. These scripts are called by main analysis programs and do not require separate execution. 
 
 **Scripts to load and prepare data for main analysis:**
-- `load_data_for_imputation_estimation.R` - Loads data. 
-- `data_preparation_feat_eng_time_by_state_fes_create_data.R` - Called in above script to load and prepare feature-engineered fixed effects
+- `load_data_for_imputation_estimation.R` - Loads primary datasets. 
+- `data_preparation_feat_eng_time_by_state_fes_create_data.R` - Prepares state-by-time estimated fixed effects. 
 - `data_preparation_imputation_estimation.R`: Prepares data for analysis (original sample)
-- `data_preparation_bootstrap_estimation_tracts.R`: Prepares data for analysis (bootstrap sample)
-- `data_preparation_get_hyperparameters.R`: Called in script above to load optimal hyperparameter settings found during model training
+- `data_preparation_bootstrap_estimation_tracts.R`: Prepares bootstrap sample data
+- `data_preparation_get_hyperparameters.R`: Loads optimal hyperparameter settings
  
 <details>
 <summary>Additional helper scripts</summary>
@@ -95,9 +94,9 @@ These scripts are called by the main analysis programs and do not need to be run
 
 ### Model Training and Bootstrap Estimation
 
-#### Step 1: Model Training
+#### Step 1: XGBoost Model Training
 
-For training and hyperparameter optimization of XGBoost models, open the directory `Code/Analysis/Imputation_Xgboost/Main/Training/` and run:
+To train XGBoost models with hyperparameter optimization, navigate to `Code/Analysis/Imputation_Xgboost/Main/Training/` and run:
 
 ```bash
 sbatch sbatch_models_training_imputation_xgboost.sh
@@ -105,7 +104,7 @@ sbatch sbatch_models_training_imputation_xgboost.sh
 This script generates three main outputs: 
 1. **Model Tuning**: Determines optimal set of XGBoost hyperparameters 
 2. **Cross-validation (CV)**: Out-of-sample predictions and errors using full set of pre-treatment block groups
-3. **Treatment effect estimates**: Counterfactual low-access status in the absence of dollar store entry and treatment effect estimates for full set of treated block groups
+3. **Treatment effect estimates**: Counterfactual low-access status and treatment effects for treated block groups
 
 Before running the SBATCH script, the following placeholders or arguments should be updated:
 
@@ -113,13 +112,13 @@ Before running the SBATCH script, the following placeholders or arguments should
 - Urban models: `--mem=100gb --cpus-per-task=3`
 - Rural models: `--mem=30gb --cpus-per-task=3`
 - `--export=model_geography=Urban` (or `Rural`)
-- Update `--mail-user=useremail`, replacing `useremail` email address
-- Update `--qos=accountname-b`, replacing `accountname` with account username
+- Update `--mail-user=useremail`, replacing `useremail` with your email address
+- Update `--qos=accountname-b`, replacing `accountname` with your account username
 - Update file paths in R scripts as necessary. 
 
 #### Step 2: Bootstrap Procedure
 
-For statistical inference, we estimate bootstrapped standard errors from 499 bootstrap samples. Block groups are resampled at the census-tract level, and the entire training procedure is repeated for each sample.
+For statistical inference, we generate bootstrapped standard errors using 499 bootstrap samples. Block groups are resampled at the census-tract level, and the entire training procedure is repeated for each sample.
 
 To implement the bootstrap procedure, open `Code/Analysis/Imputation_Xgboost/Main/Bootstrap/` and run:
 
@@ -136,7 +135,7 @@ The bash script produces 499 bootstrap iterations, each generating:
 - Urban models: `--mem=60gb --cpus-per-task=3`
 - Same email and account configuration from training. 
 
-### Step 3: Bootstrapped Estimates of Model Diagnostics and Analyses of Treatment Effects
+#### Step 3: Bootstrapped Estimates of Model Diagnostics and Analyses of Treatment Effects
 
 We use the bootstrapped results above (CV predictions and errors, predicted counterfactual outcomes and estimated treatment effects) to:
 - Assess average CV errors, conduct model diagnostics, and evaluate model assumptions 
@@ -148,8 +147,10 @@ In `Code/Analysis`, run the following script:
 bash Code/Analysis/sbatch_bootstrap_all_output.sh
 ```
 
-This produces bootstrapped estimates for analyses that evaluate model fit on pre-treatment data (i.e., comparing actual vs predicted low-access status), average CV errors and treatment effects with respect to time from treatment and covariates, 
-and treatment effect heterogeneity across socio-demographic and geographic characteristics, baseline grocery store counts, and presence of dollar store policies.
+This produces bootstrapped estimates for three types of analyses: 
+- Model diagnostics (i.e., comparing actual vs predicted low-access status) using pre-treatment data 
+- Average treatment effects over time and across covariates
+- Treatment effect heterogeneity by socio-demographics, geography, baseline grocery store counts, and presence of dollar store policies.
 
 **Configuration Notes:**
 - `--mem=20gb --cpus-per-task=1` (ensures all analyses complete without errors)
@@ -158,9 +159,9 @@ and treatment effect heterogeneity across socio-demographic and geographic chara
 
 **Note:** Individual analyses can be run separately, but `sbatch_bootstrap_all_output.sh` runs all analyses in a single script. 
 
-#### Figures
+### Figures and Tables
 
-The following bash script uses the output produced in Steps 1-3 to generate all figures presented in the main results and appendix. Figures for supplementary analyses that include superettes in the low-access indicator are produced separately as described in Step 4.  
+To generate all main paper and appendix figures using outputs from Steps 1-3, run: 
 
 ```bash
 bash Code/Analysis/sbatch_figures.sh
@@ -173,17 +174,44 @@ bash Code/Analysis/sbatch_figures.sh
 
 Individual figures can alternatively be created by running the appropriate code found in each of the `Figures_*` directories. 
 
-#### Tables
+**Note**: Figures for supplementary analyses that include superettes in the low-access indicator are produced separately as described in Step 4.  
 
-Tables are generated using scripts in `Tables_*` directories. These scripts use outputs from Steps 1-3 and produce `.csv` and `.tex` files.
+**Tables**: Tables are produced using scripts within `Tables_*` directories, creating `.csv` and `.tex` files based on outputs from Steps 1-3. 
 
-### Step 4: Supplementary Analyses with Superettes
+### Supplementary Analyses with Superettes
 
 For the supplementary analyses using the modified low-access indicator that includes superettes:
 
 1. Open `Code/Analysis_Supplementary_w_Superettes/`
 2. Follow the same procedure as the main analysis (Steps 1-3)
 3. The directory structure mirrors `Code/Analysis/` but uses the modified indicator
+
+## Output
+
+Our results are saved in directories with the following structure: 
+
+```
+├── Analysis/
+│   ├── Model_Training/                                         
+│   │   ├── Low_Access/                                         # Saves results from model training
+│   ├── Urban_Bootstrap/                                        
+│   │   ├── Low_Access/ 
+│   │   │   ├── [Subdirectories to save bootstrap output]       # Saves results from bootstrap estimation
+│   ├── Rural_Bootstrap/                                        
+│   │   ├── Low_Access/ 
+│   │   │   ├── [Subdirectories to save bootstrap output]       # Saves results from bootstrap estimation
+│   ├── Figures/                                                
+│   │   ├── Low_Access/
+│   │   │   ├── Rural/
+│   │   │   |   ├──[Subdirectories to save figures]             # Saves figures from main results and appendix
+│   │   │   ├── Urban/
+│   │   │   |   ├──[Subdirectories to save figures]             # Saves figures from main results and appendix
+│   ├── Tables/                                                 
+│   │   ├── Low_Access/
+│   │   │   ├── Rural/                                          # Saves tables from main results and appendix
+│   │   │   ├── Urban/                                          # Saves tables from main results and appendix
+```
+
 
 
 ## Questions 
