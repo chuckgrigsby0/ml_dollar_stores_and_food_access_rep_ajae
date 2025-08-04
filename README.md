@@ -46,7 +46,7 @@ Researchers with smaller datasets may find the approach feasible on standard com
 
 ### Required R Packages
 
-**Core Packages:**
+**Primary Packages:**
 - `pacman` - package management
 - `here` - file path management  
 - `dplyr`, `purrr`, `tidyr`, `stringr`, `broom` - data manipulation
@@ -65,7 +65,7 @@ Researchers with smaller datasets may find the approach feasible on standard com
 
 ### Data Preparation
 
-The analysis uses helper scripts in `Code/Analysis/` that automatically load and prepare data. These scripts are called by main analysis programs and do not require separate execution. 
+We created several helper scripts in `Code/Analysis/` that automatically load and prepare data. These scripts are called by main analysis programs and do not require separate execution. 
 
 **Scripts to load and prepare data for main analysis:**
 - `load_data_for_imputation_estimation.R` - Loads primary datasets
@@ -96,7 +96,7 @@ The analysis uses helper scripts in `Code/Analysis/` that automatically load and
 
 #### Step 1: XGBoost Model Training
 
-To train XGBoost models with hyperparameter optimization, navigate to `Code/Analysis/Imputation_Xgboost/Main/Training/` and run:
+To train and tune XGBoost models, navigate to `Code/Analysis/Imputation_Xgboost/Main/Training/` and run:
 
 ```bash
 sbatch sbatch_models_training_imputation_xgboost.sh
@@ -155,7 +155,7 @@ This produces bootstrapped estimates for three types of analyses:
 **Configuration Notes:**
 - `--mem=20gb --cpus-per-task=1` (ensures all analyses complete without errors)
 - `--export=model_geography=Urban` (or `Rural`)
-- Same email and account configuration training. 
+- Same email and account configuration from training. 
 
 **Note:** Individual analyses can be run separately, but `sbatch_bootstrap_all_output.sh` runs all analyses in a single script. 
 
@@ -172,11 +172,10 @@ bash Code/Analysis/sbatch_figures.sh
 - Script creates figures for both urban and rural model results. 
 - Directories for figures should be created prior to running script. 
 
-Individual figures can alternatively be created by running the appropriate code found in each of the `Figures_*` directories. 
+**Note:** Individual figures can alternatively be created by running the appropriate code found in each of the `Figures_*` directories. 
+Figures for supplementary analyses where we include superettes in the low-access indicator are produced separately as described in Step 4.  
 
-**Note:** Figures for supplementary analyses where we include superettes in the low-access indicator are produced separately as described in Step 4.  
-
-**Tables:** Generate tables using scripts within `Tables_*` directories, creating `.csv` and `.tex` files based on outputs from Steps 1-3. 
+**Tables:** Generate tables using scripts within `Tables_*` directories, which create `.csv` or `.tex` files based on outputs from Steps 1-3. 
 
 ### Supplementary Analyses with Superettes
 
@@ -213,7 +212,7 @@ Results are organized in the following directory structure:
 
 ## Questions 
 
-For questions about the code structure, please contact authors.
+For questions about the workflow or code structure, please contact authors.
 
 ## Citation
 
