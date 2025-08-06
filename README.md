@@ -238,9 +238,10 @@ Results are organized in the following directory structure:
 **Note:** Steps 1-3 populate the estimation directories (Model_Training, Urban_Bootstrap, and Rural_Bootstrap), while figures and tables are created from these results and saved in their respective subdirectories.
 
 <details>
-
 <summary>Bootstrap Output Directories</summary>
+
 The following subdirectories contain urban and rural bootstrap results: 
+
 - `bootstrap_01_499_tracts`                                  
 - `bootstrap_01_499_tracts_lhs`                              
 - `bootstrap_01_499_tracts_ols`                              
@@ -271,7 +272,9 @@ The following subdirectories contain urban and rural bootstrap results:
 
 <details>
 <summary>Figure Output Directories</summary>
+
 The following subdirectories contain publication-ready figures: 
+
 - `descriptive_statistics`                     
 - `dollar_store_growth_by_time_tracts`         
 - `effects_by_region_and_division_tracts`      
