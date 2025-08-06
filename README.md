@@ -4,7 +4,31 @@
 
 This repository contains all scripts and code necessary to replicate the analyses conducted in "The Varying Effects of Dollar Stores on Food Access: A Machine Learning Analysis."
 
-**Note:** Due to proprietary data restrictions, actual datasets are not included. This repository documents the workflow and code structure used in our research and can serve as a guide for adopting a similar methodology. 
+## Data Availability and Sources
+
+This repository documents the workflow and code structure used in our research and can serve as a guide for adopting a similar methodology. 
+
+Due to proprietary data restrictions, actual datasets are not included in this repository. However, nearly all data used in our study are publicly available and can be obtained directly from the listed sources.
+
+Our analysis employs the following datasets:
+
+1. **NielsenIQ's TDLinx** - Dollar store entry information, low-access outcomes, and baseline retail variables are derived from TDLinx, a comprehensive national database of U.S. food retailers. Data were accessed through a third-party agreement with the USDA Economic Research Service.
+
+2. **U.S. Census Bureau** - Block group-level demographic and socioeconomic data are obtained from the 2000 Decennial Census and American Community Survey (ACS) Five-Year estimates for 2006-2010, 2011-2015, and 2016-2020.
+
+3. **National Land Cover Database (NLCD)** - Land-use shares for census block groups are computed using NLCD data for 2004, 2006, 2009, 2011, 2013, 2016, and 2019.
+
+4. **Parks and Recreation Data** - Block group-level park accessibility measures are created by combining ESRI's USA Parks, Trust for Public Land's ParkServe, and The National Conservation Easement Database.
+
+5. **Educational Facilities** - Public and private school counts are derived from the Homeland Infrastructure Foundation-Level Data platform, which incorporates U.S. Department of Education sources including the Common Core of Data and Private School Universe Survey.
+
+6. **Transportation Infrastructure** - Road network measures by type (interstate, U.S./state/county highways, local roads) at the block-group level are calculated using U.S. Census Bureau primary and secondary roads data.
+
+7. **Urban-Rural Classification** - Block-group urban and rural classification is based on the 2010 U.S. Census Bureau definition and delineation of urban areas.
+
+8. **Dollar Store Policy Data** - City and county dollar store restriction and ban policy information is obtained from the Institute for Local Self-Reliance (ILSR).
+
+9. **Block Group Centroids** - Population-weighted centroids are obtained from the U.S. Census Bureau for calculating geographic and network distances and spatial analysis.
 
 ## Repository Structure
 
@@ -31,6 +55,8 @@ While these additional scripts are included in the repository for transparency, 
 
 ### System Requirements
 
+**Software:** R version 4.2. Many of the analyses are run using bash scripts and a SLURM job scheduler for cluster computing, which may require Linux. 
+
 **Model Training:**
 - Rural models: 30 GB RAM, ~2-3 hours (including hyperparameter optimization)
 - Urban models: 100 GB RAM, ~6-8 hours (including hyperparameter optimization)
@@ -39,10 +65,10 @@ While these additional scripts are included in the repository for transparency, 
 - Rural models: 21 GB RAM, ~30-45 minutes (with 50 parallel jobs)
 - Urban models: 60 GB RAM, ~2.5-4 hours (with 50 parallel jobs)
 
-- **Software**: R version 4.2, SLURM job scheduler for cluster computing. 
-
-- **Runtime Notes**: Our analysis uses 2,128,234 urban and 801,771 rural block-group observations from 2005-2020. Running models sequentially would require ~21 hours (rural areas) and ~125 hours (urban areas), making cluster computing essential for our analysis. 
+**Runtime Notes:** Our data contain 2,128,234 urban and 801,771 rural block-group observations from 2005-2020. Running models sequentially require ~21 hours (rural areas) and ~125 hours (urban areas), making cluster computing essential for our analysis. 
 Researchers with smaller datasets may find the approach feasible on standard computing resources. Runtimes will also vary with machine learning algorithm, tuning, and training strategies employed. 
+
+**Approximate storage space needed:** ~150 GB to store data and output files
 
 ### Required R Packages
 
@@ -55,9 +81,10 @@ Researchers with smaller datasets may find the approach feasible on standard com
 - `future`, `furrr`, `parallelly` - parallel processing
 
 **Additional Packages:**
-- `ggplot2` - visualization
+- `ggplot2`, `tmap` - visualization
 - `knitr`, `kableExtra` - table formatting
 - `ParBayesianOptimization` - hyperparameter tuning
+- `sf` - spatial data analysis
 
 **Note:** Each script contains the necessary package loading commands at the top using `pacman::p_load()`. Additional packages may be required depending on specific analyses.
 
@@ -72,12 +99,12 @@ We created several helper scripts in `Code/Analysis/` that automatically load an
 - `data_preparation_feat_eng_time_by_state_fes_create_data.R` - Prepares state-by-time estimated fixed effects
 - `data_preparation_imputation_estimation.R` - Prepares data for analysis (original sample)
 - `data_preparation_bootstrap_estimation_tracts.R` - Prepares bootstrap sample data
-- `data_preparation_get_hyperparameters.R` - Loads optimal hyperparameter settings
+- `data_preparation_get_hyperparameters.R` - Loads optimal hyperparameter settings (used in bootstrap estimation)
  
 <details>
 <summary>Additional helper scripts</summary>
 
-**Scripts used in evaluating cross-validation errors and treatment effect heterogeneity**
+**Scripts used in evaluating cross-validation errors, treatment effect heterogeneity, and creating figures and tables**
 - `data_preparation_model_covars_lists.R`
 - `data_preparation_prepare_binned_and_factor_covars.R`
 - `data_preparation_prepare_binned_ds_policy_vars.R`
@@ -208,7 +235,65 @@ Results are organized in the following directory structure:
 │   │   │   ├── Rural/          # Tables (rural models)
 ```
 
-**Note:** Steps 1-3 fill the estimation directories (Model_Training, Urban_Bootstrap, and Rural_Bootstrap), while figures and tables are created from these results and saved in their respective directories.
+**Note:** Steps 1-3 populate the estimation directories (Model_Training, Urban_Bootstrap, and Rural_Bootstrap), while figures and tables are created from these results and saved in their respective subdirectories.
+
+<details>
+
+<summary>Bootstrap Output Directories</summary>
+The following subdirectories contain urban and rural bootstrap results: 
+- `bootstrap_01_499_tracts`                                  
+- `bootstrap_01_499_tracts_lhs`                              
+- `bootstrap_01_499_tracts_ols`                              
+- `bootstrap_01_499_tracts_rf`                               
+- `bootstrap_01_499_tracts_w_time_trends_lhs`                
+- `bootstrap_change_in_outcomes_tracts`                      
+- `bootstrap_change_in_outcomes_tracts_lhs`                  
+- `bootstrap_change_in_outcomes_tracts_lhs_w_time_trends`    
+- `bootstrap_change_in_outcomes_tracts_ols`                  
+- `bootstrap_change_in_outcomes_tracts_rf`                   
+- `bootstrap_cv_error_and_att_tracts`                        
+- `bootstrap_effects_by_interactions_tracts`                 
+- `bootstrap_effects_on_baseline_store_counts_x_entry_tracts`
+- `bootstrap_effects_on_ds_policy_vars_tracts`               
+- `bootstrap_error_by_grocery_entry_policy_region_tracts`    
+- `bootstrap_errors_and_effects_by_covars_tracts`            
+- `bootstrap_errors_and_effects_by_entry_x_grocery`          
+- `bootstrap_errors_and_predictions_mult_thresh_tracts`      
+- `bootstrap_errors_and_predictions_tracts`                  
+- `bootstrap_errors_and_predictions_tracts_rf`               
+- `bootstrap_errors_on_baseline_store_counts_x_entry_tracts` 
+- `bootstrap_fit_metrics_tracts`                             
+- `bootstrap_placebo_att_tracts`                             
+- `bootstrap_rel_year_heterogeneity_tracts`                  
+- `bootstrap_ruca_urban_rural_comparison`                    
+- `bootstrap_total_new_grocers_cf`
+</details>
+
+<details>
+<summary>Figure Output Directories</summary>
+The following subdirectories contain publication-ready figures: 
+- `descriptive_statistics`                     
+- `dollar_store_growth_by_time_tracts`         
+- `effects_by_region_and_division_tracts`      
+- `effects_on_covars_bins_tracts`              
+- `effects_on_covars_norm_tracts`              
+- `effects_on_dollar_stores_tracts`            
+- `effects_on_ds_policy_vars_tracts`           
+- `effects_on_interactions_tracts`             
+- `effects_on_store_counts_2005_x_entry_tracts`
+- `errors_and_preds_mult_thresh_tracts`        
+- `errors_and_preds_tracts`                    
+- `errors_and_preds_tracts_ols`                
+- `errors_and_preds_tracts_rf`                 
+- `errors_by_region_tracts`                    
+- `errors_on_covars_bins_tracts`               
+- `errors_on_covars_norm_tracts`               
+- `errors_on_ds_policy_vars_tracts`            
+- `errors_on_grocery_stores_2005_tracts`       
+- `errors_on_store_counts_2005_x_entry_tracts` 
+- `maps`                                       
+- `roc_and_pr_curves`
+</details>
 
 ## Questions 
 
