@@ -240,7 +240,7 @@ Results are organized in the following directory structure:
 <details>
 <summary>Bootstrap Output Directories</summary>
 
-The following subdirectories contain urban and rural bootstrap results: 
+The following subdirectories are used to save urban and rural bootstrap results: 
 
 - `bootstrap_01_499_tracts`                                  
 - `bootstrap_01_499_tracts_lhs`                              
@@ -273,7 +273,7 @@ The following subdirectories contain urban and rural bootstrap results:
 <details>
 <summary>Figure Output Directories</summary>
 
-The following subdirectories contain publication-ready figures: 
+The following subdirectories are used to save publication-ready figures: 
 
 - `descriptive_statistics`                     
 - `dollar_store_growth_by_time_tracts`         
