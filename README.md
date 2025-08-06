@@ -6,9 +6,9 @@ This repository contains all scripts and code necessary to replicate the analyse
 
 ## Data Availability and Sources
 
-This repository documents the workflow and code structure used in our research and can serve as a guide for adopting a similar methodology. 
-
 Due to proprietary data restrictions, actual datasets are not included in this repository. However, nearly all data used in our study are publicly available and can be obtained directly from the listed sources.
+
+This repository documents the workflow and code structure used in our research and can serve as a guide for adopting a similar methodology. 
 
 Our analysis employs the following datasets:
 
@@ -55,7 +55,7 @@ While these additional scripts are included in the repository for transparency, 
 
 ### System Requirements
 
-**Software:** R version 4.2. Many of the analyses are run using bash scripts and a SLURM job scheduler for cluster computing, which may require Linux. 
+**Software:** R version 4.2 or higher. Many analyses use bash scripts and SLURM job scheduler for cluster computing.
 
 **Model Training:**
 - Rural models: 30 GB RAM, ~2-3 hours (including hyperparameter optimization)
@@ -65,7 +65,7 @@ While these additional scripts are included in the repository for transparency, 
 - Rural models: 21 GB RAM, ~30-45 minutes (with 50 parallel jobs)
 - Urban models: 60 GB RAM, ~2.5-4 hours (with 50 parallel jobs)
 
-**Runtime Notes:** Our data contain 2,128,234 urban and 801,771 rural block-group observations from 2005-2020. Running models sequentially require ~21 hours (rural areas) and ~125 hours (urban areas), making cluster computing essential for our analysis. 
+**Runtime Notes:** Our data contain 2,128,234 urban and 801,771 rural block-group observations from 2005-2020. Running models sequentially would require ~21 hours (rural areas) and ~125 hours (urban areas), making cluster computing essential for our analysis. 
 Researchers with smaller datasets may find the approach feasible on standard computing resources. Runtimes will also vary with machine learning algorithm, tuning, and training strategies employed. 
 
 **Approximate storage space needed:** ~150 GB to store data and output files
@@ -240,7 +240,7 @@ Results are organized in the following directory structure:
 <details>
 <summary>Bootstrap Output Directories</summary>
 
-The following subdirectories are used to save urban and rural bootstrap results: 
+The following subdirectories contain urban and rural bootstrap results:
 
 - `bootstrap_01_499_tracts`                                  
 - `bootstrap_01_499_tracts_lhs`                              
@@ -273,7 +273,7 @@ The following subdirectories are used to save urban and rural bootstrap results:
 <details>
 <summary>Figure Output Directories</summary>
 
-The following subdirectories are used to save publication-ready figures: 
+The following subdirectories contain publication-ready figures: 
 
 - `descriptive_statistics`                     
 - `dollar_store_growth_by_time_tracts`         
