@@ -198,11 +198,11 @@ bash Code/Analysis/sbatch_figures.sh
 
 **Note:** Individual figures can alternatively be created by running the appropriate code found in each of the `Figures_*` directories. 
 
-Figures for supplementary analyses where we include superettes in the low-access indicator are produced separately as described in Step 4.  
+Figures for supplementary analyses where we include superettes in the low-access indicator are produced separately as described below.  
 
 **Tables:** Generate tables using scripts within `Tables_*` directories, which create `.csv` or `.tex` files based on outputs from Steps 1-3. 
 
-### Step 4: Supplementary Analyses with Superettes
+### Supplementary Analyses with Superettes
 
 For the supplementary analyses using the modified low-access indicator that includes superettes:
 
