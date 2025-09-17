@@ -6,7 +6,7 @@ This repository contains all scripts and code necessary to replicate the analyse
 
 ## Data Availability and Sources
 
-Due to proprietary data restrictions, actual datasets are not included in this repository. However, nearly all data used in our study are publicly available and can be obtained directly from the listed sources. This repository provides the code developed in our research. This document aims to summarize the workflow and code structure of the repository and can serve as a guide for adopting a similar methodology. 
+Due to proprietary data restrictions, actual datasets are not included in this repository. However, nearly all data used in our study are publicly available and can be obtained directly from the listed sources. This repository documents the workflow and code structure used in our research and can serve as a guide for adopting a similar methodology. 
 
 Our analysis employs the following datasets:
 
