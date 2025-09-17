@@ -6,13 +6,11 @@ This repository contains all scripts and code necessary to replicate the analyse
 
 ## Data Availability and Sources
 
-Due to proprietary data restrictions, actual datasets are not included in this repository. However, nearly all data used in our study are publicly available and can be obtained directly from the listed sources.
-
-This repository documents the workflow and code structure used in our research and can serve as a guide for adopting a similar methodology. 
+Due to proprietary data restrictions, actual datasets are not included in this repository. However, nearly all data used in our study are publicly available and can be obtained directly from the listed sources. This repository provides the code developed in our research. This document aims to summarize the workflow and code structure of the repository and can serve as a guide for adopting a similar methodology. 
 
 Our analysis employs the following datasets:
 
-1. **NielsenIQ's TDLinx** - Dollar store entry information, low-access outcomes, and baseline retail variables are derived from TDLinx, a comprehensive national database of U.S. food retailers. Data were accessed through a third-party agreement with the USDA Economic Research Service.
+1. **NielsenIQ's TDLinx** - Dollar store entry information, low-access outcomes, and baseline retail variables are derived from TDLinx. Data were accessed through a third-party agreement with the USDA Economic Research Service.
 
 2. **U.S. Census Bureau** - Block group-level demographic and socioeconomic data are obtained from the 2000 Decennial Census and American Community Survey (ACS) Five-Year estimates for 2006-2010, 2011-2015, and 2016-2020.
 
@@ -48,7 +46,7 @@ Our analysis employs the following datasets:
 
 
 **Note:** The repository contains several other folders and scripts that run additional machine learning algorithms (e.g., random forest), implement alternative tuning strategies, and perform various robustness checks of our main results.
-While these additional scripts are included in the repository for transparency, we do not provide detailed procedures for running them here. However, the folders and scripts generally follow the same organization and workflow as our main analyses. 
+While these additional scripts are included in the repository for reference, we do not provide detailed procedures for running them here. However, the folders and scripts generally follow the same organization and workflow as our main analyses. 
 
 
 ## Computational Requirements
@@ -65,8 +63,7 @@ While these additional scripts are included in the repository for transparency, 
 - Rural models: 21 GB RAM, ~30-45 minutes (with 50 parallel jobs)
 - Urban models: 60 GB RAM, ~2.5-4 hours (with 50 parallel jobs)
 
-**Runtime Notes:** Our data contain 2,128,234 urban and 801,771 rural block-group observations from 2005-2020. Running models sequentially would require ~21 hours (rural areas) and ~125 hours (urban areas), making cluster computing essential for our analysis. 
-Researchers with smaller datasets may find the approach feasible on standard computing resources. Runtimes will also vary with machine learning algorithm, tuning, and training strategies employed. 
+**Runtime Notes:** Our data contain 2,128,234 urban and 801,771 rural block-group observations from 2005-2020. Running models sequentially would require ~21 hours (rural areas) and ~125 hours (urban areas). However, cluster computing can reduce runtime considerably for mid-sized and large datasets. Runtimes will also vary with machine learning algorithm, tuning, and training strategies employed. Researchers with smaller datasets may find the approach feasible on standard computing resources.
 
 **Approximate storage space needed:** ~150 GB to store data and output files
 
@@ -81,12 +78,12 @@ Researchers with smaller datasets may find the approach feasible on standard com
 - `future`, `furrr`, `parallelly` - parallel processing
 
 **Additional Packages:**
-- `ggplot2`, `tmap` - visualization
+- `ggplot2`, `tmap` - figures
 - `knitr`, `kableExtra` - table formatting
 - `ParBayesianOptimization` - hyperparameter tuning
-- `sf` - spatial data analysis
+- `sf` - spatial data development and analysis
 
-**Note:** Each script contains the necessary package loading commands at the top using `pacman::p_load()`. Additional packages may be required depending on specific analyses.
+**Note:** Each script contains the necessary package loading commands at the top using `pacman::p_load()`. Additional packages may be required depending on the specific script. 
 
 ## Replication Instructions
 
@@ -160,7 +157,7 @@ The bash script produces 499 bootstrap iterations, each generating:
 **Configuration Notes:**
 - Rural models: `--mem=21gb --cpus-per-task=3`
 - Urban models: `--mem=60gb --cpus-per-task=3`
-- Same email and account configuration from training. 
+- Same email and account configuration from training (see Configuration Notes in Step 1)
 
 #### Step 3: Bootstrapped Estimates of Model Diagnostics and Analyses of Treatment Effects
 
@@ -177,14 +174,14 @@ bash Code/Analysis/sbatch_bootstrap_all_output.sh
 This produces bootstrapped estimates for three types of analyses: 
 - Model diagnostics (i.e., comparing actual vs predicted low-access status) using pre-treatment data 
 - Average treatment effects over time and across covariates
-- Treatment effect heterogeneity by socio-demographics, geography, baseline grocery store counts, and presence of dollar store policies.
+- Treatment effect heterogeneity by socio-demographics, geography, baseline grocery store counts, and presence of dollar store policies
 
 **Configuration Notes:**
 - `--mem=20gb --cpus-per-task=1` (ensures all analyses complete without errors)
 - `--export=model_geography=Urban` (or `Rural`)
-- Same email and account configuration from training. 
+- Same email and account configuration from training (see Configuration Notes in Step 1)
 
-**Note:** Individual analyses can be run separately, but `sbatch_bootstrap_all_output.sh` runs all analyses in a single script. 
+**Note:** Individual scripts can be run separately, but `sbatch_bootstrap_all_output.sh` runs all analyses in a single bash script. 
 
 ### Figures and Tables
 
@@ -196,15 +193,16 @@ bash Code/Analysis/sbatch_figures.sh
 
 **Configuration Notes:**
 - `--mem=20gb --cpus-per-task=1` (ensures all figures are created without errors)
-- Script creates figures for both urban and rural model results. 
-- Directories for figures should be created prior to running script. 
+- Script creates figures for both urban and rural model results
+- Directories for figures should be created prior to running script 
 
 **Note:** Individual figures can alternatively be created by running the appropriate code found in each of the `Figures_*` directories. 
+
 Figures for supplementary analyses where we include superettes in the low-access indicator are produced separately as described in Step 4.  
 
 **Tables:** Generate tables using scripts within `Tables_*` directories, which create `.csv` or `.tex` files based on outputs from Steps 1-3. 
 
-### Supplementary Analyses with Superettes
+### Step 4: Supplementary Analyses with Superettes
 
 For the supplementary analyses using the modified low-access indicator that includes superettes:
 
@@ -273,7 +271,7 @@ The following subdirectories contain urban and rural bootstrap results:
 <details>
 <summary>Figure Output Directories</summary>
 
-The following subdirectories contain publication-ready figures: 
+The following subdirectories contain output figures: 
 
 - `descriptive_statistics`                     
 - `dollar_store_growth_by_time_tracts`         
